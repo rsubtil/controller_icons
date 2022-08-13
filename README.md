@@ -31,7 +31,7 @@ Provides icons for all major controllers and keyboard/mouse actions, with an aut
 
 ## Installation
 
-The minimum Godot version is 3.5. Versions for 3.4 and upcoming 4.0 will be made soon.
+The minimum Godot version is 3.3, but has been tested successfully on 3.4 and 3.5. Support for the upcoming 4.0 will be available later on.
 
 Download this repository and copy the `addons` folder to your project root directory.
 
