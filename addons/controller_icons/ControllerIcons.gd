@@ -34,9 +34,10 @@ func _parse_input_actions():
 	if proj_file.load("res://project.godot"):
 		printerr("Failed to open \"project.godot\"! Custom input actions will not work on editor view!")
 		return
-	for input_action in proj_file.get_section_keys("input"):
-		var data : Dictionary = proj_file.get_value("input", input_action)
-		_add_custom_input_action(input_action, data)
+	if proj_file.has_section("input"):
+		for input_action in proj_file.get_section_keys("input"):
+			var data : Dictionary = proj_file.get_value("input", input_action)
+			_add_custom_input_action(input_action, data)
 
 func _ready():
 	Input.connect("joy_connection_changed", self, "_on_joy_connection_changed")
