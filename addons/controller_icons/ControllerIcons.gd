@@ -99,7 +99,7 @@ func _expand_path(path: String) -> Array:
 			var event = _get_matching_event(path)
 			if event:
 				base_path += _convert_event_to_path(event)
-		elif path.get_slice("/", 0) == "joypad":
+		elif path.substr(0, path.find("/")) == "joypad":
 			base_path += Mapper._convert_joypad_path(path, _settings.joypad_fallback)
 		else:
 			base_path += path
