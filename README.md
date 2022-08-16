@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/Ev1lbl0w/controller_icons/master/icon.png" width=15%>
+
 # Controller Icons
 
 Provides icons for all major controllers and keyboard/mouse actions, with an automatic icon remapping system.
@@ -45,4 +47,6 @@ Check the full [docs](DOCS.md), which has a [Quick-Start guide](DOCS.md#quick-st
 
 The addon is licensed under the MIT license. Full details at [LICENSE](LICENSE).
 
-The controller assets are [Xelu's FREE Controllers & Keyboard PROMPTS](https://thoseawesomeguys.com/prompts/), made by Nicolae (XELU) Berbece and under Creative Common 0 _(CC0)_.
+The controller assets are [Xelu's FREE Controllers & Keyboard PROMPTS](https://thoseawesomeguys.com/prompts/), made by Nicolae (XELU) Berbece and under Creative Commons 0 _(CC0)_.
+
+The icon is a mix of a [game controller vector image](https://www.svgrepo.com/svg/255536/game-controller-gamepad) under Create Commons 0 _(CC0)_ and [Godot's logo](https://github.com/godotengine/godot/blob/master/icon.svg) under Creative Commons Attribution 4.0 International License _(CC-BY-4.0 International)_
