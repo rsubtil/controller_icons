@@ -17,7 +17,8 @@ enum Devices {
 	WIIU,
 	XBOX360,
 	XBOXONE,
-	XBOXSERIES
+	XBOXSERIES,
+	STEAM_DECK
 }
 
 ## Controller type to fallback to if automatic
