@@ -28,6 +28,7 @@ Provides icons for all major controllers and keyboard/mouse actions, with an aut
 	- Nintendo Switch Controller
 	- Nintendo Switch Joy-Con
 	- Steam Controller
+	- Steam Deck
 	- Amazon Luna
 	- Google Stadia
 

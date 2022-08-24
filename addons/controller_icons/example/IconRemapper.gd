@@ -43,12 +43,6 @@ func _on_Luna_pressed():
 		nodes[i].get_child(0).path = control_text
 
 
-func _on_OUYA_pressed():
-	for i in range(nodes.size()):
-		var control_text = ControllerIcons.Mapper._convert_joypad_to_ouya(base_names[i])
-		nodes[i].get_child(0).path = control_text
-
-
 func _on_PS3_pressed():
 	for i in range(nodes.size()):
 		var control_text = ControllerIcons.Mapper._convert_joypad_to_ps3(base_names[i])
@@ -91,24 +85,6 @@ func _on_Joycon_pressed():
 		nodes[i].get_child(0).path = control_text
 
 
-func _on_Vita_pressed():
-	for i in range(nodes.size()):
-		var control_text = ControllerIcons.Mapper._convert_joypad_to_vita(base_names[i])
-		nodes[i].get_child(0).path = control_text
-
-
-func _on_Wii_pressed():
-	for i in range(nodes.size()):
-		var control_text = ControllerIcons.Mapper._convert_joypad_to_wii(base_names[i])
-		nodes[i].get_child(0).path = control_text
-
-
-func _on_WiiU_pressed():
-	for i in range(nodes.size()):
-		var control_text = ControllerIcons.Mapper._convert_joypad_to_wiiu(base_names[i])
-		nodes[i].get_child(0).path = control_text
-
-
 func _on_Xbox360_pressed():
 	for i in range(nodes.size()):
 		var control_text = ControllerIcons.Mapper._convert_joypad_to_xbox360(base_names[i])
@@ -124,4 +100,10 @@ func _on_XboxOne_pressed():
 func _on_XboxSeries_pressed():
 	for i in range(nodes.size()):
 		var control_text = ControllerIcons.Mapper._convert_joypad_to_xboxseries(base_names[i])
+		nodes[i].get_child(0).path = control_text
+
+
+func _on_SteamDeck_pressed():
+	for i in range(nodes.size()):
+		var control_text = ControllerIcons.Mapper._convert_joypad_to_steamdeck(base_names[i])
 		nodes[i].get_child(0).path = control_text

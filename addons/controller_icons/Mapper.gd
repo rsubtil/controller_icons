@@ -25,6 +25,8 @@ func _convert_joypad_path(path: String, fallback) -> String:
 			return _convert_joypad_to_xboxone(path)
 		ControllerSettings.Devices.XBOXSERIES:
 			return _convert_joypad_to_xboxseries(path)
+		ControllerSettings.Devices.STEAM_DECK:
+			return _convert_joypad_to_steamdeck(path)
 		_:
 			return ""
 
@@ -40,8 +42,7 @@ func _get_joypad_type(fallback):
 		return ControllerSettings.Devices.PS5
 	elif "Stadia Controller" in controller_name:
 		return ControllerSettings.Devices.STADIA
-	elif "Steam Controller" in controller_name or \
-		"Steam Virtual Gamepad" in controller_name:
+	elif "Steam Controller" in controller_name:
 		return ControllerSettings.Devices.STEAM
 	elif "Switch Controller" in controller_name or \
 		"Switch Pro Controller" in controller_name:
@@ -56,6 +57,9 @@ func _get_joypad_type(fallback):
 		return ControllerSettings.Devices.XBOXONE
 	elif "Xbox Series" in controller_name:
 		return ControllerSettings.Devices.XBOXSERIES
+	elif "Steam Deck" in controller_name or \
+		"Steam Virtual Gamepad" in controller_name:
+		return ControllerSettings.Devices.STEAM_DECK
 	else:
 		return fallback
 
@@ -270,5 +274,27 @@ func _convert_joypad_to_xboxseries(path: String):
 			return path.replace("/select", "/view")
 		"start":
 			return path.replace("/start", "/menu")
+		_:
+			return path
+
+func _convert_joypad_to_steamdeck(path: String):
+	path = path.replace("joypad", "steamdeck")
+	match path.substr(path.find("/") + 1):
+		"lb":
+			return path.replace("/lb", "/l1")
+		"rb":
+			return path.replace("/rb", "/r1")
+		"lt":
+			return path.replace("/lt", "/l2")
+		"rt":
+			return path.replace("/rt", "/r2")
+		"select":
+			return path.replace("/select", "/square")
+		"start":
+			return path.replace("/start", "/menu")
+		"home":
+			return path.replace("/home", "/steam")
+		"share":
+			return path.replace("/share", "/dots")
 		_:
 			return path
