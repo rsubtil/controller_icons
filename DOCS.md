@@ -22,11 +22,16 @@ Controller Icons provides various custom node types:
 - `ControllerSprite` _(`Sprite`)_
 - `ControllerSprite3D` _(`Sprite3D`)_
 
-All of these provide a `Path` property to fill, with `ControllerTextureRect` having an additional `Max Width` field to quickly set a desired width in pixels.
+All of these provide the following properties:
+- `Path`: Specify the controller lookup path
+- `Show Only`: Set the input type this icon will appear on. When set to `Keyboard/Mouse` or `Controller`, the object will hide when the opposite input method is used.
+
+ControllerTextureRect has the following additional properties:
+- `Max Width`: Max width for the icon to occupy, in pixels.
 
 ![](screenshots/docs/path.png)
 
-`Path` is a String that can be one of three major categories, detailed below.
+`Path` can be one of three major categories, detailed below.
 
 ## Input action
 
