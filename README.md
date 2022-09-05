@@ -44,10 +44,14 @@ Then activate **Controller Icons** in your project plugins.
 
 Check the full [docs](DOCS.md), which has a [Quick-Start guide](DOCS.md#quick-start-guide) to get you up to speed.
 
+## Credits
+
+- Thank you [@adambelis](https://github.com/adambelis) for the redesigned logo!
+
 ## License
 
 The addon is licensed under the MIT license. Full details at [LICENSE](LICENSE).
 
 The controller assets are [Xelu's FREE Controllers & Keyboard PROMPTS](https://thoseawesomeguys.com/prompts/), made by Nicolae (XELU) Berbece and under Creative Commons 0 _(CC0)_.
 
-The icon is a mix of a [game controller vector image](https://www.svgrepo.com/svg/255536/game-controller-gamepad) under Create Commons 0 _(CC0)_ and [Godot's logo](https://github.com/godotengine/godot/blob/master/icon.svg) under Creative Commons Attribution 4.0 International License _(CC-BY-4.0 International)_
+The icon was designed by [@adambelis](https://github.com/adambelis) ([#5](https://github.com/Ev1lbl0w/controller_icons/pull/5)) and is under Create Commons 0 _(CC0)_. It uses the [Godot's logo](https://github.com/godotengine/godot/blob/master/icon.svg) which is under Creative Commons Attribution 4.0 International License _(CC-BY-4.0 International)_
