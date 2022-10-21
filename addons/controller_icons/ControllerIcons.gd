@@ -381,6 +381,10 @@ func _convert_joypad_motion_to_path(axis: int):
 			path = "joypad/l_stick"
 		JOY_ANALOG_RX, JOY_ANALOG_RY:
 			path = "joypad/r_stick"
+		JOY_L2:
+			path = "joypad/lt"
+		JOY_R2:
+			path = "joypad/rt"
 		_:
 			return ""
 	return Mapper._convert_joypad_path(path, _settings.joypad_fallback)
