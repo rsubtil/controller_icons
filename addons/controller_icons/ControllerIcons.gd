@@ -13,7 +13,6 @@ var _custom_input_actions := {}
 
 var _last_input_type = InputType.KEYBOARD_MOUSE
 var _settings
-var _file : FileAccess
 
 var Mapper = preload("res://addons/controller_icons/Mapper.gd").new()
 
@@ -416,7 +415,7 @@ func _load_icon(path: String) -> int:
 		else:
 			return ERR_FILE_NOT_FOUND
 	else:
-		if not _file.file_exists(path):
+		if not FileAccess.file_exists(path):
 			return ERR_FILE_NOT_FOUND
 		var img := Image.new()
 		var err = img.load(path)
