@@ -15,12 +15,12 @@ class_name ControllerButton
 
 func _ready():
 	ControllerIcons.input_type_changed.connect(_on_input_type_changed)
-	path = path
+	self.path = path
 
 func _on_input_type_changed(input_type):
 	if show_only == 0 or \
 		(show_only == 1 and input_type == ControllerIcons.InputType.KEYBOARD_MOUSE) or \
 		(show_only == 2 and input_type == ControllerIcons.InputType.CONTROLLER):
-		path = path
+		self.path = path
 	else:
 		icon = null

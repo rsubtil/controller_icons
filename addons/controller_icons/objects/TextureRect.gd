@@ -29,14 +29,14 @@ class_name ControllerTextureRect
 
 func _ready():
 	ControllerIcons.input_type_changed.connect(_on_input_type_changed)
-	path = path
-	max_width = max_width
+	self.path = path
+	self.max_width = max_width
 
 func _on_input_type_changed(input_type):
 	if show_only == 0 or \
 		(show_only == 1 and input_type == ControllerIcons.InputType.KEYBOARD_MOUSE) or \
 		(show_only == 2 and input_type == ControllerIcons.InputType.CONTROLLER):
 		visible = true
-		path = path
+		self.path = path
 	else:
 		visible = false
