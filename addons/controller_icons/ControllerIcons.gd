@@ -1,4 +1,4 @@
-tool
+@tool
 extends Node
 
 signal input_type_changed(input_type)
@@ -13,7 +13,6 @@ var _custom_input_actions := {}
 
 var _last_input_type = InputType.KEYBOARD_MOUSE
 var _settings
-var _file := File.new()
 
 var Mapper = preload("res://addons/controller_icons/Mapper.gd").new()
 
@@ -22,7 +21,7 @@ func _set_last_input_type(__last_input_type):
 	emit_signal("input_type_changed", _last_input_type)
 
 func _enter_tree():
-	if Engine.editor_hint:
+	if Engine.is_editor_hint():
 		_parse_input_actions()
 
 func _parse_input_actions():
@@ -40,7 +39,7 @@ func _parse_input_actions():
 			_add_custom_input_action(input_action, data)
 
 func _ready():
-	Input.connect("joy_connection_changed", self, "_on_joy_connection_changed")
+	Input.joy_connection_changed.connect(_on_joy_connection_changed)
 	_settings = load("res://addons/controller_icons/settings.tres")
 	if not _settings:
 		_settings = ControllerSettings.new()
@@ -50,12 +49,12 @@ func _ready():
 func _on_joy_connection_changed(device, connected):
 	if device == 0:
 		if connected:
-			# A yield is required, otherwise a deadlock happens
-			yield(get_tree(), "idle_frame")
+			# An await is required, otherwise a deadlock happens
+			await get_tree().process_frame
 			_set_last_input_type(InputType.CONTROLLER)
 		else:
-			# A yield is required, otherwise a deadlock happens
-			yield(get_tree(), "idle_frame")
+			# An await is required, otherwise a deadlock happens
+			await get_tree().process_frame
 			_set_last_input_type(InputType.KEYBOARD_MOUSE)
 
 func _input(event: InputEvent):
@@ -64,7 +63,7 @@ func _input(event: InputEvent):
 		"InputEventKey", "InputEventMouseButton":
 			input_type = InputType.KEYBOARD_MOUSE
 		"InputEventMouseMotion":
-			if _settings.allow_mouse_remap and event.speed.length() > _settings.mouse_min_movement:
+			if _settings.allow_mouse_remap and event.velocity.length() > _settings.mouse_min_movement:
 				input_type = InputType.KEYBOARD_MOUSE
 		"InputEventJoypadButton":
 			input_type = InputType.CONTROLLER
@@ -94,7 +93,7 @@ func _expand_path(path: String) -> Array:
 		"res://addons/controller_icons/assets/"
 	]
 	for base_path in base_paths:
-		if base_path.empty():
+		if base_path.is_empty():
 			continue
 		if _is_path_action(path):
 			var event = _get_matching_event(path)
@@ -113,7 +112,7 @@ func _is_path_action(path):
 
 func _convert_event_to_path(event: InputEvent):
 	if event is InputEventKey:
-		return _convert_key_to_path(event.scancode)
+		return _convert_key_to_path(event.keycode)
 	elif event is InputEventMouseButton:
 		return _convert_mouse_button_to_path(event.button_index)
 	elif event is InputEventJoypadButton:
@@ -157,7 +156,7 @@ func _convert_key_to_path(scancode: int):
 			return "key/page_down"
 		KEY_SHIFT:
 			return "key/shift_alt"
-		KEY_CONTROL:
+		KEY_CTRL:
 			return "key/ctrl"
 		KEY_META, KEY_SUPER_L, KEY_SUPER_R:
 			match OS.get_name():
@@ -322,11 +321,11 @@ func _convert_key_to_path(scancode: int):
 
 func _convert_mouse_button_to_path(button_index: int):
 	match button_index:
-		BUTTON_LEFT:
+		MOUSE_BUTTON_LEFT:
 			return "mouse/left"
-		BUTTON_RIGHT:
+		MOUSE_BUTTON_RIGHT:
 			return "mouse/right"
-		BUTTON_MIDDLE:
+		MOUSE_BUTTON_MIDDLE:
 			return "mouse/middle"
 		_:
 			return "mouse/sample"
@@ -334,41 +333,41 @@ func _convert_mouse_button_to_path(button_index: int):
 func _convert_joypad_button_to_path(button_index: int):
 	var path
 	match button_index:
-		JOY_XBOX_A:
+		JOY_BUTTON_A:
 			path = "joypad/a"
-		JOY_XBOX_B:
+		JOY_BUTTON_B:
 			path = "joypad/b"
-		JOY_XBOX_X:
+		JOY_BUTTON_X:
 			path = "joypad/x"
-		JOY_XBOX_Y:
+		JOY_BUTTON_Y:
 			path = "joypad/y"
-		JOY_L:
+		JOY_BUTTON_LEFT_SHOULDER:
 			path = "joypad/lb"
-		JOY_R:
+		JOY_BUTTON_RIGHT_SHOULDER:
 			path = "joypad/rb"
-		JOY_L2:
+		JOY_AXIS_TRIGGER_LEFT:
 			path = "joypad/lt"
-		JOY_R2:
+		JOY_AXIS_TRIGGER_RIGHT:
 			path = "joypad/rt"
-		JOY_L3:
+		JOY_BUTTON_LEFT_STICK:
 			path = "joypad/l_stick_click"
-		JOY_R3:
+		JOY_BUTTON_RIGHT_STICK:
 			path = "joypad/r_stick_click"
-		JOY_SELECT:
+		JOY_BUTTON_BACK:
 			path = "joypad/select"
-		JOY_START:
+		JOY_BUTTON_START:
 			path = "joypad/start"
-		JOY_DPAD_UP:
+		JOY_BUTTON_DPAD_UP:
 			path = "joypad/dpad_up"
-		JOY_DPAD_DOWN:
+		JOY_BUTTON_DPAD_DOWN:
 			path = "joypad/dpad_down"
-		JOY_DPAD_LEFT:
+		JOY_BUTTON_DPAD_LEFT:
 			path = "joypad/dpad_left"
-		JOY_DPAD_RIGHT:
+		JOY_BUTTON_DPAD_RIGHT:
 			path = "joypad/dpad_right"
-		JOY_GUIDE:
+		JOY_BUTTON_GUIDE:
 			path = "joypad/home"
-		JOY_MISC1:
+		JOY_BUTTON_MISC1:
 			path = "joypad/share"
 		_:
 			return ""
@@ -377,13 +376,13 @@ func _convert_joypad_button_to_path(button_index: int):
 func _convert_joypad_motion_to_path(axis: int):
 	var path : String
 	match axis:
-		JOY_ANALOG_LX, JOY_ANALOG_LY:
+		JOY_AXIS_LEFT_X, JOY_AXIS_LEFT_Y:
 			path = "joypad/l_stick"
-		JOY_ANALOG_RX, JOY_ANALOG_RY:
+		JOY_AXIS_RIGHT_X, JOY_AXIS_RIGHT_Y:
 			path = "joypad/r_stick"
-		JOY_L2:
+		JOY_AXIS_TRIGGER_LEFT:
 			path = "joypad/lt"
-		JOY_R2:
+		JOY_AXIS_TRIGGER_RIGHT:
 			path = "joypad/rt"
 		_:
 			return ""
@@ -394,7 +393,7 @@ func _get_matching_event(path: String):
 	if _custom_input_actions.has(path):
 		events = _custom_input_actions[path]
 	else:
-		events = InputMap.get_action_list(path)
+		events = InputMap.action_get_events(path)
 
 	for event in events:
 		match event.get_class():
@@ -416,7 +415,7 @@ func _load_icon(path: String) -> int:
 		else:
 			return ERR_FILE_NOT_FOUND
 	else:
-		if not _file.file_exists(path):
+		if not FileAccess.file_exists(path):
 			return ERR_FILE_NOT_FOUND
 		var img := Image.new()
 		var err = img.load(path)
