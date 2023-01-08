@@ -19,7 +19,7 @@ Controller Icons provides various custom node types:
 
 - `ControllerButton` _(`Button`)_
 - `ControllerTextureRect` _(`TextureRect`)_
-- `ControllerSprite` _(`Sprite`)_
+- `ControllerSprite2D` _(`Sprite2D`)_
 - `ControllerSprite3D` _(`Sprite3D`)_
 
 All of these provide the following properties:
@@ -66,7 +66,7 @@ The `ControllerIcons` singleton has an `input_type_changed` signal available so 
 ```gdscript
 func my_func():
 	...
-	ControllerIcons.connect("input_type_changed", self, "_on_input_type_changed")
+	ControllerIcons.input_type_changed.connect(_on_input_type_changed)
 
 func _on_input_type_changed(input_type):
 	match input_type:
