@@ -4,6 +4,8 @@
 
 Provides icons for all major controllers and keyboard/mouse actions, with an automatic icon remapping system.
 
+> This is the Godot 3.x version. For the Godot 4.x version, check the [master branch](https://github.com/rsubtil/controller_icons/tree/master)
+
 ## Features
 
 - Parse input actions and assign respective icons for keyboard/mouse and controller
@@ -34,7 +36,9 @@ Provides icons for all major controllers and keyboard/mouse actions, with an aut
 
 ## Installation
 
-The minimum Godot version is 3.3, but has been tested successfully on 3.4 and 3.5. Support for the upcoming 4.0 will be available later on.
+> This is the Godot 3.x version. For the Godot 4.x version, check the [master branch](https://github.com/rsubtil/controller_icons/tree/master)
+
+The minimum Godot version is 3.3, but has been tested successfully on 3.4 and 3.5.
 
 Download this repository and copy the `addons` folder to your project root directory.
 
@@ -47,6 +51,7 @@ Check the full [docs](DOCS.md), which has a [Quick-Start guide](DOCS.md#quick-st
 ## Credits
 
 - Thank you [@adambelis](https://github.com/adambelis) for the redesigned logo!
+- Thank you [@el-falso](https://github.com/el-falso) for the port to Godot 4!
 
 ## License
 
