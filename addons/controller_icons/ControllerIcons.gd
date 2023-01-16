@@ -113,6 +113,9 @@ func _is_path_action(path):
 
 func _convert_event_to_path(event: InputEvent):
 	if event is InputEventKey:
+		# If this is a physical key, convert to localized scancode
+		if event.scancode == 0:
+			return _convert_key_to_path(OS.keyboard_get_scancode_from_physical(event.physical_scancode))
 		return _convert_key_to_path(event.scancode)
 	elif event is InputEventMouseButton:
 		return _convert_mouse_button_to_path(event.button_index)
