@@ -11,7 +11,7 @@ enum InputType {
 var _cached_icons := {}
 var _custom_input_actions := {}
 
-var _last_input_type = InputType.KEYBOARD_MOUSE
+var _last_input_type
 var _settings
 
 var Mapper = preload("res://addons/controller_icons/Mapper.gd").new()
@@ -45,6 +45,13 @@ func _ready():
 		_settings = ControllerSettings.new()
 	if _settings.custom_mapper:
 		Mapper = _settings.custom_mapper.new()
+	# Wait a frame to give a chance for the app to initialize
+	await get_tree().process_frame
+	# Set input type to what's likely being used currently
+	if Input.get_connected_joypads().is_empty():
+		_set_last_input_type(InputType.KEYBOARD_MOUSE)
+	else:
+		_set_last_input_type(InputType.CONTROLLER)
 
 func _on_joy_connection_changed(device, connected):
 	if device == 0:
@@ -76,6 +83,10 @@ func _input(event: InputEvent):
 
 func _add_custom_input_action(input_action: String, data: Dictionary):
 	_custom_input_actions[input_action] = data["events"]
+
+func refresh():
+	# All it takes is to signal icons to refresh paths
+	emit_signal("input_type_changed", _last_input_type)
 
 func parse_path(path: String) -> Texture:
 	var root_paths := _expand_path(path)
