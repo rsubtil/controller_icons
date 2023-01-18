@@ -79,7 +79,6 @@ func _input(event: InputEvent):
 				input_type = InputType.CONTROLLER
 	if input_type != _last_input_type:
 		_set_last_input_type(input_type)
-		#print("Input changed to " + str(input_type) + "! Joy name is: ", Input.get_joy_name(0), " with GUID ", Input.get_joy_guid(0))
 
 func _add_custom_input_action(input_action: String, data: Dictionary):
 	_custom_input_actions[input_action] = data["events"]
@@ -88,8 +87,10 @@ func refresh():
 	# All it takes is to signal icons to refresh paths
 	emit_signal("input_type_changed", _last_input_type)
 
-func parse_path(path: String) -> Texture:
-	var root_paths := _expand_path(path)
+func parse_path(path: String, input_type: int = _last_input_type) -> Texture:
+	if typeof(input_type) == TYPE_NIL:
+		return null
+	var root_paths := _expand_path(path, input_type)
 	for root_path in root_paths:
 		if not _cached_icons.has(root_path):
 			if _load_icon(root_path):
@@ -97,7 +98,26 @@ func parse_path(path: String) -> Texture:
 		return _cached_icons[root_path]
 	return null
 
-func _expand_path(path: String) -> Array:
+func parse_event(event: InputEvent) -> Texture:
+	var path = _convert_event_to_path(event)
+	if path.is_empty():
+		return null
+
+	var base_paths := [
+		_settings.custom_asset_dir + "/",
+		"res://addons/controller_icons/assets/"
+	]
+	for base_path in base_paths:
+		if base_path.is_empty():
+			continue
+		base_path += path + ".png"
+		if not _cached_icons.has(base_path):
+			if _load_icon(base_path):
+				continue
+		return _cached_icons[base_path]
+	return null
+
+func _expand_path(path: String, input_type: int) -> Array:
 	var paths := []
 	var base_paths := [
 		_settings.custom_asset_dir + "/",
@@ -107,7 +127,7 @@ func _expand_path(path: String) -> Array:
 		if base_path.is_empty():
 			continue
 		if _is_path_action(path):
-			var event = _get_matching_event(path)
+			var event = _get_matching_event(path, input_type)
 			if event:
 				base_path += _convert_event_to_path(event)
 		elif path.substr(0, path.find("/")) == "joypad":
@@ -126,7 +146,7 @@ func _convert_event_to_path(event: InputEvent):
 		# If this is a physical key, convert to localized scancode
 		if event.keycode == 0:
 			return _convert_key_to_path(DisplayServer.keyboard_get_keycode_from_physical(event.physical_keycode))
-		return _convert_key_to_path(event.physical_keycode)
+		return _convert_key_to_path(event.keycode)
 	elif event is InputEventMouseButton:
 		return _convert_mouse_button_to_path(event.button_index)
 	elif event is InputEventJoypadButton:
@@ -402,7 +422,7 @@ func _convert_joypad_motion_to_path(axis: int):
 			return ""
 	return Mapper._convert_joypad_path(path, _settings.joypad_fallback)
 
-func _get_matching_event(path: String):
+func _get_matching_event(path: String, input_type: int):
 	var events : Array
 	if _custom_input_actions.has(path):
 		events = _custom_input_actions[path]
@@ -412,10 +432,10 @@ func _get_matching_event(path: String):
 	for event in events:
 		match event.get_class():
 			"InputEventKey", "InputEventMouse", "InputEventMouseMotion", "InputEventMouseButton":
-				if _last_input_type == InputType.KEYBOARD_MOUSE:
+				if input_type == InputType.KEYBOARD_MOUSE:
 					return event
 			"InputEventJoypadButton", "InputEventJoypadMotion":
-				if _last_input_type == InputType.CONTROLLER:
+				if input_type == InputType.CONTROLLER:
 					return event
 	return null
 
