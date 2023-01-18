@@ -21,8 +21,15 @@ func _on_input_type_changed(input_type):
 func set_path(_path: String):
 	path = _path
 	if is_inside_tree():
-		texture = ControllerIcons.parse_path(path)
+		if force_type > 0:
+			texture = ControllerIcons.parse_path(path, force_type - 1)
+		else:
+			texture = ControllerIcons.parse_path(path)
 
 func set_show_only(_show_only: int):
 	show_only = _show_only
+	_on_input_type_changed(ControllerIcons._last_input_type)
+
+func set_force_type(_force_type: int):
+	force_type = _force_type
 	_on_input_type_changed(ControllerIcons._last_input_type)
