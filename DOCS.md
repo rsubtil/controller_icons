@@ -25,6 +25,7 @@ Controller Icons provides various custom node types:
 All of these provide the following properties:
 - `Path`: Specify the controller lookup path
 - `Show Only`: Set the input type this icon will appear on. When set to `Keyboard/Mouse` or `Controller`, the object will hide when the opposite input method is used.
+- `Force Type`: When set to other than `None`, forces the displayed icon to be either `Keyboard/Mouse` or `Controller`. Only relevant for input actions, other types of lookup paths are not affected by this.
 
 ControllerTextureRect has the following additional properties:
 - `Max Width`: Max width for the icon to occupy, in pixels.
@@ -41,7 +42,13 @@ This mode also automatically switches icons when the user either uses keyboard/m
 
 ![](screenshots/docs/input_action.gif)
 
-If you add/remove/change input actions, you need to reload the addon so it can update the input map and show the appropriate mappings in the editor view again. This is not needed in the launched project though.
+If you add/remove/change input actions on the editor, you need to reload the addon so it can update the input map and show the appropriate mappings in the editor view again. This is not needed in the launched project though.
+
+However, if you change input actions at runtime, you must call `refresh` on the `ControllerIcons` singleton to update all existing icons with the new actions:
+
+```gdscript
+ControllerIcons.refresh()
+```
 
 ## Generic joypad path
 
