@@ -18,6 +18,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="ControllerButton" type="Button" parent="."]
+layout_mode = 0
 offset_left = 282.0
 offset_top = 44.0
 offset_right = 469.0
@@ -31,7 +32,6 @@ path = "ui_left"
 position = Vector2(359, 229)
 texture = ExtResource("3")
 script = ExtResource("4_yv7se")
-path = "ui_up"
 
 [node name="ControllerSprite3D" type="Sprite3D" parent="."]
 texture = ExtResource("5")
@@ -40,6 +40,7 @@ path = "ui_right"
 
 [node name="ControllerTextureRect" type="TextureRect" parent="."]
 custom_minimum_size = Vector2(40, 40)
+layout_mode = 0
 offset_left = 675.0
 offset_top = 106.0
 offset_right = 775.0

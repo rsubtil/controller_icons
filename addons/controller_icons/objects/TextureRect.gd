@@ -26,9 +26,9 @@ class_name ControllerTextureRect
 		max_width = _max_width
 		if is_inside_tree():
 			if max_width < 0:
-				ignore_texture_size = false
+				expand_mode = TextureRect.EXPAND_KEEP_SIZE
 			else:
-				ignore_texture_size = true
+				expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 				custom_minimum_size.x = max_width
 				if texture:
 					custom_minimum_size.y = texture.get_height() * max_width / texture.get_width()
