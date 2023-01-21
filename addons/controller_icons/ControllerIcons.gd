@@ -87,7 +87,7 @@ func refresh():
 	# All it takes is to signal icons to refresh paths
 	emit_signal("input_type_changed", _last_input_type)
 
-func parse_path(path: String, input_type: int = _last_input_type) -> Texture:
+func parse_path(path: String, input_type = _last_input_type) -> Texture:
 	if typeof(input_type) == TYPE_NIL:
 		return null
 	var root_paths := _expand_path(path, input_type)
