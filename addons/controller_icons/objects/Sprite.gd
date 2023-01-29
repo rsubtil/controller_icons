@@ -4,6 +4,7 @@ class_name ControllerSprite
 
 export(String) var path : String = "" setget set_path
 export(int, "Both", "Keyboard/Mouse", "Controller") var show_only : int = 0 setget set_show_only
+export(int, "None", "Keyboard/Mouse", "Controller") var force_type : int = 0 setget set_force_type
 
 func _ready():
 	ControllerIcons.connect("input_type_changed", self, "_on_input_type_changed")
