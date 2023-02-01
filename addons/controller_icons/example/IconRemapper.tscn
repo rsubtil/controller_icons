@@ -2,25 +2,25 @@
 
 [ext_resource type="Script" path="res://addons/controller_icons/objects/TextureRect.gd" id="1"]
 [ext_resource type="Script" path="res://addons/controller_icons/example/IconRemapper.gd" id="2"]
-[ext_resource type="Texture2D" uid="uid://b3iafdmclhdit" path="res://addons/controller_icons/assets/xboxone/dpad.png" id="3"]
-[ext_resource type="Texture2D" uid="uid://ddoiw1qbo1nqo" path="res://addons/controller_icons/assets/xboxone/menu.png" id="4"]
-[ext_resource type="Texture2D" uid="uid://tgpcpple5h2q" path="res://addons/controller_icons/assets/xboxone/view.png" id="5"]
-[ext_resource type="Texture2D" uid="uid://bxseb4ccmfktr" path="res://addons/controller_icons/assets/xboxone/dpad_down.png" id="6"]
-[ext_resource type="Texture2D" uid="uid://dx7no3wmbkt3s" path="res://addons/controller_icons/assets/xboxone/r_stick_click.png" id="7"]
-[ext_resource type="Texture2D" uid="uid://c3lkr5o5sqj06" path="res://addons/controller_icons/assets/xboxone/y.png" id="8"]
-[ext_resource type="Texture2D" uid="uid://dp2y22fkfbsyu" path="res://addons/controller_icons/assets/xboxone/lb.png" id="9"]
-[ext_resource type="Texture2D" uid="uid://bfxo2jdawkbxl" path="res://addons/controller_icons/assets/xboxone/l_stick.png" id="10"]
-[ext_resource type="Texture2D" uid="uid://pxfeij36kho8" path="res://addons/controller_icons/assets/xboxone/lt.png" id="11"]
-[ext_resource type="Texture2D" uid="uid://nqv3xt52o1e" path="res://addons/controller_icons/assets/xboxone/rt.png" id="12"]
-[ext_resource type="Texture2D" uid="uid://gxvdjyj5ur2w" path="res://addons/controller_icons/assets/xboxone/r_stick.png" id="13"]
-[ext_resource type="Texture2D" uid="uid://cna0glvxuuco" path="res://addons/controller_icons/assets/xboxone/x.png" id="14"]
-[ext_resource type="Texture2D" uid="uid://cxx27mcrkop34" path="res://addons/controller_icons/assets/xboxone/dpad_up.png" id="15"]
-[ext_resource type="Texture2D" uid="uid://b4wnmpco87lk2" path="res://addons/controller_icons/assets/xboxone/l_stick_click.png" id="16"]
-[ext_resource type="Texture2D" uid="uid://21k6orfpjxk5" path="res://addons/controller_icons/assets/xboxone/b.png" id="17"]
-[ext_resource type="Texture2D" uid="uid://dv1dkaue3ow3r" path="res://addons/controller_icons/assets/xboxone/dpad_left.png" id="18"]
-[ext_resource type="Texture2D" uid="uid://dwwgf5g11galy" path="res://addons/controller_icons/assets/xboxone/a.png" id="19"]
-[ext_resource type="Texture2D" uid="uid://cepfb3dgv2lhf" path="res://addons/controller_icons/assets/xboxone/dpad_right.png" id="20"]
-[ext_resource type="Texture2D" uid="uid://cbor273q2fdp3" path="res://addons/controller_icons/assets/xboxone/rb.png" id="21"]
+[ext_resource type="Texture2D" uid="uid://d284wkmo0vqfk" path="res://addons/controller_icons/assets/xbox360/a.png" id="2_518mb"]
+[ext_resource type="Texture2D" uid="uid://bufx8lu1tny4o" path="res://addons/controller_icons/assets/xbox360/b.png" id="4_4ab0g"]
+[ext_resource type="Texture2D" uid="uid://jcc3t88rfxh0" path="res://addons/controller_icons/assets/xbox360/x.png" id="5_nfuy6"]
+[ext_resource type="Texture2D" uid="uid://bva4iswwvta5d" path="res://addons/controller_icons/assets/xbox360/y.png" id="6_8iybr"]
+[ext_resource type="Texture2D" uid="uid://bamrmda3in3qq" path="res://addons/controller_icons/assets/xbox360/lb.png" id="7_dhavb"]
+[ext_resource type="Texture2D" uid="uid://cw2jo5xbteqdu" path="res://addons/controller_icons/assets/xbox360/rb.png" id="8_hoxxr"]
+[ext_resource type="Texture2D" uid="uid://dhhjoq01cc2oh" path="res://addons/controller_icons/assets/xbox360/lt.png" id="9_3s3cu"]
+[ext_resource type="Texture2D" uid="uid://d2qha4gd4x604" path="res://addons/controller_icons/assets/xbox360/rt.png" id="10_82tca"]
+[ext_resource type="Texture2D" uid="uid://mh6if65g6eob" path="res://addons/controller_icons/assets/xbox360/l_stick_click.png" id="11_3rx8a"]
+[ext_resource type="Texture2D" uid="uid://db7d0vqnfyuin" path="res://addons/controller_icons/assets/xbox360/r_stick_click.png" id="12_fw7j3"]
+[ext_resource type="Texture2D" uid="uid://cdjnpcxgnxrxb" path="res://addons/controller_icons/assets/xbox360/back.png" id="13_rkxrv"]
+[ext_resource type="Texture2D" uid="uid://coxp4sapp4g8n" path="res://addons/controller_icons/assets/xbox360/start.png" id="14_pejnt"]
+[ext_resource type="Texture2D" uid="uid://cuds8v7pvi4tj" path="res://addons/controller_icons/assets/xbox360/dpad.png" id="15_u7uri"]
+[ext_resource type="Texture2D" uid="uid://bh66fibu352gl" path="res://addons/controller_icons/assets/xbox360/dpad_up.png" id="16_8pfh4"]
+[ext_resource type="Texture2D" uid="uid://dt4m6u4nau82r" path="res://addons/controller_icons/assets/xbox360/dpad_down.png" id="17_2wsg3"]
+[ext_resource type="Texture2D" uid="uid://7r70kxgen0mv" path="res://addons/controller_icons/assets/xbox360/dpad_left.png" id="18_s5fk2"]
+[ext_resource type="Texture2D" uid="uid://7qkn2dva6jv" path="res://addons/controller_icons/assets/xbox360/dpad_right.png" id="19_3qb24"]
+[ext_resource type="Texture2D" uid="uid://fxgoiilpipsd" path="res://addons/controller_icons/assets/xbox360/l_stick.png" id="20_yio6b"]
+[ext_resource type="Texture2D" uid="uid://d6jwqg6mq8dk" path="res://addons/controller_icons/assets/xbox360/r_stick.png" id="21_wowfx"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -31,6 +31,8 @@ offset_left = 100.0
 offset_top = 60.0
 offset_right = -695.0
 offset_bottom = -108.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("2")
 
 [node name="Controls" type="Control" parent="."]
@@ -51,8 +53,10 @@ size_flags_vertical = 3
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer/A"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("19")
+texture = ExtResource("2_518mb")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/a"
 
@@ -64,8 +68,10 @@ text = " A"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer/B"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("17")
+texture = ExtResource("4_4ab0g")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/b"
 
@@ -77,8 +83,10 @@ text = " B"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer/X"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("14")
+texture = ExtResource("5_nfuy6")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/x"
 
@@ -90,8 +98,10 @@ text = " X"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer/Y"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("8")
+texture = ExtResource("6_8iybr")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/y"
 
@@ -103,8 +113,10 @@ text = " Y"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer/LB"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("9")
+texture = ExtResource("7_dhavb")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/lb"
 
@@ -116,8 +128,10 @@ text = " Left Button"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer/RB"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("21")
+texture = ExtResource("8_hoxxr")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/rb"
 
@@ -129,8 +143,10 @@ text = " Right Button"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer/LT"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("11")
+texture = ExtResource("9_3s3cu")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/lt"
 
@@ -142,8 +158,10 @@ text = " Left Trigger"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer/RT"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("12")
+texture = ExtResource("10_82tca")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/rt"
 
@@ -155,8 +173,10 @@ text = " Right Trigger"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer/L_Stick_Click"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("16")
+texture = ExtResource("11_3rx8a")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/l_stick_click"
 
@@ -168,8 +188,10 @@ text = " Left Stick Click"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer/R_Stick_Click"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("7")
+texture = ExtResource("12_fw7j3")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/r_stick_click"
 
@@ -181,8 +203,10 @@ text = " Right Stick Click"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer/Select"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("5")
+texture = ExtResource("13_rkxrv")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/select"
 
@@ -199,8 +223,10 @@ size_flags_vertical = 3
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer2/Start"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("4")
+texture = ExtResource("14_pejnt")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/start"
 
@@ -212,8 +238,10 @@ text = " Start"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer2/DPAD"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("3")
+texture = ExtResource("15_u7uri")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/dpad"
 
@@ -225,8 +253,10 @@ text = " DPAD"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer2/DPAD_Up"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("15")
+texture = ExtResource("16_8pfh4")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/dpad_up"
 
@@ -238,8 +268,10 @@ text = " DPAD Up"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer2/DPAD_Down"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("6")
+texture = ExtResource("17_2wsg3")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/dpad_down"
 
@@ -251,8 +283,10 @@ text = " DPAD Down"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer2/DPAD_Left"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("18")
+texture = ExtResource("18_s5fk2")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/dpad_left"
 
@@ -264,8 +298,10 @@ text = " DPAD Left"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer2/DPAD_Right"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("20")
+texture = ExtResource("19_3qb24")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/dpad_right"
 
@@ -277,7 +313,9 @@ text = " DPAD Right"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer2/Home"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/home"
 
@@ -289,7 +327,9 @@ text = " Home"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer2/Share"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/share"
 
@@ -301,8 +341,10 @@ text = " Share"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer2/L-Stick"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("10")
+texture = ExtResource("20_yio6b")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/l_stick"
 
@@ -314,8 +356,10 @@ text = " Left Stick"
 layout_mode = 2
 
 [node name="ControllerTextureRect" type="TextureRect" parent="Controls/HBoxContainer/VBoxContainer2/R-Stick"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
-texture = ExtResource("13")
+texture = ExtResource("21_wowfx")
+expand_mode = 1
 script = ExtResource("1")
 path = "joypad/r_stick"
 

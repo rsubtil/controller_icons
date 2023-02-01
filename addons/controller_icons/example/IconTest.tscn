@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://addons/controller_icons/objects/Button.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://d04bqc5v3befo" path="res://addons/controller_icons/assets/key/arrow_up.png" id="3"]
 [ext_resource type="Script" path="res://addons/controller_icons/objects/Sprite3D.gd" id="4"]
-[ext_resource type="Script" path="res://addons/controller_icons/objects/Sprite2D.gd" id="4_yv7se"]
+[ext_resource type="Script" path="res://addons/controller_icons/objects/Sprite.gd" id="4_7uppx"]
 [ext_resource type="Texture2D" uid="uid://bbjc54bmpv3f8" path="res://addons/controller_icons/assets/key/arrow_right.png" id="5"]
 [ext_resource type="Texture2D" uid="uid://puc614rf26im" path="res://addons/controller_icons/assets/key/arrow_left.png" id="6"]
 [ext_resource type="Texture2D" uid="uid://cge2w6yy0r2cx" path="res://addons/controller_icons/assets/key/arrow_down.png" id="7"]
@@ -31,7 +31,8 @@ path = "ui_left"
 [node name="ControllerSprite" type="Sprite2D" parent="."]
 position = Vector2(359, 229)
 texture = ExtResource("3")
-script = ExtResource("4_yv7se")
+script = ExtResource("4_7uppx")
+path = "ui_up"
 
 [node name="ControllerSprite3D" type="Sprite3D" parent="."]
 texture = ExtResource("5")
@@ -46,6 +47,7 @@ offset_top = 106.0
 offset_right = 775.0
 offset_bottom = 206.0
 texture = ExtResource("7")
+expand_mode = 1
 script = ExtResource("1")
 path = "ui_down"
 
