@@ -31,6 +31,11 @@ func _convert_joypad_path(path: String, fallback) -> String:
 			return ""
 
 func _get_joypad_type(fallback):
+	# If on editor, default to fallback always, to avoid editing scene
+	# files on controller reload
+	if Engine.is_editor_hint():
+		return fallback
+
 	var controller_name = Input.get_joy_name(0)
 	if "Luna Controller" in controller_name:
 		return ControllerSettings.Devices.LUNA
