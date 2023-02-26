@@ -192,7 +192,7 @@ func _convert_key_to_path(scancode: int):
 			return "key/shift_alt"
 		KEY_CTRL:
 			return "key/ctrl"
-		KEY_META, KEY_SUPER_L, KEY_SUPER_R:
+		KEY_META:
 			match OS.get_name():
 				"OSX":
 					return "key/command"
