@@ -38,7 +38,7 @@ Provides icons for all major controllers and keyboard/mouse actions, with an aut
 
 > This is the Godot 4.x version. For the Godot 3.x version, check the [3.x branch](https://github.com/rsubtil/controller_icons/tree/3.x)
 
-It's recommended to use the latest alpha/beta of Godot 4 until the stable version is released. This addon has been tested successfully on Godot 4 beta 10.
+The minimum Godot version is 4.0 (stable).
 
 Download this repository and copy the `addons` folder to your project root directory.
 
