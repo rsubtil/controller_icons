@@ -26,6 +26,29 @@ func _enter_tree():
 		_parse_input_actions()
 
 func _parse_input_actions():
+	# Default actions will be the builtin editor actions when
+	# the script is at editor ("tool") level. To pickup more
+	# actions available, these have to be queried manually
+	var keys := [
+		"input/ui_accept",
+		"input/ui_cancel",
+		"input/ui_down",
+		"input/ui_end",
+		"input/ui_focus_next",
+		"input/ui_focus_prev",
+		"input/ui_home",
+		"input/ui_left",
+		"input/ui_page_down",
+		"input/ui_page_up",
+		"input/ui_right",
+		"input/ui_select",
+		"input/ui_up"
+	]
+	for key in keys:
+		var data : Dictionary = ProjectSettings.get_setting(key)
+		if not data.empty() and data.has("events") and data["events"] is Array:
+			_add_custom_input_action((key as String).trim_prefix("input/"), data)
+
 	# A script running at editor ("tool") level only has
 	# the default mappings. The way to get around this is
 	# manually parsing the project file and adding the
