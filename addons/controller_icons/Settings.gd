@@ -5,20 +5,20 @@ class_name ControllerSettings
 enum Devices {
 	LUNA,
 	OUYA,
+	STADIA,
 	PS3,
 	PS4,
 	PS5,
-	STADIA,
-	STEAM,
-	SWITCH,
-	JOYCON,
 	VITA,
+	STEAM,
+    STEAM_DECK,
 	WII,
 	WIIU,
+	SWITCH,
+	JOYCON,
 	XBOX360,
 	XBOXONE,
-	XBOXSERIES,
-	STEAM_DECK
+	XBOXSERIES
 }
 
 ## Controller type to fallback to if automatic
