@@ -2,23 +2,23 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://wu8qw55v5y8b"
-path="res://.godot/imported/lb.png-6801064bd1c155e4e4cafb2a90cecfd3.ctex"
+uid="uid://crrpiy63ykx14"
+path="res://.godot/imported/touch.png-1ba3e7ec2b35a2d00655a24d0089caad.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/controller_icons/assets/switch/lb.png"
-dest_files=["res://.godot/imported/lb.png-6801064bd1c155e4e4cafb2a90cecfd3.ctex"]
+source_file="res://addons/controller_icons/assets/ouya/touch.png"
+dest_files=["res://.godot/imported/touch.png-1ba3e7ec2b35a2d00655a24d0089caad.ctex"]
 
 [params]
 
 compress/mode=0
+compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
-compress/bptc_ldr=0
 compress/normal_map=0
 compress/channel_pack=0
 mipmaps/generate=false
