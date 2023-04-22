@@ -424,6 +424,11 @@ layout_mode = 2
 size_flags_vertical = 3
 text = "Nintendo Switch JoyCon"
 
+[node name="OUYA" type="Button" parent="Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "OUYA"
+
 [node name="Xbox360" type="Button" parent="Buttons"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -449,6 +454,7 @@ text = "Xbox Series"
 [connection signal="pressed" from="Buttons/SteamDeck" to="." method="_on_SteamDeck_pressed"]
 [connection signal="pressed" from="Buttons/Switch" to="." method="_on_Switch_pressed"]
 [connection signal="pressed" from="Buttons/Joycon" to="." method="_on_Joycon_pressed"]
+[connection signal="pressed" from="Buttons/OUYA" to="." method="_on_ouya_pressed"]
 [connection signal="pressed" from="Buttons/Xbox360" to="." method="_on_Xbox360_pressed"]
 [connection signal="pressed" from="Buttons/XboxOne" to="." method="_on_XboxOne_pressed"]
 [connection signal="pressed" from="Buttons/XboxSeries" to="." method="_on_XboxSeries_pressed"]
