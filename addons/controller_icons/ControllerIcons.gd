@@ -425,10 +425,6 @@ func _convert_joypad_button_to_path(button_index: int):
 			path = "joypad/lb"
 		JOY_BUTTON_RIGHT_SHOULDER:
 			path = "joypad/rb"
-		JOY_AXIS_TRIGGER_LEFT:
-			path = "joypad/lt"
-		JOY_AXIS_TRIGGER_RIGHT:
-			path = "joypad/rt"
 		JOY_BUTTON_LEFT_STICK:
 			path = "joypad/l_stick_click"
 		JOY_BUTTON_RIGHT_STICK:
