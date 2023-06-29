@@ -11,6 +11,8 @@
 - [Adding/removing controller iconss](#addingremoving-controller-icons)
 - [Changing controller mapper](#changing-controller-mapper)
 - [TTS support](#tts-support)
+- [Porting addon versions](#porting-addon-versions)
+	- [v1.x.x to v2.0.0](#v1xx-to-v200)
 - [Generic path lookup](#generic-path-lookup)
 
 
@@ -156,6 +158,22 @@ func _ready():
 	var tts_text = ControllerIcons.parse_path_to_tts("xbox360/a")
 	var ttx_text = ControllerIcons.parse_path_to_tts("key/z")
 ```
+
+# Porting addon versions
+
+This section details porting instructions between breaking changes of the addon.
+
+## v1.x.x to v2.0.0
+
+- The `ControllerSetting.Devices` enum had some dangling values removed, which changed the order of a few existing keys. If you rely on these values, you'll need to update your code:
+	- The `VITA`, `WII` and `WIIU` values were removed. These were not used anywhere in the addon, so you shouldn't be affected by this.
+	- The preceding enum keys had their values changed by this: `XBOX360`, `XBOXONE`, `XBOXSERIES` and `STEAM_DECK` enum values have changed. If you use these values directly in your code, you'll need to update them.
+	- The default settings file (`settings.tres`) will need to be updated, as the `Joypad Fallback` setting depends on this.
+- Some Nintendo Switch asset filenames were renamed. If you use these assets directly in your project, you'll may need to re-add them:
+	- `switch/lb.png` -> `switch/l.png`
+	- `switch/rb.png` -> `switch/r.png`
+	- `switch/lt.png` -> `switch/zl.png`
+	- `switch/rt.png` -> `switch/zr.png`
 
 # Generic path lookup
 
