@@ -49,3 +49,9 @@ func set_max_width(_max_width: int):
 				rect_min_size.y = texture.get_height() * max_width / texture.get_width()
 			else:
 				rect_min_size.y = rect_min_size.x
+
+func get_tts_string() -> String:
+	if force_type:
+		return ControllerIcons.parse_path_to_tts(path, force_type - 1)
+	else:
+		return ControllerIcons.parse_path_to_tts(path)

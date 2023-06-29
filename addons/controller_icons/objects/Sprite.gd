@@ -34,3 +34,9 @@ func set_show_only(_show_only: int):
 func set_force_type(_force_type: int):
 	force_type = _force_type
 	_on_input_type_changed(ControllerIcons._last_input_type)
+
+func get_tts_string() -> String:
+	if force_type:
+		return ControllerIcons.parse_path_to_tts(path, force_type - 1)
+	else:
+		return ControllerIcons.parse_path_to_tts(path)

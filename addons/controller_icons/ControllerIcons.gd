@@ -123,6 +123,12 @@ func parse_path(path: String, input_type: int = _last_input_type) -> Texture:
 		return _cached_icons[root_path]
 	return null
 
+func parse_path_to_tts(path: String, input_type: int = _last_input_type) -> String:
+	if input_type == null:
+		return ""
+	var tts = _convert_path_to_asset_file(path, input_type)
+	return _convert_asset_file_to_tts(tts.get_basename().get_file())
+
 func parse_event(event: InputEvent) -> Texture:
 	var path = _convert_event_to_path(event)
 	if path.empty():
@@ -151,20 +157,81 @@ func _expand_path(path: String, input_type: int) -> Array:
 	for base_path in base_paths:
 		if base_path.empty():
 			continue
-		if _is_path_action(path):
-			var event = _get_matching_event(path, input_type)
-			if event:
-				base_path += _convert_event_to_path(event)
-		elif path.substr(0, path.find("/")) == "joypad":
-			base_path += Mapper._convert_joypad_path(path, _settings.joypad_fallback)
-		else:
-			base_path += path
+		base_path += _convert_path_to_asset_file(path, input_type)
 
 		paths.push_back(base_path + ".png")
 	return paths
 
 func _is_path_action(path):
 	return _custom_input_actions.has(path) or InputMap.has_action(path)
+
+func _convert_path_to_asset_file(path: String, input_type: int) -> String:
+	if _is_path_action(path):
+		var event = _get_matching_event(path, input_type)
+		if event:
+			return _convert_event_to_path(event)
+		return path
+	elif path.substr(0, path.find("/")) == "joypad":
+		return Mapper._convert_joypad_path(path, _settings.joypad_fallback)
+	else:
+		return path
+
+func _convert_asset_file_to_tts(path: String) -> String:
+	match path:
+		"shift_alt":
+			return "shift"
+		"esc":
+			return "escape"
+		"backspace_alt":
+			return "backspace"
+		"enter_alt":
+			return "enter"
+		"enter_tall":
+			return "keypad enter"
+		"arrow_left":
+			return "left arrow"
+		"arrow_right":
+			return "right arrow"
+		"del":
+			return "delete"
+		"arrow_up":
+			return "up arrow"
+		"arrow_down":
+			return "down arrow"
+		"shift_alt":
+			return "shift"
+		"ctrl":
+			return "control"
+		"kp_add":
+			return "keypad plus"
+		"mark_left":
+			return "left mark"
+		"mark_right":
+			return "right mark"
+		"bracket_left":
+			return "left bracket"
+		"bracket_right":
+			return "right bracket"
+		"tilda":
+			return "tilde"
+		"lb":
+			return "left bumper"
+		"rb":
+			return "right bumper"
+		"lt":
+			return "left trigger"
+		"rt":
+			return "right trigger"
+		"l_stick_click":
+			return "left stick click"
+		"r_stick_click":
+			return "right stick click"
+		"l_stick":
+			return "left stick"
+		"r_stick":
+			return "right stick"
+		_:
+			return path
 
 func _convert_event_to_path(event: InputEvent):
 	if event is InputEventKey:
