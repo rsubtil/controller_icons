@@ -10,6 +10,7 @@
 - [Settings](#settings)
 - [Adding/removing controller iconss](#addingremoving-controller-icons)
 - [Changing controller mapper](#changing-controller-mapper)
+- [TTS support](#tts-support)
 - [Generic path lookup](#generic-path-lookup)
 
 
@@ -129,6 +130,32 @@ The only function that's mandatory is `_convert_joypad_path`. This supplies a ge
 `fallback` is the fallback device type if automatic detection fails. There's not much need to use this is you're writing a custom mapper, but it's needed for the default mapping process.
 
 If you do not wish to fully replace the original mapper and instead only want to add detection to new controller types, don't forget to fallback to the default mapper by calling the parent's method (`return ._convert_joypad_path(path, fallback)`)
+
+# TTS support
+
+Text-to-speech (TTS) is supported by the addon. To fetch a TTS representation of a given icon, you can call the object's `get_tts_string()` method:
+
+```gdscript
+func _ready():
+	var tts_text = $ControllerButton.get_tts_string()
+```
+
+This TTS text takes into consideration the currently displayed icon, and will thus be different if the icon is from keyboard/mouse or controller. It also takes into consideration the controller type, and will thus use native button names (e.g. `A` for Xbox, `Cross` for PlayStation, etc).
+
+You can also access the `ControllerIcons` singleton directly with any path:
+
+```gdscript
+func _ready():
+	# Will switch based on active keyboard/mouse or controller
+	var tts_text = ControllerIcons.parse_path_to_tts("attack")
+
+	# Will switch based on active controller
+	var tts_text = ControllerIcons.parse_path_to_tts("joypad/a")
+
+	# Direct icon translation
+	var tts_text = ControllerIcons.parse_path_to_tts("xbox360/a")
+	var ttx_text = ControllerIcons.parse_path_to_tts("key/z")
+```
 
 # Generic path lookup
 
