@@ -24,6 +24,9 @@ func _enter_tree():
 	if Engine.is_editor_hint():
 		_parse_input_actions()
 
+func _exit_tree():
+	Mapper.queue_free()
+
 func _parse_input_actions():
 	# Default actions will be the builtin editor actions when
 	# the script is at editor ("tool") level. To pickup more
