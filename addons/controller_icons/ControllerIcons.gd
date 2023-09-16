@@ -307,7 +307,7 @@ func _convert_key_to_path(scancode: int):
 			return "key/ctrl"
 		KEY_META:
 			match OS.get_name():
-				"OSX":
+				"macOS":
 					return "key/command"
 				_:
 					return "key/meta"
