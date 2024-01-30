@@ -12,62 +12,71 @@
 - [Changing controller mapper](#changing-controller-mapper)
 - [TTS support](#tts-support)
 - [Porting addon versions](#porting-addon-versions)
+	- [v2.x.x to v3.0.0](#v2xx-to-v300)
 	- [v1.x.x to v2.0.0](#v1xx-to-v200)
 - [Generic path lookup](#generic-path-lookup)
 
 
 # Quick-start guide
 
-Controller Icons provides various custom node types:
+Controller Icons provides a new Texture2D resource, `ControllerIconTexture`, which displays the correct icon for the current input device. This can be used in any node that accepts a Texture2D, such as `TextureRect`, `Button`, `Sprite2D/3D`, `RichTextLabel`, etc...
 
-- `ControllerButton` _(`Button`)_
-- `ControllerTextureRect` _(`TextureRect`)_
-- `ControllerSprite2D` _(`Sprite2D`)_
-- `ControllerSprite3D` _(`Sprite3D`)_
+> [!TIP]
+> The `demo` folder contains some scenes showcasing and explaining how to use the addon as well.
 
-All of these provide the following properties:
+> [!WARNING]
+> The existing objects before version 3.0.0 (`ControllerButton`, `ControllerTextureRect`, `ControllerSprite2D`, `ControllerSprite3D`) should no longer be used as they are deprecated, and will be removed in a future version. For help in porting your project, refer to [Porting addon versions](#porting-addon-versions).
+
+![](screenshots/docs/controller_icon_texture_new.png)
+
+The following properties are available:
 - `Path`: Specify the controller lookup path
-- `Show Only`: Set the input type this icon will appear on. When set to `Keyboard/Mouse` or `Controller`, the object will hide when the opposite input method is used.
+- `Show Mode`: Set the input type this icon will appear on. When set to `Keyboard/Mouse` or `Controller`, the object will hide when the opposite input method is used.
 - `Force Type`: When set to other than `None`, forces the displayed icon to be either `Keyboard/Mouse` or `Controller`. Only relevant for input actions, other types of lookup paths are not affected by this.
-
-ControllerTextureRect has the following additional properties:
-- `Max Width`: Max width for the icon to occupy, in pixels.
 
 ![](screenshots/docs/path.png)
 
-`Path` can be one of three major categories, detailed below.
+The `Path` is the most relevant property, as it specifies what icons to show. It can be one of three major categories, detailed below. You can use the builtin tool for picking paths, or write it manually as well.
+
+![](screenshots/docs/path_selector_tool.png)
+
+> [!NOTE]
+> If you add/remove/change input actions on the editor, you will need to reload the addon so it can update the input map and show the appropriate mappings in the editor view again. This is not needed in the launched project though.
+>
+> However, if you change input actions at runtime, you must call `refresh` on the `ControllerIcons` singleton to update all existing icons with the new actions:
+>
+> ```gdscript
+> ControllerIcons.refresh()
+> ```
 
 ## Input action
 
-You can set `Path` to the exact name of an existing input action in your project. This is the recommended approach, as you can easily change the controls and have the icons remap automatically.
+You can specify the exact name of an existing input action in your project. This is the recommended approach, as you can easily change the controls and have the icons remap automatically between keyboard/mouse and controller.
 
-This mode also automatically switches icons when the user either uses keyboard/mouse or controller if the action is mapped to that device as well.
+![](screenshots/docs/input_action_ui.png)
 
 ![](screenshots/docs/input_action.gif)
 
-If you add/remove/change input actions on the editor, you need to reload the addon so it can update the input map and show the appropriate mappings in the editor view again. This is not needed in the launched project though.
-
-However, if you change input actions at runtime, you must call `refresh` on the `ControllerIcons` singleton to update all existing icons with the new actions:
-
-```gdscript
-ControllerIcons.refresh()
-```
-
 ## Generic joypad path
 
-If you want to use only controller icons, you can use generic mappings, which automatically change to the correct icons depending on the connected controller type.
+If you want to only use controller icons, you can use a generic mapping, which automatically changes to the correct icons depending on the connected controller type.
 
-![](screenshots/docs/generic_path.gif)
+![](screenshots/docs/joypad_path_ui.png)
 
-The list of generic paths available, as well as to which icons they map per controller, can be checked at [Generic path lookup](#generic-path-lookup).
+![](screenshots/docs/joypad_path.gif)
+
+> [!NOTE]
+> The list of generic paths available, as well as to which icons they map per controller, can be checked at [Generic path lookup](#generic-path-lookup).
 
 ## Specific path
 
-As a last resource, you can directly use the icons by specifying their path. This lets you use more custom icons which can't be accessed from generic paths:
+You can also directly use the icons by specifying their path. This lets you use more custom icons which can't be accessed from generic scenarios:
+
+![](screenshots/docs/specific_path_ui.png)
 
 ![](screenshots/docs/specific_path.png)
 
-To know which paths exist, simply check the `assets` folder from this addon. The path to use is the path to an image file, minus the base path and extension. So for example, to use `res://addons/controller_icons/assets/switch/controllers_separate.png`, the path is `switch/controllers_separate`
+To know which paths exist, check the `assets` folder from this addon. The path to use is the path to an image file, minus the base path and extension. So for example, to use `res://addons/controller_icons/assets/switch/controllers_separate.png`, the path is `switch/controllers_separate`
 
 # Reacting to input change
 
@@ -103,15 +112,13 @@ There is a settings resource file at `res://addons/controller_icons/settings.tre
 
 # Adding/removing controller icons
 
-To remove controller icons you don't want to use, simply delete those files/folders from `res://addons/controller_icons/assets`.
+To remove controller icons you don't want to use, delete those files/folders from `res://addons/controller_icons/assets`. You might need to create a custom mapper in order to prevent the addon from trying to use deleted icons. For more information, refer to [Changing controller mapper](#changing-controller-mapper).
 
-To add or change controller icons, while you could do so directly in the `assets` folder, it's better to set a custom folder for different assets.
-
-Set the `Custom Asset Dir` field from [Settings]() to your custom icons folder. It needs to have a similar structure to the existing assets folder.
+To add or change controller icons, while you can do it directly in the `assets` folder, you can intead set a custom folder for different assets. When set, the addon will look for icons in that folder first, and if not found, fallback to the default assets folder. Do to this, set the `Custom Asset Dir` field from [Settings](#settings) to your custom icons folder. It needs to have a similar structure to the addon's assets folder.
 
 # Changing controller mapper
 
-The default mapper maps generic joypad paths to a bunch of popular controllers available. However, you may wish to override this mapping process.
+The default mapper script maps generic joypad paths to a lot of popular controllers available. However, you may need to override how this mapping process works.
 
 You can do so by creating a script which extends `ControllerMapper`:
 
@@ -120,48 +127,62 @@ extends ControllerMapper
 
 func _convert_joypad_path(path: String, fallback: int) -> String:
 	var controller_name = Input.get_joy_name(0)
-	# I want to support the hot new Playstation 42 controller
+	# Support for the new hot Playstation 42 controller
 	if "PlayStation 42 Controller" in controller_name:
 		return path.replace("joypad/", "playstation42/")
 	# else return default mapping
-	return ._convert_joypad_path(path, fallback)
+	return super._convert_joypad_path(path, fallback)
 ```
 
-The only function that's mandatory is `_convert_joypad_path`. This supplies a generic joypad `path`, which you need to convert to the controller's desired path. Have a look at the default implementation at `res://addons/controller_icons/Mapper.gd` to see how the default mapping is done.
+The only function that's mandatory is `_convert_joypad_path`. This supplies a [generic joypad `path`](#generic-joypad-path), which you then need to convert to a [specific path](#specific-path) for the desired controller assets. Check out the the default implementation at `res://addons/controller_icons/Mapper.gd` to see how the default mapping is done.
 
-`fallback` is the fallback device type if automatic detection fails. There's not much need to use this is you're writing a custom mapper, but it's needed for the default mapping process.
+`fallback` is the fallback device type if automatic detection fails. There's not much need to use this if you're writing a custom mapper, but it is needed for the default mapping process.
 
-If you do not wish to fully replace the original mapper and instead only want to add detection to new controller types, don't forget to fallback to the default mapper by calling the parent's method (`return ._convert_joypad_path(path, fallback)`)
+If you do not wish to fully replace the original mapper, you can still fallback to the default mapper by calling the parent's method (`return super._convert_joypad_path(path, fallback)`)
 
 # TTS support
 
-Text-to-speech (TTS) is supported by the addon. To fetch a TTS representation of a given icon, you can call the object's `get_tts_string()` method:
+Text-to-speech (TTS) is supported by the addon. To fetch a TTS representation of a given icon, you can call the texture's `get_tts_string()` method:
 
 ```gdscript
-func _ready():
-	var tts_text = $ControllerButton.get_tts_string()
+var tts_text = texture.get_tts_string()
 ```
 
 This TTS text takes into consideration the currently displayed icon, and will thus be different if the icon is from keyboard/mouse or controller. It also takes into consideration the controller type, and will thus use native button names (e.g. `A` for Xbox, `Cross` for PlayStation, etc).
 
-You can also access the `ControllerIcons` singleton directly with any path:
+You can also request to convert an icon path directly throuh the `ControllerIcons` singleton:
 
 ```gdscript
 func _ready():
-	# Will switch based on active keyboard/mouse or controller
+	# Input Action - Will switch based on active keyboard/mouse or controller
 	var tts_text = ControllerIcons.parse_path_to_tts("attack")
 
-	# Will switch based on active controller
+	# Generic Joypad Path - Will switch based on active controller
 	var tts_text = ControllerIcons.parse_path_to_tts("joypad/a")
 
-	# Direct icon translation
+	# Specific Path
 	var tts_text = ControllerIcons.parse_path_to_tts("xbox360/a")
 	var ttx_text = ControllerIcons.parse_path_to_tts("key/z")
 ```
 
 # Porting addon versions
 
-This section details porting instructions between breaking changes of the addon.
+This section details porting instructions between breaking changes of the addon. If you're updating multiple versions, you should start at your current version, and work your way up to the latest version.
+
+## v2.x.x to v3.0.0
+
+Version 3.0.0 represents a very large breaking change due to an internal refactor of the addon. The most impactful change is that the existing objects before version 3.0.0 (`ControllerButton`, `ControllerTextureRect`, `ControllerSprite2D`, `ControllerSprite3D`) should no longer be used as they are deprecated, and will be removed in a future version.
+
+![](screenshots/docs/deprecated_nodes.png)
+![](screenshots/docs/deprecated_nodes_warning.png)
+
+To update these objects, remove their script, and assign a new `ControllerIconTexture` to it. The given warning also gives more specific instructions on what do to for each particular object.
+
+Beyond that, the remaining properties and behavior remain largely the same. However, there are still some minor changes of note:
+
+- The `show_only` property was renamed to `show_mode`. If you access this property directly in your code, you'll need to update it.
+- The `show_mode` and `force_type` properties now use enums (`ShowMode` and `ForceType` respectively), instead of `int` values. If you access these properties directly in your code, you'll need to update them.
+- The `max_width` property, only available in `ControllerTextureRect`, was removed. Use the related properties like `expand_mode` and `custom_minimum_size` instead.
 
 ## v1.x.x to v2.0.0
 

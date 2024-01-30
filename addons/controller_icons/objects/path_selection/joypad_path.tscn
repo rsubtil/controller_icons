@@ -1,0 +1,678 @@
+[gd_scene load_steps=25 format=3 uid="uid://b3lplrf2w6kh7"]
+
+[ext_resource type="Script" path="res://addons/controller_icons/objects/path_selection/JoypadPathSelector.gd" id="1_4ryog"]
+[ext_resource type="Script" path="res://addons/controller_icons/objects/ControllerIconTexture.gd" id="2_yxfq6"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_haylq"]
+
+[sub_resource type="Texture2D" id="Texture2D_nls54"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/l_stick"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_6klsb"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/l_stick_click"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_bij8j"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/r_stick"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_2h0w3"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/r_stick_click"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_kvj2q"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/lb"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_wtcrq"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/lt"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_lfpf5"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/rb"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_b3bsp"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/rt"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_u40go"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/a"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_rnqww"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/b"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_1a2yv"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/x"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_hktfi"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/y"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_2ksy6"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/select"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_08sqi"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/start"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_tivgf"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/home"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_87fow"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/share"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_n4i6p"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/dpad"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_eoyuo"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/dpad_down"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_c660e"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/dpad_right"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_riwus"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/dpad_left"
+show_only = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_onmvf"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_yxfq6")
+_horizontal_repeat = 1
+path = "joypad/dpad_up"
+show_only = 0
+force_type = 0
+
+[node name="Joypad Path" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_4ryog")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "The icon will only display a controller icon, changing dynamically according to the connected controller brand."
+horizontal_alignment = 1
+
+[node name="Control" type="Control" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ButtonLabel" type="Label" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 18.0
+offset_right = 150.0
+offset_bottom = 41.0
+grow_horizontal = 2
+text = "Press or click on the desired button..."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="LStick" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -126.0
+offset_top = 47.0
+offset_right = -76.0
+offset_bottom = 97.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_nls54")
+expand_icon = true
+
+[node name="LStickClick" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -101.0
+offset_top = 97.0
+offset_right = -51.0
+offset_bottom = 147.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_6klsb")
+expand_icon = true
+
+[node name="RStick" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 74.0
+offset_top = 47.0
+offset_right = 124.0
+offset_bottom = 97.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_bij8j")
+expand_icon = true
+
+[node name="RStickClick" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 49.0
+offset_top = 97.0
+offset_right = 99.0
+offset_bottom = 147.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_2h0w3")
+expand_icon = true
+
+[node name="LB" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -276.0
+offset_top = -153.0
+offset_right = -226.0
+offset_bottom = -103.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_kvj2q")
+expand_icon = true
+
+[node name="LT" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -326.0
+offset_top = -178.0
+offset_right = -276.0
+offset_bottom = -128.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_wtcrq")
+expand_icon = true
+
+[node name="RB" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 224.0
+offset_top = -153.0
+offset_right = 274.0
+offset_bottom = -103.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_lfpf5")
+expand_icon = true
+
+[node name="RT" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 274.0
+offset_top = -178.0
+offset_right = 324.0
+offset_bottom = -128.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_b3bsp")
+expand_icon = true
+
+[node name="A" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 174.0
+offset_top = 22.0
+offset_right = 224.0
+offset_bottom = 72.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_u40go")
+expand_icon = true
+
+[node name="B" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 224.0
+offset_top = -28.0
+offset_right = 274.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_rnqww")
+expand_icon = true
+
+[node name="X" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 124.0
+offset_top = -28.0
+offset_right = 174.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_1a2yv")
+expand_icon = true
+
+[node name="Y" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 174.0
+offset_top = -78.0
+offset_right = 224.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_hktfi")
+expand_icon = true
+
+[node name="Select" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -76.0
+offset_top = -53.0
+offset_right = -26.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_2ksy6")
+expand_icon = true
+
+[node name="Start" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 24.0
+offset_top = -53.0
+offset_right = 74.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_08sqi")
+expand_icon = true
+
+[node name="Home" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -26.0
+offset_top = -78.0
+offset_right = 24.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_tivgf")
+expand_icon = true
+
+[node name="Share" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -26.0
+offset_top = -28.0
+offset_right = 24.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_87fow")
+expand_icon = true
+
+[node name="DPAD" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -226.0
+offset_top = -28.0
+offset_right = -176.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_n4i6p")
+expand_icon = true
+
+[node name="DPADDown" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -226.0
+offset_top = 22.0
+offset_right = -176.0
+offset_bottom = 72.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_eoyuo")
+expand_icon = true
+
+[node name="DPADRight" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -176.0
+offset_top = -28.0
+offset_right = -126.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_c660e")
+expand_icon = true
+
+[node name="DPADLeft" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -276.0
+offset_top = -28.0
+offset_right = -226.0
+offset_bottom = 22.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_riwus")
+expand_icon = true
+
+[node name="DPADUp" type="Button" parent="VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -226.0
+offset_top = -78.0
+offset_right = -176.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+button_group = SubResource("ButtonGroup_haylq")
+icon = SubResource("Texture2D_onmvf")
+expand_icon = true
+
+[connection signal="pressed" from="VBoxContainer/Control/LStick" to="." method="_on_l_stick_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/LStick" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/LStickClick" to="." method="_on_l_stick_click_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/LStickClick" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/RStick" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/RStick" to="." method="_on_r_stick_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/RStickClick" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/RStickClick" to="." method="_on_r_stick_click_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/LB" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/LB" to="." method="_on_lb_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/LT" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/LT" to="." method="_on_lt_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/RB" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/RB" to="." method="_on_rb_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/RT" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/RT" to="." method="_on_rt_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/A" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/A" to="." method="_on_a_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/B" to="." method="_on_b_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/B" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/X" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/X" to="." method="_on_x_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/Y" to="." method="_on_y_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/Y" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/Select" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/Select" to="." method="_on_select_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/Start" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/Home" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/Home" to="." method="_on_home_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/Share" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/Share" to="." method="_on_share_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/DPAD" to="." method="_on_dpad_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/DPAD" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/DPADDown" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/DPADDown" to="." method="_on_dpad_down_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/DPADRight" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/DPADRight" to="." method="_on_dpad_right_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/DPADLeft" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/DPADLeft" to="." method="_on_dpad_left_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/DPADUp" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/Control/DPADUp" to="." method="_on_dpad_up_pressed"]

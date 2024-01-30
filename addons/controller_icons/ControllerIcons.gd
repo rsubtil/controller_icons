@@ -12,9 +12,51 @@ var _cached_icons := {}
 var _custom_input_actions := {}
 
 var _last_input_type
-var _settings
+var _settings : ControllerSettings
 
 var Mapper = preload("res://addons/controller_icons/Mapper.gd").new()
+
+# Default actions will be the builtin editor actions when
+# the script is at editor ("tool") level. To pickup more
+# actions available, these have to be queried manually
+var _builtin_keys := [
+	"input/ui_accept", "input/ui_cancel", "input/ui_copy",
+	"input/ui_cut", "input/ui_down", "input/ui_end",
+	"input/ui_filedialog_refresh", "input/ui_filedialog_show_hidden",
+	"input/ui_filedialog_up_one_level", "input/ui_focus_next",
+	"input/ui_focus_prev", "input/ui_graph_delete",
+	"input/ui_graph_duplicate", "input/ui_home",
+	"input/ui_left", "input/ui_menu", "input/ui_page_down",
+	"input/ui_page_up", "input/ui_paste", "input/ui_redo",
+	"input/ui_right", "input/ui_select", "input/ui_swap_input_direction",
+	"input/ui_text_add_selection_for_next_occurrence",
+	"input/ui_text_backspace", "input/ui_text_backspace_all_to_left",
+	"input/ui_text_backspace_all_to_left.macos",
+	"input/ui_text_backspace_word", "input/ui_text_backspace_word.macos",
+	"input/ui_text_caret_add_above", "input/ui_text_caret_add_above.macos",
+	"input/ui_text_caret_add_below", "input/ui_text_caret_add_below.macos",
+	"input/ui_text_caret_document_end", "input/ui_text_caret_document_end.macos",
+	"input/ui_text_caret_document_start", "input/ui_text_caret_document_start.macos",
+	"input/ui_text_caret_down", "input/ui_text_caret_left",
+	"input/ui_text_caret_line_end", "input/ui_text_caret_line_end.macos",
+	"input/ui_text_caret_line_start", "input/ui_text_caret_line_start.macos",
+	"input/ui_text_caret_page_down", "input/ui_text_caret_page_up",
+	"input/ui_text_caret_right", "input/ui_text_caret_up",
+	"input/ui_text_caret_word_left", "input/ui_text_caret_word_left.macos",
+	"input/ui_text_caret_word_right", "input/ui_text_caret_word_right.macos",
+	"input/ui_text_clear_carets_and_selection", "input/ui_text_completion_accept",
+	"input/ui_text_completion_query", "input/ui_text_completion_replace",
+	"input/ui_text_dedent", "input/ui_text_delete",
+	"input/ui_text_delete_all_to_right", "input/ui_text_delete_all_to_right.macos",
+	"input/ui_text_delete_word", "input/ui_text_delete_word.macos",
+	"input/ui_text_indent", "input/ui_text_newline", "input/ui_text_newline_above",
+	"input/ui_text_newline_blank", "input/ui_text_scroll_down",
+	"input/ui_text_scroll_down.macos", "input/ui_text_scroll_up",
+	"input/ui_text_scroll_up.macos", "input/ui_text_select_all",
+	"input/ui_text_select_word_under_caret", "input/ui_text_select_word_under_caret.macos",
+	"input/ui_text_submit", "input/ui_text_toggle_insert_mode", "input/ui_undo",
+	"input/ui_up",
+]
 
 func _set_last_input_type(__last_input_type):
 	_last_input_type = __last_input_type
@@ -28,48 +70,9 @@ func _exit_tree():
 	Mapper.queue_free()
 
 func _parse_input_actions():
-	# Default actions will be the builtin editor actions when
-	# the script is at editor ("tool") level. To pickup more
-	# actions available, these have to be queried manually
-	var keys := [
-		"input/ui_accept", "input/ui_cancel", "input/ui_copy",
-		"input/ui_cut", "input/ui_down", "input/ui_end",
-		"input/ui_filedialog_refresh", "input/ui_filedialog_show_hidden",
-		"input/ui_filedialog_up_one_level", "input/ui_focus_next",
-		"input/ui_focus_prev", "input/ui_graph_delete",
-		"input/ui_graph_duplicate", "input/ui_home",
-		"input/ui_left", "input/ui_menu", "input/ui_page_down",
-		"input/ui_page_up", "input/ui_paste", "input/ui_redo",
-		"input/ui_right", "input/ui_select", "input/ui_swap_input_direction",
-		"input/ui_text_add_selection_for_next_occurrence",
-		"input/ui_text_backspace", "input/ui_text_backspace_all_to_left",
-		"input/ui_text_backspace_all_to_left.macos",
-		"input/ui_text_backspace_word", "input/ui_text_backspace_word.macos",
-		"input/ui_text_caret_add_above", "input/ui_text_caret_add_above.macos",
-		"input/ui_text_caret_add_below", "input/ui_text_caret_add_below.macos",
-		"input/ui_text_caret_document_end", "input/ui_text_caret_document_end.macos",
-		"input/ui_text_caret_document_start", "input/ui_text_caret_document_start.macos",
-		"input/ui_text_caret_down", "input/ui_text_caret_left",
-		"input/ui_text_caret_line_end", "input/ui_text_caret_line_end.macos",
-		"input/ui_text_caret_line_start", "input/ui_text_caret_line_start.macos",
-		"input/ui_text_caret_page_down", "input/ui_text_caret_page_up",
-		"input/ui_text_caret_right", "input/ui_text_caret_up",
-		"input/ui_text_caret_word_left", "input/ui_text_caret_word_left.macos",
-		"input/ui_text_caret_word_right", "input/ui_text_caret_word_right.macos",
-		"input/ui_text_clear_carets_and_selection", "input/ui_text_completion_accept",
-		"input/ui_text_completion_query", "input/ui_text_completion_replace",
-		"input/ui_text_dedent", "input/ui_text_delete",
-		"input/ui_text_delete_all_to_right", "input/ui_text_delete_all_to_right.macos",
-		"input/ui_text_delete_word", "input/ui_text_delete_word.macos",
-		"input/ui_text_indent", "input/ui_text_newline", "input/ui_text_newline_above",
-		"input/ui_text_newline_blank", "input/ui_text_scroll_down",
-		"input/ui_text_scroll_down.macos", "input/ui_text_scroll_up",
-		"input/ui_text_scroll_up.macos", "input/ui_text_select_all",
-		"input/ui_text_select_word_under_caret", "input/ui_text_select_word_under_caret.macos",
-		"input/ui_text_submit", "input/ui_text_toggle_insert_mode", "input/ui_undo",
-		"input/ui_up",
-	]
-	for key in keys:
+	_custom_input_actions.clear()
+
+	for key in _builtin_keys:
 		var data : Dictionary = ProjectSettings.get_setting(key)
 		if not data.is_empty() and data.has("events") and data["events"] is Array:
 			_add_custom_input_action((key as String).trim_prefix("input/"), data)

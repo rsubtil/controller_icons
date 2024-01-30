@@ -3,26 +3,25 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bbjc54bmpv3f8"
-path.s3tc="res://.godot/imported/arrow_right.png-d9645066e53f8382133c3d6066489082.s3tc.ctex"
+path="res://.godot/imported/arrow_right.png-d9645066e53f8382133c3d6066489082.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
-"vram_texture": true
+"vram_texture": false
 }
 
 [deps]
 
 source_file="res://addons/controller_icons/assets/key/arrow_right.png"
-dest_files=["res://.godot/imported/arrow_right.png-d9645066e53f8382133c3d6066489082.s3tc.ctex"]
+dest_files=["res://.godot/imported/arrow_right.png-d9645066e53f8382133c3d6066489082.ctex"]
 
 [params]
 
-compress/mode=2
+compress/mode=0
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=true
+mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

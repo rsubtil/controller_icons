@@ -8,4 +8,4 @@ joypad_fallback = 9
 joypad_deadzone = 0.5
 allow_mouse_remap = true
 mouse_min_movement = 200
-custom_asset_dir = "res://resources"
+custom_asset_dir = ""

@@ -1,6 +1,15 @@
 @tool
 extends Button
 class_name ControllerButton
+## Controller icon for Button nodes.
+##
+## [b]Deprecated[/b]: Use the new [ControllerIconTexture] texture resource and set it
+## directly in [member Button.icon].
+##
+## @deprecated
+
+func _get_configuration_warnings():
+	return ["This node is deprecated, and will be removed in a future version.\n\nRemove this script and use the new ControllerIconTexture resource\nby setting it directly in Button's icon property."]
 
 @export var path : String = "":
 	set(_path):

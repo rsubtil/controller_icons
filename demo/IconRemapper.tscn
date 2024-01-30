@@ -1,0 +1,587 @@
+[gd_scene load_steps=24 format=3 uid="uid://cmopiwmgjwjb8"]
+
+[ext_resource type="Script" path="res://demo/IconRemapper.gd" id="2"]
+[ext_resource type="Script" path="res://addons/controller_icons/objects/ControllerIconTexture.gd" id="2_ww1q8"]
+
+[sub_resource type="Texture2D" id="Texture2D_oaqcv"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/a"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_julos"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/b"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_p7fj8"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/x"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_e65pp"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/y"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_drwxf"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/lb"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_lpg8q"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/rb"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_tqj64"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/lt"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_g8v8u"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/rt"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_uqh53"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/l_stick_click"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_jt7n0"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/r_stick_click"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_jmm2v"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/select"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_2w7la"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/start"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_rhnqu"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/dpad"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_vr4j2"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/dpad_up"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_hp6k2"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/dpad_down"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_4trym"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/dpad_left"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_61h51"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/dpad_right"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_adhf2"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/home"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_dl7nm"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/share"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_3ry3e"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/l_stick"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_t68xw"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("2_ww1q8")
+path = "joypad/r_stick"
+show_mode = 0
+force_type = 0
+
+[node name="Control" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+script = ExtResource("2")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Icons" type="HBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Icons"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="A" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer/A"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_oaqcv")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer/A"]
+layout_mode = 2
+text = " A"
+
+[node name="B" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer/B"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_julos")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer/B"]
+layout_mode = 2
+text = " B"
+
+[node name="X" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer/X"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_p7fj8")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer/X"]
+layout_mode = 2
+text = " X"
+
+[node name="Y" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer/Y"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_e65pp")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer/Y"]
+layout_mode = 2
+text = " Y"
+
+[node name="LB" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer/LB"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_drwxf")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer/LB"]
+layout_mode = 2
+text = " Left Button"
+
+[node name="RB" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer/RB"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_lpg8q")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer/RB"]
+layout_mode = 2
+text = " Right Button"
+
+[node name="LT" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer/LT"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_tqj64")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer/LT"]
+layout_mode = 2
+text = " Left Trigger"
+
+[node name="RT" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer/RT"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_g8v8u")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer/RT"]
+layout_mode = 2
+text = " Right Trigger"
+
+[node name="L_Stick_Click" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer/L_Stick_Click"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_uqh53")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer/L_Stick_Click"]
+layout_mode = 2
+text = " Left Stick Click"
+
+[node name="R_Stick_Click" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer/R_Stick_Click"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_jt7n0")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer/R_Stick_Click"]
+layout_mode = 2
+text = " Right Stick Click"
+
+[node name="Select" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer/Select"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_jmm2v")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer/Select"]
+layout_mode = 2
+text = " Select"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer/Icons"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Start" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer2/Start"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_2w7la")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer2/Start"]
+layout_mode = 2
+text = " Start"
+
+[node name="DPAD" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer2/DPAD"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_rhnqu")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer2/DPAD"]
+layout_mode = 2
+text = " DPAD"
+
+[node name="DPAD_Up" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer2/DPAD_Up"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_vr4j2")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer2/DPAD_Up"]
+layout_mode = 2
+text = " DPAD Up"
+
+[node name="DPAD_Down" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer2/DPAD_Down"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_hp6k2")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer2/DPAD_Down"]
+layout_mode = 2
+text = " DPAD Down"
+
+[node name="DPAD_Left" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer2/DPAD_Left"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_4trym")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer2/DPAD_Left"]
+layout_mode = 2
+text = " DPAD Left"
+
+[node name="DPAD_Right" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer2/DPAD_Right"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_61h51")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer2/DPAD_Right"]
+layout_mode = 2
+text = " DPAD Right"
+
+[node name="Home" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer2/Home"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_adhf2")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer2/Home"]
+layout_mode = 2
+text = " Home"
+
+[node name="Share" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer2/Share"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_dl7nm")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer2/Share"]
+layout_mode = 2
+text = " Share"
+
+[node name="LStick" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer2/LStick"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_3ry3e")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer2/LStick"]
+layout_mode = 2
+text = " Left Stick"
+
+[node name="RStick" type="HBoxContainer" parent="HBoxContainer/Icons/VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ControllerTextureRect" type="TextureRect" parent="HBoxContainer/Icons/VBoxContainer2/RStick"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+texture = SubResource("Texture2D_t68xw")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="HBoxContainer/Icons/VBoxContainer2/RStick"]
+layout_mode = 2
+text = " Right Stick"
+
+[node name="Buttons" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Auto" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "[ Set to automatic ]"
+
+[node name="Luna" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Amazon Luna"
+
+[node name="PS3" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "PlayStation 3"
+
+[node name="PS4" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "PlayStation 4"
+
+[node name="PS5" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "PlayStation 5"
+
+[node name="Stadia" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Google Stadia"
+
+[node name="Steam" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Steam Controller"
+
+[node name="SteamDeck" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Steam Deck"
+
+[node name="Switch" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Nintendo Switch Controller"
+
+[node name="Joycon" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Nintendo Switch JoyCon"
+
+[node name="OUYA" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "OUYA"
+
+[node name="Xbox360" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Xbox 360"
+
+[node name="XboxOne" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Xbox One"
+
+[node name="XboxSeries" type="Button" parent="HBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Xbox Series"
+
+[connection signal="pressed" from="HBoxContainer/Buttons/Auto" to="." method="_on_Auto_pressed"]
+[connection signal="pressed" from="HBoxContainer/Buttons/Luna" to="." method="_on_Luna_pressed"]
+[connection signal="pressed" from="HBoxContainer/Buttons/PS3" to="." method="_on_PS3_pressed"]
+[connection signal="pressed" from="HBoxContainer/Buttons/PS4" to="." method="_on_PS4_pressed"]
+[connection signal="pressed" from="HBoxContainer/Buttons/PS5" to="." method="_on_PS5_pressed"]
+[connection signal="pressed" from="HBoxContainer/Buttons/Stadia" to="." method="_on_Stadia_pressed"]
+[connection signal="pressed" from="HBoxContainer/Buttons/Steam" to="." method="_on_Steam_pressed"]
+[connection signal="pressed" from="HBoxContainer/Buttons/SteamDeck" to="." method="_on_SteamDeck_pressed"]
+[connection signal="pressed" from="HBoxContainer/Buttons/Switch" to="." method="_on_Switch_pressed"]
+[connection signal="pressed" from="HBoxContainer/Buttons/Joycon" to="." method="_on_Joycon_pressed"]
+[connection signal="pressed" from="HBoxContainer/Buttons/OUYA" to="." method="_on_ouya_pressed"]
+[connection signal="pressed" from="HBoxContainer/Buttons/Xbox360" to="." method="_on_Xbox360_pressed"]
+[connection signal="pressed" from="HBoxContainer/Buttons/XboxOne" to="." method="_on_XboxOne_pressed"]
+[connection signal="pressed" from="HBoxContainer/Buttons/XboxSeries" to="." method="_on_XboxSeries_pressed"]
