@@ -1,0 +1,59 @@
+[gd_scene load_steps=2 format=3 uid="uid://bituity863qe4"]
+
+[ext_resource type="Script" path="res://addons/controller_icons/objects/path_selection/InputActionSelector.gd" id="1_shxks"]
+
+[node name="Input Action" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_shxks")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "The icon will be tied to an input action, swapping between keyboard/mouse and controller automatically."
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="NameFilter" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Filter by name..."
+clear_button_enabled = true
+
+[node name="BuiltinActionButton" type="CheckButton" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Show Built-in Actions"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Tree" type="Tree" parent="VBoxContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 3
+column_titles_visible = true
+hide_folding = true
+hide_root = true
+select_mode = 1
+scroll_horizontal_enabled = false
+
+[connection signal="text_changed" from="VBoxContainer/HBoxContainer/NameFilter" to="." method="_on_name_filter_text_changed"]
+[connection signal="toggled" from="VBoxContainer/HBoxContainer/BuiltinActionButton" to="." method="_on_builtin_action_button_toggled"]
+[connection signal="item_activated" from="VBoxContainer/ScrollContainer/Tree" to="." method="_on_tree_item_activated"]

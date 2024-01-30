@@ -1,6 +1,16 @@
 @tool
 extends TextureRect
 class_name ControllerTextureRect
+## Controller icon for TextureRect nodes.
+##
+## [b]Deprecated[/b]: Use the new [ControllerIconTexture] texture resource and set it
+## directly in [member TextureRect.texture].
+##
+## @deprecated
+
+func _get_configuration_warnings():
+	return ["This node is deprecated, and will be removed in a future version.\n\nRemove this script and use the new ControllerIconTexture resource\nby setting it directly in TextureRect's texture property."]
+
 
 @export var path : String = "":
 	set(_path):

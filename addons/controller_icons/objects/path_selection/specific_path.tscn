@@ -1,0 +1,67 @@
+[gd_scene load_steps=2 format=3 uid="uid://d2ow6e2ba86b6"]
+
+[ext_resource type="Script" path="res://addons/controller_icons/objects/path_selection/SpecificPathSelector.gd" id="1_iqwfd"]
+
+[node name="Specific Path" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_iqwfd")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "The icon will be set to a specific asset, without any dynamic remapping."
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="NameFilter" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Filter by name..."
+clear_button_enabled = true
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/HSplitContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="BaseAssetNames" type="Tree" parent="VBoxContainer/HSplitContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+hide_folding = true
+hide_root = true
+
+[node name="ScrollContainer2" type="ScrollContainer" parent="VBoxContainer/HSplitContainer"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="AssetsContainer" type="HFlowContainer" parent="VBoxContainer/HSplitContainer/ScrollContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[connection signal="text_changed" from="VBoxContainer/HBoxContainer/NameFilter" to="." method="_on_name_filter_text_changed"]
+[connection signal="item_selected" from="VBoxContainer/HSplitContainer/ScrollContainer/BaseAssetNames" to="." method="_on_base_asset_names_item_selected"]

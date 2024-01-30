@@ -1,0 +1,224 @@
+[gd_scene load_steps=10 format=3 uid="uid://8ypaj35qfhyr"]
+
+[ext_resource type="Script" path="res://addons/controller_icons/objects/ControllerIconTexture.gd" id="1_vfnng"]
+
+[sub_resource type="Texture2D" id="Texture2D_s5m8q"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("1_vfnng")
+path = "ui_accept"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_m553g"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("1_vfnng")
+path = "joypad/x"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_htjm2"]
+
+[sub_resource type="Sky" id="Sky_tf27q"]
+sky_material = SubResource("ProceduralSkyMaterial_htjm2")
+
+[sub_resource type="Environment" id="Environment_klhn5"]
+background_mode = 2
+sky = SubResource("Sky_tf27q")
+
+[sub_resource type="Texture2D" id="Texture2D_utrwd"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("1_vfnng")
+path = "joypad/a"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_8wr4o"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("1_vfnng")
+path = "joypad/x"
+show_mode = 0
+force_type = 0
+
+[sub_resource type="Texture2D" id="Texture2D_82sge"]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("1_vfnng")
+path = "switch/controllers_separate"
+show_mode = 0
+force_type = 0
+
+[node name="Showcase" type="Node"]
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+offset_left = 150.0
+offset_top = 25.0
+offset_right = 1002.0
+offset_bottom = 111.0
+bbcode_enabled = true
+text = "Controller Icons provides automatic icons for all major controllers, keyboard, and mouse.
+
+It provides a [b]ControllerIconTexture[/b] resource that can be set on any node that accepts a [b]Texture2D[/b], such as:"
+
+[node name="Label" type="Label" parent="."]
+offset_left = 117.0
+offset_top = 151.0
+offset_right = 292.0
+offset_bottom = 174.0
+text = "TextureRect / Sprite2D"
+horizontal_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_left = 164.0
+offset_top = 187.0
+offset_right = 235.0
+offset_bottom = 258.0
+texture = SubResource("Texture2D_s5m8q")
+expand_mode = 1
+
+[node name="Label2" type="Label" parent="."]
+offset_left = 357.0
+offset_top = 152.0
+offset_right = 451.0
+offset_bottom = 175.0
+text = "Button"
+horizontal_alignment = 1
+
+[node name="Button" type="Button" parent="."]
+offset_left = 340.0
+offset_top = 191.0
+offset_right = 468.0
+offset_bottom = 239.0
+text = "Attack"
+icon = SubResource("Texture2D_m553g")
+expand_icon = true
+
+[node name="Label3" type="Label" parent="."]
+offset_left = 571.0
+offset_top = 151.0
+offset_right = 665.0
+offset_bottom = 174.0
+text = "Sprite3D"
+horizontal_alignment = 1
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+offset_left = 546.0
+offset_top = 187.0
+offset_right = 689.0
+offset_bottom = 332.0
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(143, 145)
+render_target_update_mode = 4
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0.745)
+environment = SubResource("Environment_klhn5")
+
+[node name="Sprite3D" type="Sprite3D" parent="SubViewportContainer/SubViewport"]
+texture = SubResource("Texture2D_utrwd")
+
+[node name="Label3D" type="Label3D" parent="SubViewportContainer/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.573528, 0)
+text = "Jump"
+
+[node name="Label4" type="Label" parent="."]
+offset_left = 826.0
+offset_top = 152.0
+offset_right = 934.0
+offset_bottom = 175.0
+text = "RichTextLabel"
+horizontal_alignment = 1
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="."]
+offset_left = 775.0
+offset_top = 195.0
+offset_right = 993.0
+offset_bottom = 279.0
+bbcode_enabled = true
+text = "Press [img=40]res://demo/icon_respect.tres[/img] to pay respects"
+
+[node name="RichTextLabel3" type="RichTextLabel" parent="."]
+offset_left = 262.0
+offset_top = 389.0
+offset_right = 858.0
+offset_bottom = 421.0
+bbcode_enabled = true
+text = "You'll need to provide a [b]path[/b] indicating which icon to display, which can be:"
+
+[node name="RichTextLabel4" type="RichTextLabel" parent="."]
+offset_left = 47.0
+offset_top = 434.0
+offset_right = 373.0
+offset_bottom = 525.0
+bbcode_enabled = true
+text = "[center]An input action, switching automatically between keyboard/mouse and controller[/center]"
+
+[node name="TextureRect2" type="TextureRect" parent="."]
+offset_left = 187.0
+offset_top = 515.0
+offset_right = 258.0
+offset_bottom = 586.0
+texture = SubResource("Texture2D_s5m8q")
+expand_mode = 1
+
+[node name="RichTextLabel5" type="RichTextLabel" parent="."]
+offset_left = 181.0
+offset_top = 596.0
+offset_right = 274.0
+offset_bottom = 624.0
+bbcode_enabled = true
+text = "[i]\"ui_accept\"[/i]"
+
+[node name="RichTextLabel6" type="RichTextLabel" parent="."]
+offset_left = 417.0
+offset_top = 432.0
+offset_right = 777.0
+offset_bottom = 523.0
+bbcode_enabled = true
+text = "[center]A generic joypad path, which shows only controller icons and according to the connected controller type[/center]"
+
+[node name="TextureRect3" type="TextureRect" parent="."]
+offset_left = 567.0
+offset_top = 513.0
+offset_right = 638.0
+offset_bottom = 584.0
+texture = SubResource("Texture2D_8wr4o")
+expand_mode = 1
+
+[node name="RichTextLabel7" type="RichTextLabel" parent="."]
+offset_left = 561.0
+offset_top = 594.0
+offset_right = 654.0
+offset_bottom = 622.0
+bbcode_enabled = true
+text = "[i]\"joypad/x\"[/i]"
+
+[node name="RichTextLabel8" type="RichTextLabel" parent="."]
+offset_left = 789.0
+offset_top = 432.0
+offset_right = 1060.0
+offset_bottom = 523.0
+bbcode_enabled = true
+text = "[center]A specific path, which will always display the chosen icon[/center]"
+
+[node name="TextureRect4" type="TextureRect" parent="."]
+offset_left = 874.0
+offset_top = 513.0
+offset_right = 945.0
+offset_bottom = 584.0
+texture = SubResource("Texture2D_82sge")
+expand_mode = 1
+
+[node name="RichTextLabel9" type="RichTextLabel" parent="."]
+offset_left = 798.0
+offset_top = 594.0
+offset_right = 1031.0
+offset_bottom = 622.0
+bbcode_enabled = true
+text = "[i]\"switch/controllers_separate\"[/i]"

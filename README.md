@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/Ev1lbl0w/controller_icons/master/icon.png" width=15%>
+<img src="https://raw.githubusercontent.com/rsubtil/controller_icons/master/icon.png" width=15%>
 
 # Controller Icons
 
@@ -27,18 +27,18 @@ Provides icons for all major controllers and keyboard/mouse actions, with an aut
 	- PlayStation 3
 	- PlayStation 4
 	- PlayStation 5
-	- Nintendo Switch Controller
-	- Nintendo Switch Joy-Con
+	- Nintendo Switch Controller / Joy-Con
 	- Steam Controller
 	- Steam Deck
 	- Amazon Luna
 	- Google Stadia
+	- OUYA
 
 ## Installation
 
 > This is the Godot 4.x version. For the Godot 3.x version, check the [3.x branch](https://github.com/rsubtil/controller_icons/tree/3.x)
 
-The minimum Godot version is 4.0 (stable).
+The minimum Godot version is 4.1.2 (stable).
 
 Download this repository and copy the `addons` folder to your project root directory.
 
@@ -59,4 +59,4 @@ The addon is licensed under the MIT license. Full details at [LICENSE](LICENSE).
 
 The controller assets are [Xelu's FREE Controllers & Keyboard PROMPTS](https://thoseawesomeguys.com/prompts/), made by Nicolae (XELU) Berbece and under Creative Commons 0 _(CC0)_.
 
-The icon was designed by [@adambelis](https://github.com/adambelis) ([#5](https://github.com/Ev1lbl0w/controller_icons/pull/5)) and is under Create Commons 0 _(CC0)_. It uses the [Godot's logo](https://github.com/godotengine/godot/blob/master/icon.svg) which is under Creative Commons Attribution 4.0 International License _(CC-BY-4.0 International)_
+The icon was designed by [@adambelis](https://github.com/adambelis) ([#5](https://github.com/rsubtil/controller_icons/pull/5)) and is under Create Commons 0 _(CC0)_. It uses the [Godot's logo](https://github.com/godotengine/godot/blob/master/icon.svg) which is under Creative Commons Attribution 4.0 International License _(CC-BY-4.0 International)_

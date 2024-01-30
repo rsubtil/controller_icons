@@ -1,6 +1,15 @@
 @tool
 extends Sprite2D
 class_name ControllerSprite2D
+## Controller icon for Sprite2D nodes.
+##
+## [b]Deprecated[/b]: Use the new [ControllerIconTexture] texture resource and set it
+## directly in [member Sprite2D.texture].
+##
+## @deprecated
+
+func _get_configuration_warnings():
+	return ["This node is deprecated, and will be removed in a future version.\n\nRemove this script and use the new ControllerIconTexture resource\nby setting it directly in Sprite2D's texture property."]
 
 @export var path : String = "":
 	set(_path):
