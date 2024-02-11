@@ -7,13 +7,13 @@ signal done
 @onready var n_base_asset_names := %BaseAssetNames
 @onready var n_assets_container := %AssetsContainer
 
-var _last_pressed_icon : Icon
+var _last_pressed_icon : ControllerIcons_Icon
 var _last_pressed_timestamp : int
 
 var color_text_enabled : Color
 var color_text_disabled : Color
 
-class Icon:
+class ControllerIcons_Icon:
 	static var group := ButtonGroup.new()
 
 	func _init(category: String, path: String):
@@ -114,7 +114,7 @@ func create_icon(category: String, path: String):
 	if button_nodes[map_category].has(filename): return
 
 	var icon_path = ("" if category.is_empty() else category + "/") + path.get_file().get_basename()
-	var icon := Icon.new(map_category, icon_path)
+	var icon := ControllerIcons_Icon.new(map_category, icon_path)
 	button_nodes[map_category][filename] = icon
 	n_assets_container.add_child(icon.button)
 	icon.button.pressed.connect(func():
@@ -129,7 +129,7 @@ func create_icon(category: String, path: String):
 	)
 
 func get_icon_path() -> String:
-	var button := Icon.group.get_pressed_button()
+	var button := ControllerIcons_Icon.group.get_pressed_button()
 	if button:
 		return button.icon.path
 	return ""
@@ -141,14 +141,14 @@ func grab_focus() -> void:
 func _on_base_asset_names_item_selected():
 	var selected : TreeItem = n_base_asset_names.get_selected()
 	if not selected: return
-	
+
 	var category := selected.get_text(0)
 	if not button_nodes.has(category): return
-	
+
 	# UPGRADE: In Godot 4.2, for-loop variables can be
 	# statically typed:
 	# for key:String in button_nodes.keys():
-	# 	for icon:Icon in button_nodes[key].values():
+	# 	for icon:ControllerIcon_Icon in button_nodes[key].values():
 	for key in button_nodes.keys():
 		for icon in button_nodes[key].values():
 			icon.selected = key == category
