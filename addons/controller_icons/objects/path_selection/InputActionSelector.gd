@@ -7,7 +7,7 @@ signal done
 @onready var n_builtin_action_button := %BuiltinActionButton
 @onready var n_tree := %Tree
 
-class Item:
+class ControllerIcons_Item:
 	func _init(tree: Tree, root: TreeItem, path: String, is_default: bool):
 		self.is_default = is_default
 		self.filtered = true
@@ -45,13 +45,13 @@ class Item:
 		set(_filtered):
 			filtered = _filtered
 			_query_visibility()
-	
+
 	func _query_visibility():
 		if is_instance_valid(tree_item):
 			tree_item.visible = show_default and filtered
 
 var root : TreeItem
-var items : Array[Item]
+var items : Array[ControllerIcons_Item]
 
 func populate(editor_interface: EditorInterface) -> void:
 	# Clear
@@ -81,7 +81,7 @@ func populate(editor_interface: EditorInterface) -> void:
 	# Map with all input actions
 	root = n_tree.create_item()
 	for data in ControllerIcons._custom_input_actions:
-		var child := Item.new(n_tree, root, data, data in default_actions)
+		var child := ControllerIcons_Item.new(n_tree, root, data, data in default_actions)
 		items.push_back(child)
 
 	set_default_actions_visibility(n_builtin_action_button.button_pressed)
@@ -95,7 +95,7 @@ func get_icon_path() -> String:
 func set_default_actions_visibility(display: bool):
 	# UPGRADE: In Godot 4.2, for-loop variables can be
 	# statically typed:
-	# for item:Item in items:
+	# for item:ControllerIcons_Item in items:
 	for item in items:
 		item.show_default = display or not item.is_default
 
@@ -114,7 +114,7 @@ func _on_tree_item_activated() -> void:
 func _on_name_filter_text_changed(new_text: String):
 	# UPGRADE: In Godot 4.2, for-loop variables can be
 	# statically typed:
-	# for item:Item in items:
+	# for item:ControllerIcons_Item in items:
 	for item in items:
 		var filtered := true if new_text.is_empty() else item.tree_item.get_text(0).findn(new_text) != -1
 		item.filtered = filtered

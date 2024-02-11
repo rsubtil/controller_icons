@@ -4,7 +4,7 @@ var path_selector := preload("res://addons/controller_icons/objects/ControllerIc
 
 var editor_interface : EditorInterface
 
-class TexturePreview:
+class ControllerIcons_TexturePreview:
 	var n_root: MarginContainer
 	var n_background: TextureRect
 	var n_texture: TextureRect
@@ -40,13 +40,13 @@ class TexturePreview:
 	func get_root():
 		return n_root
 
-var preview: TexturePreview
+var preview: ControllerIcons_TexturePreview
 
 func _can_handle(object: Object) -> bool:
 	return object is ControllerIconTexture
 
 func _parse_begin(object: Object) -> void:
-	preview = TexturePreview.new(editor_interface)
+	preview = ControllerIcons_TexturePreview.new(editor_interface)
 	add_custom_control(preview.get_root())
 	
 	var icon := object as ControllerIconTexture
