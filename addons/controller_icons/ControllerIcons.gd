@@ -108,12 +108,8 @@ func _ready():
 func _on_joy_connection_changed(device, connected):
 	if device == 0:
 		if connected:
-			# An await is required, otherwise a deadlock happens
-			await get_tree().process_frame
 			_set_last_input_type(InputType.CONTROLLER)
 		else:
-			# An await is required, otherwise a deadlock happens
-			await get_tree().process_frame
 			_set_last_input_type(InputType.KEYBOARD_MOUSE)
 
 func _input(event: InputEvent):
