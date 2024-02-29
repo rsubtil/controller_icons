@@ -21,15 +21,10 @@ class ControllerIcons_Item:
 		controller_icon_joy.path = path
 		controller_icon_joy.force_type = 2
 
-		tree_item.set_icon_max_width(1, 48)
-		tree_item.set_icon_max_width(2, 48)
-		if controller_icon_key._texture and controller_icon_joy._texture:
-			tree_item.set_icon(1, controller_icon_key)
-			tree_item.set_icon(2, controller_icon_joy)
-		elif controller_icon_key._texture:
-			tree_item.set_icon(2, controller_icon_key)
-		elif controller_icon_joy._texture:
-			tree_item.set_icon(2, controller_icon_joy)
+		tree_item.set_icon_max_width(1, 48 * controller_icon_key._textures.size())
+		tree_item.set_icon_max_width(2, 48 * controller_icon_key._textures.size())
+		tree_item.set_icon(1, controller_icon_key)
+		tree_item.set_icon(2, controller_icon_joy)
 
 	var is_default : bool
 	var tree_item : TreeItem
