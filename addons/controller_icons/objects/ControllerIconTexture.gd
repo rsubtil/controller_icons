@@ -21,29 +21,6 @@ class_name ControllerIconTexture
 ##
 ## @tutorial(Online documentation): https://github.com/rsubtil/controller_icons/blob/master/DOCS.md
 
-var _texture : Texture2D:
-	set(__texture):
-		if _texture and _texture.is_connected("changed", _reload_resource):
-			_texture.disconnect("changed", _reload_resource)
-
-		_texture = __texture
-		if _texture:
-			_texture.connect("changed", _reload_resource)
-
-func _reload_resource():
-	_dirty = true
-	emit_changed()
-
-func _load_texture_path():
-	if ControllerIcons.is_node_ready() and _can_be_shown():
-		if force_type > 0:
-			_texture = ControllerIcons.parse_path(path, force_type - 1)
-		else:
-			_texture = ControllerIcons.parse_path(path)
-	else:
-		_texture = null
-	_reload_resource()
-
 ## A path describing the desired icon. This is a generic path that can be one
 ## of three different types:
 ## [br][br]
@@ -107,6 +84,17 @@ enum ForceType {
 		force_type = _force_type
 		_load_texture_path()
 
+@export_subgroup("Text Rendering")
+## Custom LabelSettings. If set, overrides the addon's global label settings.
+@export var custom_label_settings : LabelSettings:
+	set(_custom_label_settings):
+		custom_label_settings = _custom_label_settings
+		_load_texture_path()
+
+		# Call _textures setter, which handles signal connections for label settings
+		_textures = _textures
+
+
 ## Returns a text representation of the displayed icon, useful for TTS
 ## (text-to-speech) scenarios.
 ## [br][br]
@@ -129,6 +117,60 @@ func _can_be_shown():
 		0, _:
 			return true
 
+var _textures : Array[Texture2D]:
+	set(__textures):
+		# UPGRADE: In Godot 4.2, for-loop variables can be
+		# statically typed:
+		# for tex:Texture in __textures:
+		for tex in __textures:
+			if tex and tex.is_connected("changed", _reload_resource):
+				tex.disconnect("changed", _reload_resource)
+
+		if _label_settings and _label_settings.is_connected("changed", _on_label_settings_changed):
+			_label_settings.disconnect("changed", _on_label_settings_changed)
+
+		_textures = __textures
+		_label_settings = null
+		if _textures and _textures.size() > 1:
+			_label_settings = custom_label_settings
+			if not _label_settings:
+				_label_settings = ControllerIcons._settings.custom_label_settings
+			if not _label_settings:
+				_label_settings = LabelSettings.new()
+			_label_settings.connect("changed", _on_label_settings_changed)
+			_font = ThemeDB.fallback_font if not _label_settings.font else _label_settings.font
+			_on_label_settings_changed()
+		# UPGRADE: In Godot 4.2, for-loop variables can be
+		# statically typed:
+		# for tex:Texture in __textures:
+		for tex in __textures:
+			if tex:
+				tex.connect("changed", _reload_resource)
+
+var _font : Font
+var _label_settings : LabelSettings
+var _text_size : Vector2
+
+func _on_label_settings_changed():
+	_font = ThemeDB.fallback_font if not _label_settings.font else _label_settings.font
+	_text_size = _font.get_string_size("+", HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size)
+	_reload_resource()
+
+func _reload_resource():
+	_dirty = true
+	emit_changed()
+
+func _load_texture_path():
+	var textures : Array[Texture2D] = []
+	if ControllerIcons.is_node_ready() and _can_be_shown():
+		var input_type = ControllerIcons._last_input_type if force_type == ForceType.NONE else force_type - 1
+		if ControllerIcons.get_path_type(path) == ControllerIcons.PathType.INPUT_ACTION:
+			var event := ControllerIcons.get_matching_event(path, input_type)
+			textures.append_array(ControllerIcons.parse_event_modifiers(event))
+		textures.append(ControllerIcons.parse_path(path, input_type))
+	_textures = textures
+	_reload_resource()
+
 func _init():
 	ControllerIcons.input_type_changed.connect(_on_input_type_changed)
 
@@ -137,52 +179,176 @@ func _on_input_type_changed(input_type: int):
 
 #region "Draw functions"
 
-func _get_width():
-	if _texture and _can_be_shown():
-		return _texture.get_width()
+func _get_width() -> int:
+	if _can_be_shown():
+		var ret := _textures.reduce(func(accum: int, texture: Texture2D):
+			if texture:
+				return accum + texture.get_width()
+			return accum
+		, 0)
+		if _label_settings:
+			ret += max(0, _textures.size()-1) * _text_size.x
+		return ret
 	return 2
 
-func _get_height():
-	if _texture and _can_be_shown():
-		return _texture.get_height()
+func _get_height() -> int:
+	if _can_be_shown():
+		var ret := _textures.reduce(func(accum: int, texture: Texture2D):
+			if texture:
+				return max(accum, texture.get_height())
+			return accum
+		, 0)
+		if _label_settings and _textures.size() > 1:
+			ret = max(ret, _text_size.y)
+		return ret
 	return 2
 
-func _has_alpha():
-	return _texture.has_alpha() if _texture else false
+func _has_alpha() -> bool:
+	return _textures.any(func(texture: Texture2D):
+		return texture.has_alpha()
+	)
 
-func _is_pixel_opaque(x, y):
+func _is_pixel_opaque(x, y) -> bool:
 	# TODO: Not exposed to GDScript; however, since this seems to be used for editor stuff, it's
 	# seemingly fine to just report all pixels as opaque. Otherwise, mouse picking for Sprite2D
 	# stops working.
 	return true
 
 func _draw(to_canvas_item: RID, pos: Vector2, modulate: Color, transpose: bool):
-	if _texture:
-		_texture.draw(to_canvas_item, pos, modulate, transpose)
+	var position := pos
+
+	for i in range(_textures.size()):
+		var tex:Texture2D = _textures[i]
+		if !tex: continue
+
+		if i != 0:
+			# Draw text char '+'
+			var font_position := Vector2(
+				position.x,
+				position.y + (get_height() - _text_size.y) / 2.0
+			)
+			_draw_text(to_canvas_item, font_position, "+")
+			position.x += _text_size.x
+
+		tex.draw(to_canvas_item, position, modulate, transpose)
+		position.x += tex.get_width()
 
 func _draw_rect(to_canvas_item: RID, rect: Rect2, tile: bool, modulate: Color, transpose: bool):
-	if _texture:
-		_texture.draw_rect(to_canvas_item, rect, tile, modulate, transpose)
+	var position := rect.position
+	var width_ratio := rect.size.x / _get_width()
+	var height_ratio := rect.size.y / _get_height()
+
+	for i in range(_textures.size()):
+		var tex:Texture2D = _textures[i]
+		if !tex: continue
+
+		if i != 0:
+			# Draw text char '+'
+			var font_position := Vector2(
+				position.x + (_text_size.x * width_ratio) / 2 - (_text_size.x / 2),
+				position.y + (rect.size.y - _text_size.y) / 2.0
+			)
+			_draw_text(to_canvas_item, font_position, "+")
+			position.x += _text_size.x * width_ratio
+
+		var size := tex.get_size() * Vector2(width_ratio, height_ratio)
+		tex.draw_rect(to_canvas_item, Rect2(position, size), tile, modulate, transpose)
+		position.x += size.x
 
 func _draw_rect_region(to_canvas_item: RID, rect: Rect2, src_rect: Rect2, modulate: Color, transpose: bool, clip_uv: bool):
-	if _texture:
-		_texture.draw_rect_region(to_canvas_item, rect, src_rect, modulate, transpose, clip_uv)
+	var position := rect.position
+	var width_ratio := rect.size.x / _get_width()
+	var height_ratio := rect.size.y / _get_height()
 
+	for i in range(_textures.size()):
+		var tex:Texture2D = _textures[i]
+		if !tex: continue
+
+		if i != 0:
+			# Draw text char '+'
+			var font_position := Vector2(
+				position.x + (_text_size.x * width_ratio) / 2 - (_text_size.x / 2),
+				position.y + (rect.size.y - _text_size.y) / 2.0
+			)
+			_draw_text(to_canvas_item, font_position, "+")
+			position.x += _text_size.x * width_ratio
+
+		var size := tex.get_size() * Vector2(width_ratio, height_ratio)
+		var src_rect_ratio := Vector2(
+			tex.get_width() / float(_get_width()),
+			tex.get_height() / float(_get_height())
+		)
+		var tex_src_rect := Rect2(
+			src_rect.position * src_rect_ratio,
+			src_rect.size * src_rect_ratio
+		)
+
+		tex.draw_rect_region(to_canvas_item, Rect2(position, size), tex_src_rect, modulate, transpose, clip_uv)
+		position.x += size.x
+
+func _draw_text(to_canvas_item: RID, font_position: Vector2, text: String):
+	font_position.y += _font.get_ascent(_label_settings.font_size)
+	
+	if _label_settings.shadow_color.a > 0:
+		_font.draw_string(to_canvas_item, font_position + _label_settings.shadow_offset, text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size, _label_settings.shadow_color)
+		if _label_settings.shadow_size > 0:
+			_font.draw_string_outline(to_canvas_item, font_position + _label_settings.shadow_offset, text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size, _label_settings.shadow_size, _label_settings.shadow_color)
+	if _label_settings.outline_color.a > 0 and _label_settings.outline_size > 0:
+			_font.draw_string_outline(to_canvas_item, font_position, text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size, _label_settings.outline_size, _label_settings.outline_color)
+	_font.draw_string(to_canvas_item, font_position, text, HORIZONTAL_ALIGNMENT_CENTER, -1, _label_settings.font_size, _label_settings.font_color)
+
+var _helper_viewport : Viewport
 func _stitch_texture():
-	# TODO: This lays the foundation for multi-icon prompts and simple text drawing.
-	# For now, don't do anything special with it; just blit it, otherwise
-	# Godot automatically reimports the texture as 3D, which may be undesired.
-
-	if not _texture:
+	if _textures.is_empty():
 		return
-	var texture_raw := _texture.get_image()
-	texture_raw.decompress()
-	var img := Image.create(_get_width(), _get_height(), true, texture_raw.get_format())
 
-	var pos := Vector2i(0, 0)
-	img.blit_rect(texture_raw, Rect2i(0, 0, texture_raw.get_width(), texture_raw.get_height()), pos)
+	var font_image : Image
+	if _textures.size() > 1:
+		# Generate a viewport to draw the text
+		_helper_viewport = SubViewport.new()
+		# FIXME: We need a 3px margin for some reason
+		_helper_viewport.size = _text_size + Vector2(3, 0)
+		_helper_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+		_helper_viewport.render_target_clear_mode = SubViewport.CLEAR_MODE_ONCE
+		_helper_viewport.transparent_bg = true
+
+		var label := Label.new()
+		label.label_settings = _label_settings
+		label.text = "+"
+		label.position = Vector2.ZERO
+		_helper_viewport.add_child(label)
+
+		ControllerIcons.add_child(_helper_viewport)
+		await RenderingServer.frame_post_draw
+		font_image = _helper_viewport.get_texture().get_image()
+		ControllerIcons.remove_child(_helper_viewport)
+		_helper_viewport.free()
+
+	var position := Vector2i(0, 0)
+	var img : Image
+	for i in range(_textures.size()):
+		if !_textures[i]: continue
+
+		if i != 0:
+			# Draw text char '+'
+			var region := font_image.get_used_rect()
+			var font_position := Vector2i(
+				position.x,
+				position.y + (get_height() - region.size.y) / 2
+			)
+			img.blit_rect(font_image, region, font_position)
+			position.x += ceili(region.size.x)
+
+		var texture_raw := _textures[i].get_image()
+		texture_raw.decompress()
+		if not img:
+			img = Image.create(_get_width(), _get_height(), true, texture_raw.get_format())
+
+		img.blit_rect(texture_raw, Rect2i(0, 0, texture_raw.get_width(), texture_raw.get_height()), position)
+		position.x += texture_raw.get_width()
 
 	_texture_3d = ImageTexture.create_from_image(img)
+	emit_changed()
 
 # This is necessary for 3D sprites, as the texture is assigned to a material, and not drawn directly.
 # For multi prompts, we need to generate a texture
@@ -190,8 +356,11 @@ var _dirty := true
 var _texture_3d : Texture
 func _get_rid():
 	if _dirty:
+		# FIXME: Function may await, but because this is an internal engine call, we can't do anything about it.
+		# This results in a one-frame white texture being displayed, which is not ideal. Investigate later.
 		_stitch_texture()
 		_dirty = false
-	return _texture_3d.get_rid() if _texture else 0
+		return 0
+	return _texture_3d.get_rid() if not _textures.is_empty() else 0
 
 #endregion

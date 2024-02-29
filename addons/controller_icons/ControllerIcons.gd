@@ -1,17 +1,23 @@
 @tool
 extends Node
 
-signal input_type_changed(input_type)
+signal input_type_changed(input_type: InputType)
 
 enum InputType {
-	KEYBOARD_MOUSE,
-	CONTROLLER
+	KEYBOARD_MOUSE, ## The input is from the keyboard and/or mouse.
+	CONTROLLER ## The input is from a controller.
+}
+
+enum PathType {
+	INPUT_ACTION, ## The path is an input action.
+	JOYPAD_PATH, ## The path is a generic joypad path.
+	SPECIFIC_PATH ## The path is a specific path.
 }
 
 var _cached_icons := {}
 var _custom_input_actions := {}
 
-var _last_input_type
+var _last_input_type : InputType
 var _settings : ControllerSettings
 
 var Mapper = preload("res://addons/controller_icons/Mapper.gd").new()
@@ -140,11 +146,42 @@ func parse_path(path: String, input_type = _last_input_type) -> Texture:
 		return null
 	var root_paths := _expand_path(path, input_type)
 	for root_path in root_paths:
-		if not _cached_icons.has(root_path):
-			if _load_icon(root_path):
-				continue
+		if _load_icon(root_path):
+			continue
 		return _cached_icons[root_path]
 	return null
+
+func parse_event_modifiers(event: InputEvent) -> Array[Texture]:
+	if not event or not event is InputEventWithModifiers:
+		return []
+
+	var icons : Array[Texture] = []
+	var modifiers : Array[String] = []
+	if event.command_or_control_autoremap:
+		match OS.get_name():
+			"macOS":
+				modifiers.push_back("key/command")
+			_:
+				modifiers.push_back("key/ctrl")
+	if event.ctrl_pressed and not event.command_or_control_autoremap:
+		modifiers.push_back("key/ctrl")
+	if event.shift_pressed:
+		modifiers.push_back("key/shift")
+	if event.alt_pressed:
+		modifiers.push_back("key/alt")
+	if event.meta_pressed and not event.command_or_control_autoremap:
+		match OS.get_name():
+			"macOS":
+				modifiers.push_back("key/command")
+			_:
+				modifiers.push_back("key/win")
+
+	for modifier in modifiers:
+		for icon_path in _expand_path(modifier, InputType.KEYBOARD_MOUSE):
+			if _load_icon(icon_path) == OK:
+				icons.push_back(_cached_icons[icon_path])
+
+	return icons
 
 func parse_path_to_tts(path: String, input_type: int = _last_input_type) -> String:
 	if input_type == null:
@@ -165,10 +202,34 @@ func parse_event(event: InputEvent) -> Texture:
 		if base_path.is_empty():
 			continue
 		base_path += path + ".png"
-		if not _cached_icons.has(base_path):
-			if _load_icon(base_path):
-				continue
+		if _load_icon(base_path):
+			continue
 		return _cached_icons[base_path]
+	return null
+
+func get_path_type(path: String) -> PathType:
+	if _custom_input_actions.has(path) or InputMap.has_action(path):
+		return PathType.INPUT_ACTION
+	elif path.get_slice("/", 0) == "joypad":
+		return PathType.JOYPAD_PATH
+	else:
+		return PathType.SPECIFIC_PATH
+
+func get_matching_event(path: String, input_type: InputType = _last_input_type) -> InputEvent:
+	var events : Array
+	if _custom_input_actions.has(path):
+		events = _custom_input_actions[path]
+	else:
+		events = InputMap.action_get_events(path)
+
+	for event in events:
+		match event.get_class():
+			"InputEventKey", "InputEventMouse", "InputEventMouseMotion", "InputEventMouseButton":
+				if input_type == InputType.KEYBOARD_MOUSE:
+					return event
+			"InputEventJoypadButton", "InputEventJoypadMotion":
+				if input_type == InputType.CONTROLLER:
+					return event
 	return null
 
 func _expand_path(path: String, input_type: int) -> Array:
@@ -185,19 +246,17 @@ func _expand_path(path: String, input_type: int) -> Array:
 		paths.push_back(base_path + ".png")
 	return paths
 
-func _is_path_action(path):
-	return _custom_input_actions.has(path) or InputMap.has_action(path)
-
 func _convert_path_to_asset_file(path: String, input_type: int) -> String:
-	if _is_path_action(path):
-		var event = _get_matching_event(path, input_type)
-		if event:
-			return _convert_event_to_path(event)
-		return path
-	elif path.substr(0, path.find("/")) == "joypad":
-		return Mapper._convert_joypad_path(path, _settings.joypad_fallback)
-	else:
-		return path
+	match get_path_type(path):
+		PathType.INPUT_ACTION:
+			var event := get_matching_event(path, input_type)
+			if event:
+				return _convert_event_to_path(event)
+			return path
+		PathType.JOYPAD_PATH:
+			return Mapper._convert_joypad_path(path, _settings.joypad_fallback)
+		PathType.SPECIFIC_PATH, _:
+			return path
 
 func _convert_asset_file_to_tts(path: String) -> String:
 	match path:
@@ -533,24 +592,8 @@ func _convert_joypad_motion_to_path(axis: int):
 			return ""
 	return Mapper._convert_joypad_path(path, _settings.joypad_fallback)
 
-func _get_matching_event(path: String, input_type: int):
-	var events : Array
-	if _custom_input_actions.has(path):
-		events = _custom_input_actions[path]
-	else:
-		events = InputMap.action_get_events(path)
-
-	for event in events:
-		match event.get_class():
-			"InputEventKey", "InputEventMouse", "InputEventMouseMotion", "InputEventMouseButton":
-				if input_type == InputType.KEYBOARD_MOUSE:
-					return event
-			"InputEventJoypadButton", "InputEventJoypadMotion":
-				if input_type == InputType.CONTROLLER:
-					return event
-	return null
-
 func _load_icon(path: String) -> int:
+	if _cached_icons.has(path): return OK
 	var tex = null
 	if path.begins_with("res://"):
 		if ResourceLoader.exists(path):
