@@ -33,6 +33,7 @@ The following properties are available:
 - `Path`: Specify the controller lookup path
 - `Show Mode`: Set the input type this icon will appear on. When set to `Keyboard/Mouse` or `Controller`, the object will hide when the opposite input method is used.
 - `Force Type`: When set to other than `None`, forces the displayed icon to be either `Keyboard/Mouse` or `Controller`. Only relevant for input actions, other types of lookup paths are not affected by this.
+- `Custom Label Settings`: When text rendering is needed for multi-icon prompts, the texture uses the addon's settings by default. If you want to override for this particular icon, you can specify it here.
 
 ![](screenshots/docs/path.png)
 
@@ -103,12 +104,16 @@ There is a settings resource file at `res://addons/controller_icons/settings.tre
 
 ![](screenshots/docs/settings.png)
 
-- `Joypad Fallback`: To what default controller type fallback to if automatic controller type detection fails.
-- `Joypad Deadzone`: Controller's deadzone for analogue inputs when detecting input device changes.
-- `Allow Mouse Remap`: If set, consider mouse movement when detecting input device changes.
-- `Mouse Min Movement`: Minimum "instantaneous" mouse speed in pixels to be considered for an input device change
-- `Custom Asset Dir`: Directory with custom controller icons to use. Refer to [Adding/removing controller icons](#addingremoving-controller-icons) for more instructions on how to do this.
-- `Custom Mapper`: Custom generic path mapper script to use. Refer to [Changing controller mapper](#changing-controller-mapper) for more instructions on how to do this.
+- **General**
+	- `Joypad Fallback`: To what default controller type fallback to if automatic controller type detection fails.
+	- `Joypad Deadzone`: Controller's deadzone for analogue inputs when detecting input device changes.
+	- `Allow Mouse Remap`: If set, consider mouse movement when detecting input device changes.
+	- `Mouse Min Movement`: Minimum "instantaneous" mouse speed in pixels to be considered for an input device change
+- **Custom Assets**
+	- `Custom Asset Dir`: Directory with custom controller icons to use. Refer to [Adding/removing controller icons](#addingremoving-controller-icons) for more instructions on how to do this.
+	- `Custom Mapper`: Custom generic path mapper script to use. Refer to [Changing controller mapper](#changing-controller-mapper) for more instructions on how to do this.
+- **Text Rendering**
+	- `Custom Label Settings`: Custom `LabelSettings` to use for text rendering on multi-icon prompts. Will be used by all icons by default, but can also be overridden on a per-icon basis.
 
 # Adding/removing controller icons
 
