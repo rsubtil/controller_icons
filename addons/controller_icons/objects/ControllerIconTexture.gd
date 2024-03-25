@@ -172,7 +172,11 @@ func _load_texture_path_main_thread():
 	_reload_resource()
 
 func _load_texture_path():
-	_load_texture_path_main_thread.call_deferred()
+	# Ensure loading only occurs on the main thread
+	if OS.get_thread_caller_id() != OS.get_main_thread_id():
+		_load_texture_path_main_thread.call_deferred()
+	else:
+		_load_texture_path_main_thread()
 
 func _init():
 	ControllerIcons.input_type_changed.connect(_on_input_type_changed)
