@@ -9,3 +9,4 @@ joypad_deadzone = 0.5
 allow_mouse_remap = true
 mouse_min_movement = 200
 custom_asset_dir = ""
+file_extension = "png"

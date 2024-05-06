@@ -45,6 +45,9 @@ enum Devices {
 ## Custom generic joystick mapper script
 @export var custom_mapper : Script
 
+## Custom icon file extension
+@export var file_extension : String = "png"
+
 ## Custom settings related to any text rendering required on prompts
 @export_subgroup("Text Rendering")
 

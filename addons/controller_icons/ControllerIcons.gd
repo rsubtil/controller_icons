@@ -201,7 +201,7 @@ func parse_event(event: InputEvent) -> Texture:
 	for base_path in base_paths:
 		if base_path.is_empty():
 			continue
-		base_path += path + ".png"
+		base_path += path + "." + _settings.file_extension
 		if _load_icon(base_path):
 			continue
 		return _cached_icons[base_path]
@@ -243,7 +243,7 @@ func _expand_path(path: String, input_type: int) -> Array:
 			continue
 		base_path += _convert_path_to_asset_file(path, input_type)
 
-		paths.push_back(base_path + ".png")
+		paths.push_back(base_path + "." + _settings.file_extension)
 	return paths
 
 func _convert_path_to_asset_file(path: String, input_type: int) -> String:
