@@ -100,7 +100,7 @@ func populate(editor_interface: EditorInterface) -> void:
 
 func handle_files(category: String, base_path: String):
 	for file in DirAccess.get_files_at(base_path):
-		if file.get_extension() == ControllerIcons._settings.file_extension:
+		if file.get_extension() == ControllerIcons.base_extension:
 			create_icon(category, base_path.path_join(file))
 
 func create_icon(category: String, path: String):
