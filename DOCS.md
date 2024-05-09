@@ -112,6 +112,7 @@ There is a settings resource file at `res://addons/controller_icons/settings.tre
 - **Custom Assets**
 	- `Custom Asset Dir`: Directory with custom controller icons to use. Refer to [Adding/removing controller icons](#addingremoving-controller-icons) for more instructions on how to do this.
 	- `Custom Mapper`: Custom generic path mapper script to use. Refer to [Changing controller mapper](#changing-controller-mapper) for more instructions on how to do this.
+	- `Custom Icon Extension`: Custom icon file extension to use. If empty, the addon defaults to `png`. Must be the extension portion only, without the preceding dot.
 - **Text Rendering**
 	- `Custom Label Settings`: Custom `LabelSettings` to use for text rendering on multi-icon prompts. Will be used by all icons by default, but can also be overridden on a per-icon basis.
 
