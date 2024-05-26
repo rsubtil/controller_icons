@@ -305,9 +305,12 @@ func _draw_text(to_canvas_item: RID, font_position: Vector2, text: String):
 	_font.draw_string(to_canvas_item, font_position, text, HORIZONTAL_ALIGNMENT_CENTER, -1, _label_settings.font_size, _label_settings.font_color)
 
 var _helper_viewport : Viewport
+var _is_stitching_texture : bool = false
 func _stitch_texture():
 	if _textures.is_empty():
 		return
+
+	_is_stitching_texture = true
 
 	var font_image : Image
 	if _textures.size() > 1:
@@ -354,6 +357,8 @@ func _stitch_texture():
 		img.blit_rect(texture_raw, Rect2i(0, 0, texture_raw.get_width(), texture_raw.get_height()), position)
 		position.x += texture_raw.get_width()
 
+	_is_stitching_texture = false
+	_dirty = false
 	_texture_3d = ImageTexture.create_from_image(img)
 	emit_changed()
 
@@ -363,11 +368,14 @@ var _dirty := true
 var _texture_3d : Texture
 func _get_rid():
 	if _dirty:
-		# FIXME: Function may await, but because this is an internal engine call, we can't do anything about it.
-		# This results in a one-frame white texture being displayed, which is not ideal. Investigate later.
-		_stitch_texture()
-		_dirty = false
-		return 0
+		if not _is_stitching_texture:
+			# FIXME: Function may await, but because this is an internal engine call, we can't do anything about it.
+			# This results in a one-frame white texture being displayed, which is not ideal. Investigate later.
+			_stitch_texture()
+			if _is_stitching_texture:
+				return 0
+		else:
+			return 0
 	return _texture_3d.get_rid() if not _textures.is_empty() else 0
 
 #endregion
