@@ -21,6 +21,12 @@ var _last_input_type : InputType
 var _settings : ControllerSettings
 var _base_extension := "png"
 
+# Custom mouse velocity calculation, because Godot
+# doesn't implement it on some OSes apparently
+const _MOUSE_VELOCITY_DELTA := 0.1
+var _t : float
+var _mouse_velocity : int
+
 var Mapper = preload("res://addons/controller_icons/Mapper.gd").new()
 
 # Default actions will be the builtin editor actions when
@@ -127,7 +133,7 @@ func _input(event: InputEvent):
 		"InputEventKey", "InputEventMouseButton":
 			input_type = InputType.KEYBOARD_MOUSE
 		"InputEventMouseMotion":
-			if _settings.allow_mouse_remap and event.velocity.length() > _settings.mouse_min_movement:
+			if _settings.allow_mouse_remap and _test_mouse_velocity(event.relative):
 				input_type = InputType.KEYBOARD_MOUSE
 		"InputEventJoypadButton":
 			input_type = InputType.CONTROLLER
@@ -136,6 +142,22 @@ func _input(event: InputEvent):
 				input_type = InputType.CONTROLLER
 	if input_type != _last_input_type:
 		_set_last_input_type(input_type)
+
+func _test_mouse_velocity(relative_vec: Vector2):
+	if _t > _MOUSE_VELOCITY_DELTA:
+		_t = 0
+		_mouse_velocity = 0
+
+	# We do a component sum instead of a length, to save on a
+	# sqrt operation, and because length_squared is negatively
+	# affected by low value vectors (<10).
+	# It is also it's good enough for this system, so reliability
+	# is sacrificed in favor of speed.
+	_mouse_velocity += abs(relative_vec.x) + abs(relative_vec.y)
+	return _mouse_velocity / _MOUSE_VELOCITY_DELTA > _settings.mouse_min_movement
+
+func _process(delta: float) -> void:
+	_t += delta
 
 func _add_custom_input_action(input_action: String, data: Dictionary):
 	_custom_input_actions[input_action] = data["events"]
