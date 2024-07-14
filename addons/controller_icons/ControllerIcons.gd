@@ -17,6 +17,9 @@ enum PathType {
 var _cached_icons := {}
 var _custom_input_actions := {}
 
+var _reload_icon_textures_list: Array[ControllerIconTexture] = []
+var _reload_icon_textures_mutex: Mutex = Mutex.new()
+
 var _last_input_type : InputType
 var _settings : ControllerSettings
 var _base_extension := "png"
@@ -156,8 +159,39 @@ func _test_mouse_velocity(relative_vec: Vector2):
 	_mouse_velocity += abs(relative_vec.x) + abs(relative_vec.y)
 	return _mouse_velocity / _MOUSE_VELOCITY_DELTA > _settings.mouse_min_movement
 
+func push_reload_icon_texture(icon_texture: ControllerIconTexture) -> void:
+	_reload_icon_textures_mutex.lock()
+
+	if not icon_texture in _reload_icon_textures_list:
+		_reload_icon_textures_list.push_back(icon_texture)
+
+	_reload_icon_textures_mutex.unlock()
+
+func _reload_icon_textures() -> void:
+	_reload_icon_textures_mutex.lock()
+
+	for icon_texture: ControllerIconTexture in _reload_icon_textures_list:
+		var textures: Array[Texture2D] = []
+		var input_type = (
+			_last_input_type
+			if icon_texture.force_type == ControllerIconTexture.ForceType.NONE
+			else icon_texture.force_type - 1
+		)
+		if get_path_type(icon_texture.path) == PathType.INPUT_ACTION:
+			var event := get_matching_event(icon_texture.path, input_type)
+			textures.append_array(parse_event_modifiers(event))
+		textures.append(parse_path(icon_texture.path, input_type))
+
+		icon_texture.set_textures(textures)
+
+	_reload_icon_textures_list.clear()
+	_reload_icon_textures_mutex.unlock()
+
+
 func _process(delta: float) -> void:
 	_t += delta
+
+	_reload_icon_textures()
 
 func _add_custom_input_action(input_action: String, data: Dictionary):
 	_custom_input_actions[input_action] = data["events"]
@@ -219,10 +253,7 @@ func parse_event(event: InputEvent) -> Texture:
 	if path.is_empty():
 		return null
 
-	var base_paths := [
-		_settings.custom_asset_dir + "/",
-		"res://addons/controller_icons/assets/"
-	]
+	var base_paths := [_settings.custom_asset_dir + "/", "res://addons/controller_icons/assets/"]
 	for base_path in base_paths:
 		if base_path.is_empty():
 			continue

@@ -160,23 +160,12 @@ func _reload_resource():
 	_dirty = true
 	emit_changed()
 
-func _load_texture_path_main_thread():
-	var textures : Array[Texture2D] = []
-	if ControllerIcons.is_node_ready() and _can_be_shown():
-		var input_type = ControllerIcons._last_input_type if force_type == ForceType.NONE else force_type - 1
-		if ControllerIcons.get_path_type(path) == ControllerIcons.PathType.INPUT_ACTION:
-			var event := ControllerIcons.get_matching_event(path, input_type)
-			textures.append_array(ControllerIcons.parse_event_modifiers(event))
-		textures.append(ControllerIcons.parse_path(path, input_type))
-	_textures = textures
+func set_textures(textures : Array[Texture2D])->void:
+	_textures = textures if ControllerIcons.is_node_ready() and _can_be_shown() else []
 	_reload_resource()
-
+	
 func _load_texture_path():
-	# Ensure loading only occurs on the main thread
-	if OS.get_thread_caller_id() != OS.get_main_thread_id():
-		_load_texture_path_main_thread.call_deferred()
-	else:
-		_load_texture_path_main_thread()
+	ControllerIcons.push_reload_icon_texture(self)
 
 func _init():
 	ControllerIcons.input_type_changed.connect(_on_input_type_changed)
