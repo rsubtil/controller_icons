@@ -159,7 +159,7 @@ func _test_mouse_velocity(relative_vec: Vector2):
 	_mouse_velocity += abs(relative_vec.x) + abs(relative_vec.y)
 	return _mouse_velocity / _MOUSE_VELOCITY_DELTA > _settings.mouse_min_movement
 
-func push_reload_icon_texture(icon_texture: ControllerIconTexture) -> void:
+func push_reload_icon_texture(icon_texture) -> void:
 	_reload_icon_textures_mutex.lock()
 
 	if not icon_texture in _reload_icon_textures_list:
