@@ -1,8 +1,8 @@
 extends Node
 class_name ControllerMapper
 
-func _convert_joypad_path(path: String, fallback) -> String:
-	match _get_joypad_type(fallback):
+func _convert_joypad_path(path: String, device: int, fallback: ControllerSettings.Devices) -> String:
+	match _get_joypad_type(device, fallback):
 		ControllerSettings.Devices.LUNA:
 			return _convert_joypad_to_luna(path)
 		ControllerSettings.Devices.PS3:
@@ -32,8 +32,16 @@ func _convert_joypad_path(path: String, fallback) -> String:
 		_:
 			return ""
 
-func _get_joypad_type(fallback):
-	var controller_name = Input.get_joy_name(0)
+func _get_joypad_type(device, fallback):
+	var available = Input.get_connected_joypads()
+	if available.is_empty():
+		return fallback;
+	if !available.has(device):
+		device = ControllerIcons._last_controller
+	if !available.has(device):
+		device = available.front();
+
+	var controller_name = Input.get_joy_name(device)
 	if "Luna Controller" in controller_name:
 		return ControllerSettings.Devices.LUNA
 	elif "PS3 Controller" in controller_name:
