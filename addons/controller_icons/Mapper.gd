@@ -35,11 +35,13 @@ func _convert_joypad_path(path: String, device: int, fallback: ControllerSetting
 func _get_joypad_type(device, fallback):
 	var available = Input.get_connected_joypads()
 	if available.is_empty():
-		return fallback;
-	if !available.has(device):
+		return fallback
+	# If the requested joypad is not on the connected joypad list, try using the last known connected joypad
+	if not device in available:
 		device = ControllerIcons._last_controller
-	if !available.has(device):
-		device = available.front();
+	# If that fails too, then use whatever joypad we have connected right now
+	if not device in available:
+		device = available.front()
 
 	var controller_name = Input.get_joy_name(device)
 	if "Luna Controller" in controller_name:

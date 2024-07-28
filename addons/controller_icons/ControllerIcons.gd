@@ -75,7 +75,7 @@ var _builtin_keys := [
 func _set_last_input_type(__last_input_type, __last_controller):
 	_last_input_type = __last_input_type
 	_last_controller = __last_controller
-	emit_signal("input_type_changed", _last_input_type, __last_controller)
+	emit_signal("input_type_changed", _last_input_type, _last_controller)
 
 func _enter_tree():
 	if Engine.is_editor_hint():
@@ -265,8 +265,10 @@ func get_matching_event(path: String, input_type: InputType = _last_input_type, 
 					return event
 			"InputEventJoypadButton", "InputEventJoypadMotion":
 				if input_type == InputType.CONTROLLER:
+					# Use the first device specific mapping if there is one.
 					if event.device == controller:
 						return event
+					# Otherwise ignore the device and use the first mapping.
 					elif fallback == null:
 						fallback = event
 
