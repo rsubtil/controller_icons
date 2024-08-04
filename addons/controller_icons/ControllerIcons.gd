@@ -268,8 +268,8 @@ func get_matching_event(path: String, input_type: InputType = _last_input_type, 
 					# Use the first device specific mapping if there is one.
 					if event.device == controller:
 						return event
-					# Otherwise ignore the device and use the first mapping.
-					elif fallback == null:
+					# Otherwise use the first "all devices" mapping.
+					elif fallback == null and event.device == -1:
 						fallback = event
 
 	return fallback
