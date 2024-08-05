@@ -1,7 +1,7 @@
 @tool
 extends Node
 
-signal input_type_changed(input_type: InputType)
+signal input_type_changed(input_type: InputType, controller: int)
 
 enum InputType {
 	KEYBOARD_MOUSE, ## The input is from the keyboard and/or mouse.
@@ -18,6 +18,7 @@ var _cached_icons := {}
 var _custom_input_actions := {}
 
 var _last_input_type : InputType
+var _last_controller : int
 var _settings : ControllerSettings
 var _base_extension := "png"
 
@@ -71,9 +72,10 @@ var _builtin_keys := [
 	"input/ui_up",
 ]
 
-func _set_last_input_type(__last_input_type):
+func _set_last_input_type(__last_input_type, __last_controller):
 	_last_input_type = __last_input_type
-	emit_signal("input_type_changed", _last_input_type)
+	_last_controller = __last_controller
+	emit_signal("input_type_changed", _last_input_type, _last_controller)
 
 func _enter_tree():
 	if Engine.is_editor_hint():
@@ -116,19 +118,22 @@ func _ready():
 	await get_tree().process_frame
 	# Set input type to what's likely being used currently
 	if Input.get_connected_joypads().is_empty():
-		_set_last_input_type(InputType.KEYBOARD_MOUSE)
+		_set_last_input_type(InputType.KEYBOARD_MOUSE, -1)
 	else:
-		_set_last_input_type(InputType.CONTROLLER)
+		_set_last_input_type(InputType.CONTROLLER, Input.get_connected_joypads().front())
 
 func _on_joy_connection_changed(device, connected):
-	if device == 0:
-		if connected:
-			_set_last_input_type(InputType.CONTROLLER)
+	if connected:
+		_set_last_input_type(InputType.CONTROLLER, device)
+	else:
+		if Input.get_connected_joypads().is_empty():
+			_set_last_input_type(InputType.KEYBOARD_MOUSE, -1)
 		else:
-			_set_last_input_type(InputType.KEYBOARD_MOUSE)
+			_set_last_input_type(InputType.CONTROLLER, Input.get_connected_joypads().front())
 
 func _input(event: InputEvent):
 	var input_type = _last_input_type
+	var controller = _last_controller
 	match event.get_class():
 		"InputEventKey", "InputEventMouseButton":
 			input_type = InputType.KEYBOARD_MOUSE
@@ -137,11 +142,13 @@ func _input(event: InputEvent):
 				input_type = InputType.KEYBOARD_MOUSE
 		"InputEventJoypadButton":
 			input_type = InputType.CONTROLLER
+			controller = event.device
 		"InputEventJoypadMotion":
 			if abs(event.axis_value) > _settings.joypad_deadzone:
 				input_type = InputType.CONTROLLER
-	if input_type != _last_input_type:
-		_set_last_input_type(input_type)
+				controller = event.device
+	if input_type != _last_input_type or controller != _last_controller:
+		_set_last_input_type(input_type, controller)
 
 func _test_mouse_velocity(relative_vec: Vector2):
 	if _t > _MOUSE_VELOCITY_DELTA:
@@ -164,12 +171,15 @@ func _add_custom_input_action(input_action: String, data: Dictionary):
 
 func refresh():
 	# All it takes is to signal icons to refresh paths
-	emit_signal("input_type_changed", _last_input_type)
+	emit_signal("input_type_changed", _last_input_type, _last_controller)
 
-func parse_path(path: String, input_type = _last_input_type) -> Texture:
+func get_joypad_type(controller: int = _last_controller) -> ControllerSettings.Devices:
+	return Mapper._get_joypad_type(controller, _settings.joypad_fallback)
+
+func parse_path(path: String, input_type = _last_input_type, last_controller = _last_controller) -> Texture:
 	if typeof(input_type) == TYPE_NIL:
 		return null
-	var root_paths := _expand_path(path, input_type)
+	var root_paths := _expand_path(path, input_type, last_controller)
 	for root_path in root_paths:
 		if _load_icon(root_path):
 			continue
@@ -202,16 +212,16 @@ func parse_event_modifiers(event: InputEvent) -> Array[Texture]:
 				modifiers.push_back("key/win")
 
 	for modifier in modifiers:
-		for icon_path in _expand_path(modifier, InputType.KEYBOARD_MOUSE):
+		for icon_path in _expand_path(modifier, InputType.KEYBOARD_MOUSE, -1):
 			if _load_icon(icon_path) == OK:
 				icons.push_back(_cached_icons[icon_path])
 
 	return icons
 
-func parse_path_to_tts(path: String, input_type: int = _last_input_type) -> String:
+func parse_path_to_tts(path: String, input_type: int = _last_input_type, controller: int = _last_controller) -> String:
 	if input_type == null:
 		return ""
-	var tts = _convert_path_to_asset_file(path, input_type)
+	var tts = _convert_path_to_asset_file(path, input_type, controller)
 	return _convert_asset_file_to_tts(tts.get_basename().get_file())
 
 func parse_event(event: InputEvent) -> Texture:
@@ -240,13 +250,14 @@ func get_path_type(path: String) -> PathType:
 	else:
 		return PathType.SPECIFIC_PATH
 
-func get_matching_event(path: String, input_type: InputType = _last_input_type) -> InputEvent:
+func get_matching_event(path: String, input_type: InputType = _last_input_type, controller: int = _last_controller) -> InputEvent:
 	var events : Array
 	if _custom_input_actions.has(path):
 		events = _custom_input_actions[path]
 	else:
 		events = InputMap.action_get_events(path)
 
+	var fallback = null
 	for event in events:
 		match event.get_class():
 			"InputEventKey", "InputEventMouse", "InputEventMouseMotion", "InputEventMouseButton":
@@ -254,10 +265,16 @@ func get_matching_event(path: String, input_type: InputType = _last_input_type) 
 					return event
 			"InputEventJoypadButton", "InputEventJoypadMotion":
 				if input_type == InputType.CONTROLLER:
-					return event
-	return null
+					# Use the first device specific mapping if there is one.
+					if event.device == controller:
+						return event
+					# Otherwise use the first "all devices" mapping.
+					elif fallback == null and event.device == -1:
+						fallback = event
 
-func _expand_path(path: String, input_type: int) -> Array:
+	return fallback
+
+func _expand_path(path: String, input_type: int, controller: int) -> Array:
 	var paths := []
 	var base_paths := [
 		_settings.custom_asset_dir + "/",
@@ -266,20 +283,20 @@ func _expand_path(path: String, input_type: int) -> Array:
 	for base_path in base_paths:
 		if base_path.is_empty():
 			continue
-		base_path += _convert_path_to_asset_file(path, input_type)
+		base_path += _convert_path_to_asset_file(path, input_type, controller)
 
 		paths.push_back(base_path + "." + _base_extension)
 	return paths
 
-func _convert_path_to_asset_file(path: String, input_type: int) -> String:
+func _convert_path_to_asset_file(path: String, input_type: int, controller: int) -> String:
 	match get_path_type(path):
 		PathType.INPUT_ACTION:
-			var event := get_matching_event(path, input_type)
+			var event := get_matching_event(path, input_type, controller)
 			if event:
 				return _convert_event_to_path(event)
 			return path
 		PathType.JOYPAD_PATH:
-			return Mapper._convert_joypad_path(path, _settings.joypad_fallback)
+			return Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback)
 		PathType.SPECIFIC_PATH, _:
 			return path
 
@@ -349,9 +366,9 @@ func _convert_event_to_path(event: InputEvent):
 	elif event is InputEventMouseButton:
 		return _convert_mouse_button_to_path(event.button_index)
 	elif event is InputEventJoypadButton:
-		return _convert_joypad_button_to_path(event.button_index)
+		return _convert_joypad_button_to_path(event.button_index, event.device)
 	elif event is InputEventJoypadMotion:
-		return _convert_joypad_motion_to_path(event.axis)
+		return _convert_joypad_motion_to_path(event.axis, event.device)
 
 func _convert_key_to_path(scancode: int):
 	match scancode:
@@ -563,7 +580,7 @@ func _convert_mouse_button_to_path(button_index: int):
 		_:
 			return "mouse/sample"
 
-func _convert_joypad_button_to_path(button_index: int):
+func _convert_joypad_button_to_path(button_index: int, controller: int):
 	var path
 	match button_index:
 		JOY_BUTTON_A:
@@ -600,9 +617,9 @@ func _convert_joypad_button_to_path(button_index: int):
 			path = "joypad/share"
 		_:
 			return ""
-	return Mapper._convert_joypad_path(path, _settings.joypad_fallback)
+	return Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback)
 
-func _convert_joypad_motion_to_path(axis: int):
+func _convert_joypad_motion_to_path(axis: int, controller: int):
 	var path : String
 	match axis:
 		JOY_AXIS_LEFT_X, JOY_AXIS_LEFT_Y:
@@ -615,7 +632,7 @@ func _convert_joypad_motion_to_path(axis: int):
 			path = "joypad/rt"
 		_:
 			return ""
-	return Mapper._convert_joypad_path(path, _settings.joypad_fallback)
+	return Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback)
 
 func _load_icon(path: String) -> int:
 	if _cached_icons.has(path): return OK

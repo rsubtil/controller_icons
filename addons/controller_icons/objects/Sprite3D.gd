@@ -23,18 +23,18 @@ func _get_configuration_warnings():
 @export_enum("Both", "Keyboard/Mouse", "Controller") var show_only := 0:
 	set(_show_only):
 		show_only = _show_only
-		_on_input_type_changed(ControllerIcons._last_input_type)
+		_on_input_type_changed(ControllerIcons._last_input_type, ControllerIcons._last_controller)
 
 @export_enum("None", "Keyboard/Mouse", "Controller") var force_type : int = 0:
 	set(_force_type):
 		force_type = _force_type
-		_on_input_type_changed(ControllerIcons._last_input_type)
+		_on_input_type_changed(ControllerIcons._last_input_type, ControllerIcons._last_controller)
 
 func _ready():
 	ControllerIcons.input_type_changed.connect(_on_input_type_changed)
 	self.path = path
 
-func _on_input_type_changed(input_type):
+func _on_input_type_changed(input_type, controller):
 	if show_only == 0 or \
 		(show_only == 1 and input_type == ControllerIcons.InputType.KEYBOARD_MOUSE) or \
 		(show_only == 2 and input_type == ControllerIcons.InputType.CONTROLLER):

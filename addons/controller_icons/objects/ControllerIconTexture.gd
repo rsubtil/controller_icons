@@ -181,7 +181,7 @@ func _load_texture_path():
 func _init():
 	ControllerIcons.input_type_changed.connect(_on_input_type_changed)
 
-func _on_input_type_changed(input_type: int):
+func _on_input_type_changed(input_type: int, controller: int):
 	_load_texture_path()
 
 #region "Draw functions"
