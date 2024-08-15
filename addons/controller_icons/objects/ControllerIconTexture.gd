@@ -185,6 +185,7 @@ func _on_input_type_changed(input_type: int, controller: int):
 	_load_texture_path()
 
 #region "Draw functions"
+const _NULL_SIZE := 2
 
 func _get_width() -> int:
 	if _can_be_shown():
@@ -195,8 +196,10 @@ func _get_width() -> int:
 		, 0)
 		if _label_settings:
 			ret += max(0, _textures.size()-1) * _text_size.x
-		return ret
-	return 2
+		# If ret is 0, return a size of 2 to prevent triggering engine checks
+		# for null sizes. The correct size will be set at a later frame.
+		return ret if ret > 0 else _NULL_SIZE
+	return _NULL_SIZE
 
 func _get_height() -> int:
 	if _can_be_shown():
@@ -207,8 +210,10 @@ func _get_height() -> int:
 		, 0)
 		if _label_settings and _textures.size() > 1:
 			ret = max(ret, _text_size.y)
-		return ret
-	return 2
+		# If ret is 0, return a size of 2 to prevent triggering engine checks
+		# for null sizes. The correct size will be set at a later frame.
+		return ret if ret > 0 else _NULL_SIZE
+	return _NULL_SIZE
 
 func _has_alpha() -> bool:
 	return _textures.any(func(texture: Texture2D):
