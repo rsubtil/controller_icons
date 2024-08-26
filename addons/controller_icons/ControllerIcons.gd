@@ -17,6 +17,9 @@ enum PathType {
 var _cached_icons := {}
 var _custom_input_actions := {}
 
+var _cached_callables_lock := Mutex.new()
+var _cached_callables : Array[Callable] = []
+
 var _last_input_type : InputType
 var _last_controller : int
 var _settings : ControllerSettings
@@ -158,13 +161,22 @@ func _test_mouse_velocity(relative_vec: Vector2):
 	# We do a component sum instead of a length, to save on a
 	# sqrt operation, and because length_squared is negatively
 	# affected by low value vectors (<10).
-	# It is also it's good enough for this system, so reliability
+	# It is also good enough for this system, so reliability
 	# is sacrificed in favor of speed.
 	_mouse_velocity += abs(relative_vec.x) + abs(relative_vec.y)
 	return _mouse_velocity / _MOUSE_VELOCITY_DELTA > _settings.mouse_min_movement
 
 func _process(delta: float) -> void:
 	_t += delta
+
+	if not _cached_callables.is_empty() and _cached_callables_lock.try_lock():
+		# UPGRADE: In Godot 4.2, for-loop variables can be
+		# statically typed:
+		# for f: Callable in _cached_callables:
+		for f in _cached_callables:
+			if f.is_valid(): f.call()
+		_cached_callables.clear()
+		_cached_callables_lock.unlock()
 
 func _add_custom_input_action(input_action: String, data: Dictionary):
 	_custom_input_actions[input_action] = data["events"]
@@ -656,3 +668,7 @@ func _load_icon(path: String) -> int:
 	_cached_icons[path] = tex
 	return OK
 
+func _defer_texture_load(f: Callable) -> void:
+	_cached_callables_lock.lock()
+	_cached_callables.push_back(f)
+	_cached_callables_lock.unlock()
