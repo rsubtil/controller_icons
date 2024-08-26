@@ -160,7 +160,7 @@ func _reload_resource():
 	_dirty = true
 	emit_changed()
 
-func _load_texture_path_main_thread():
+func _load_texture_path_impl():
 	var textures : Array[Texture2D] = []
 	if ControllerIcons.is_node_ready() and _can_be_shown():
 		var input_type = ControllerIcons._last_input_type if force_type == ForceType.NONE else force_type - 1
@@ -174,9 +174,12 @@ func _load_texture_path_main_thread():
 func _load_texture_path():
 	# Ensure loading only occurs on the main thread
 	if OS.get_thread_caller_id() != OS.get_main_thread_id():
-		_load_texture_path_main_thread.call_deferred()
+		# In Godot 4.3, call_deferred no longer makes this function
+		# execute on the main thread due to changes in resource loading.
+		# To ensure this, we instead rely on ControllerIcons for this
+		ControllerIcons._defer_texture_load(_load_texture_path_impl)
 	else:
-		_load_texture_path_main_thread()
+		_load_texture_path_impl()
 
 func _init():
 	ControllerIcons.input_type_changed.connect(_on_input_type_changed)
