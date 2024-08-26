@@ -167,7 +167,9 @@ func _load_texture_path_main_thread():
 		if ControllerIcons.get_path_type(path) == ControllerIcons.PathType.INPUT_ACTION:
 			var event := ControllerIcons.get_matching_event(path, input_type)
 			textures.append_array(ControllerIcons.parse_event_modifiers(event))
-		textures.append(ControllerIcons.parse_path(path, input_type))
+		var tex := ControllerIcons.parse_path(path, input_type)
+		if tex:
+			textures.append(tex)
 	_textures = textures
 	_reload_resource()
 
