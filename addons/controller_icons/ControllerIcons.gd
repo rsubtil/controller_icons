@@ -81,6 +81,7 @@ func _set_last_input_type(__last_input_type, __last_controller):
 	emit_signal("input_type_changed", _last_input_type, _last_controller)
 
 func _enter_tree():
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	if Engine.is_editor_hint():
 		_parse_input_actions()
 
