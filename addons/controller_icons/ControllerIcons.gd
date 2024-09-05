@@ -586,7 +586,7 @@ func _convert_key_to_path(scancode: int):
 			return "key/comma"
 		KEY_EQUAL:
 			return "key/equals"
-		KEY_PERIOD:
+		KEY_PERIOD, KEY_KP_PERIOD:
 			return "key/period"
 		_:
 			return ""
