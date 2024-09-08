@@ -575,7 +575,7 @@ func _convert_key_to_path(scancode: int):
 		KEY_BACKSLASH:
 			return "key/slash"
 		KEY_SLASH:
-			return "key/forwardslash"
+			return "key/forward_slash"
 		KEY_BRACKETRIGHT:
 			return "key/bracket_right"
 		KEY_ASCIITILDE, KEY_QUOTELEFT:

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://d31fqst2pxdni"
-path="res://.godot/imported/forwardslash.png-31f07782e0e1b20acd0fb93e98861fec.ctex"
+path="res://.godot/imported/forward_slash.png-bdc3946991216f01ca3e8ccb138c731b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/controller_icons/assets/key/forwardslash.png"
-dest_files=["res://.godot/imported/forwardslash.png-31f07782e0e1b20acd0fb93e98861fec.ctex"]
+source_file="res://addons/controller_icons/assets/key/forward_slash.png"
+dest_files=["res://.godot/imported/forward_slash.png-bdc3946991216f01ca3e8ccb138c731b.ctex"]
 
 [params]
 
