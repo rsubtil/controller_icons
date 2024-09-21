@@ -48,9 +48,11 @@ func _get_joypad_type(device, fallback):
 		return ControllerSettings.Devices.LUNA
 	elif "PS3 Controller" in controller_name:
 		return ControllerSettings.Devices.PS3
-	elif "PS4 Controller" in controller_name:
+	elif "PS4 Controller" in controller_name or \
+		"DUALSHOCK 4" in controller_name:
 		return ControllerSettings.Devices.PS4
-	elif "PS5 Controller" in controller_name:
+	elif "PS5 Controller" in controller_name or \
+		"DualSense" in controller_name:
 		return ControllerSettings.Devices.PS5
 	elif "Stadia Controller" in controller_name:
 		return ControllerSettings.Devices.STADIA
