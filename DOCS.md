@@ -131,8 +131,8 @@ You can do so by creating a script which extends `ControllerMapper`:
 ```gdscript
 extends ControllerMapper
 
-func _convert_joypad_path(path: String, fallback: int) -> String:
-	var controller_name = Input.get_joy_name(0)
+func _convert_joypad_path(path: String, device: int, fallback: ControllerSettings.Devices) -> String:
+	var controller_name = Input.get_joy_name(device)
 	# Support for the new hot Playstation 42 controller
 	if "PlayStation 42 Controller" in controller_name:
 		return path.replace("joypad/", "playstation42/")
@@ -142,9 +142,12 @@ func _convert_joypad_path(path: String, fallback: int) -> String:
 
 The only function that's mandatory is `_convert_joypad_path`. This supplies a [generic joypad `path`](#generic-joypad-path), which you then need to convert to a [specific path](#specific-path) for the desired controller assets. Check out the the default implementation at `res://addons/controller_icons/Mapper.gd` to see how the default mapping is done.
 
-`fallback` is the fallback device type if automatic detection fails. There's not much need to use this if you're writing a custom mapper, but it is needed for the default mapping process.
+* `device` is the device index. It will be `0` for the first connected controller, `1` for the 2nd, and so on. If the path originates from an input action conversion which is accepts input from "All Devices", `device` will be `-1`.
+* `fallback` is the fallback device type if automatic detection fails. There's not much need to use this if you're writing a custom mapper, but it is needed for the default mapping process.
 
-If you do not wish to fully replace the original mapper, you can still fallback to the default mapper by calling the parent's method (`return super._convert_joypad_path(path, fallback)`)
+If you do not wish to fully replace the original mapper, you can still fallback to the default mapper by calling the parent's method (`return super._convert_joypad_path(path, fallback)`).
+
+You then have to set the addon to use this mapper by setting its path in `res://addons/controller_icons/settings.tres`, in the **Custom Mapper** property of the **Custom Assets** group. 
 
 # TTS support
 
