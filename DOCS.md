@@ -142,7 +142,7 @@ func _convert_joypad_path(path: String, device: int, fallback: ControllerSetting
 
 The only function that's mandatory is `_convert_joypad_path`. This supplies a [generic joypad `path`](#generic-joypad-path), which you then need to convert to a [specific path](#specific-path) for the desired controller assets. Check out the the default implementation at `res://addons/controller_icons/Mapper.gd` to see how the default mapping is done.
 
-* `device` is the device index. It will be `0` for the first connected controller, `1` for the 2nd, and so on. If the path originates from an input action conversion which is accepts input from "All Devices", `device` will be `-1`.
+* `device` is the device index. It will be `0` for the first connected controller, `1` for the 2nd, and so on. If the path originates from an input action conversion, which accepts input from "All Devices", `device` will be `-1`.
 * `fallback` is the fallback device type if automatic detection fails. There's not much need to use this if you're writing a custom mapper, but it is needed for the default mapping process.
 
 If you do not wish to fully replace the original mapper, you can still fallback to the default mapper by calling the parent's method (`return super._convert_joypad_path(path, fallback)`).
