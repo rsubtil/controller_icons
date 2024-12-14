@@ -604,6 +604,10 @@ func _convert_mouse_button_to_path(button_index: int):
 			return "mouse/right"
 		MOUSE_BUTTON_MIDDLE:
 			return "mouse/middle"
+		MOUSE_BUTTON_WHEEL_UP:
+			return "mouse/wheel_up"
+		MOUSE_BUTTON_WHEEL_DOWN:
+			return "mouse/wheel_down"
 		_:
 			return "mouse/sample"
 
