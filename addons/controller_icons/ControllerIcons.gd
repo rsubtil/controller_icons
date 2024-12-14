@@ -272,6 +272,8 @@ func get_matching_event(path: String, input_type: InputType = _last_input_type, 
 
 	var fallback = null
 	for event in events:
+		if not is_instance_valid(event): continue
+
 		match event.get_class():
 			"InputEventKey", "InputEventMouse", "InputEventMouseMotion", "InputEventMouseButton":
 				if input_type == InputType.KEYBOARD_MOUSE:
