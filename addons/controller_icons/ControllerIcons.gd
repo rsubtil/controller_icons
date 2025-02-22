@@ -270,7 +270,7 @@ func get_matching_event(path: String, input_type: InputType = _last_input_type, 
 	else:
 		events = InputMap.action_get_events(path)
 
-	var fallback = null
+	var fallbacks = []
 	for event in events:
 		if not is_instance_valid(event): continue
 
@@ -283,11 +283,13 @@ func get_matching_event(path: String, input_type: InputType = _last_input_type, 
 					# Use the first device specific mapping if there is one.
 					if event.device == controller:
 						return event
-					# Otherwise use the first "all devices" mapping.
-					elif fallback == null and event.device < 0:
-						fallback = event
+					# Otherwise, we create a fallback prioritizing events with 'ALL_DEVICE' 
+					if event.device < 0: # All-device event
+						fallbacks.push_front(event)
+					else:
+						fallbacks.push_back(event)
 
-	return fallback
+	return fallbacks[0] if not fallbacks.is_empty() else null
 
 func _expand_path(path: String, input_type: int, controller: int) -> Array:
 	var paths := []
