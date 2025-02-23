@@ -50,7 +50,7 @@ class_name ControllerIconTexture
 ## # res://addons/controller_icons/assets/steam/gyro.png
 ## path = "steam/gyro"
 ## [/codeblock]
-@export var path : String = "":
+@export var path: String = "":
 	set(_path):
 		path = _path
 		_load_texture_path()
@@ -63,7 +63,7 @@ enum ShowMode {
 
 ## Show the icon only if a specific input method is being used. When hidden, 
 ## the icon will not occupy have any space (no width and height).
-@export var show_mode : ShowMode = ShowMode.ANY:
+@export var show_mode: ShowMode = ShowMode.ANY:
 	set(_show_mode):
 		show_mode = _show_mode
 		_load_texture_path()
@@ -71,7 +71,7 @@ enum ShowMode {
 enum ForceType {
 	NONE, ## Icon will swap according to the used input method.
 	KEYBOARD_MOUSE, ## Icon will always show the keyboard/mouse action.
-	CONTROLLER, ## Icon will always show the controller action. 
+	CONTROLLER, ## Icon will always show the controller action.
 }
 
 ## Forces the icon to show either the keyboard/mouse or controller icon,
@@ -79,14 +79,22 @@ enum ForceType {
 ##[br][br]
 ## This is only relevant for paths using input actions, and has no effect on
 ## other scenarios.
-@export var force_type : ForceType = ForceType.NONE:
+@export var force_type: ForceType = ForceType.NONE:
 	set(_force_type):
 		force_type = _force_type
 		_load_texture_path()
 
+## Forces the icon to use the textures for the device connected at the specified index.
+## For example, if a PlayStation 5 controller is connected at device_index 0,
+## the icon will always show PlayStation 5 textures.
+@export var force_device: int = -1:
+	set(_force_device):
+		force_device = _force_device
+		_load_texture_path()
+
 @export_subgroup("Text Rendering")
 ## Custom LabelSettings. If set, overrides the addon's global label settings.
-@export var custom_label_settings : LabelSettings:
+@export var custom_label_settings: LabelSettings:
 	set(_custom_label_settings):
 		custom_label_settings = _custom_label_settings
 		_load_texture_path()
@@ -117,7 +125,7 @@ func _can_be_shown():
 		0, _:
 			return true
 
-var _textures : Array[Texture2D]:
+var _textures: Array[Texture2D]:
 	set(__textures):
 		# UPGRADE: In Godot 4.2, for-loop variables can be
 		# statically typed:
@@ -147,9 +155,9 @@ var _textures : Array[Texture2D]:
 			if tex:
 				tex.connect("changed", _reload_resource)
 
-var _font : Font
-var _label_settings : LabelSettings
-var _text_size : Vector2
+var _font: Font
+var _label_settings: LabelSettings
+var _text_size: Vector2
 
 func _on_label_settings_changed():
 	_font = ThemeDB.fallback_font if not _label_settings.font else _label_settings.font
@@ -161,13 +169,14 @@ func _reload_resource():
 	emit_changed()
 
 func _load_texture_path_impl():
-	var textures : Array[Texture2D] = []
+	var textures: Array[Texture2D] = []
 	if ControllerIcons.is_node_ready() and _can_be_shown():
 		var input_type = ControllerIcons._last_input_type if force_type == ForceType.NONE else force_type - 1
 		if ControllerIcons.get_path_type(path) == ControllerIcons.PathType.INPUT_ACTION:
 			var event := ControllerIcons.get_matching_event(path, input_type)
 			textures.append_array(ControllerIcons.parse_event_modifiers(event))
-		var tex := ControllerIcons.parse_path(path, input_type)
+		var target_device = force_device if force_device >= 0 else ControllerIcons._last_controller
+		var tex := ControllerIcons.parse_path(path, input_type, target_device)
 		if tex:
 			textures.append(tex)
 	_textures = textures
@@ -200,7 +209,7 @@ func _get_width() -> int:
 			return accum
 		, 0)
 		if _label_settings:
-			ret += max(0, _textures.size()-1) * _text_size.x
+			ret += max(0, _textures.size() - 1) * _text_size.x
 		# If ret is 0, return a size of 2 to prevent triggering engine checks
 		# for null sizes. The correct size will be set at a later frame.
 		return ret if ret > 0 else _NULL_SIZE
@@ -235,7 +244,7 @@ func _draw(to_canvas_item: RID, pos: Vector2, modulate: Color, transpose: bool):
 	var position := pos
 
 	for i in range(_textures.size()):
-		var tex:Texture2D = _textures[i]
+		var tex: Texture2D = _textures[i]
 		if !tex: continue
 
 		if i != 0:
@@ -256,7 +265,7 @@ func _draw_rect(to_canvas_item: RID, rect: Rect2, tile: bool, modulate: Color, t
 	var height_ratio := rect.size.y / _get_height()
 
 	for i in range(_textures.size()):
-		var tex:Texture2D = _textures[i]
+		var tex: Texture2D = _textures[i]
 		if !tex: continue
 
 		if i != 0:
@@ -278,7 +287,7 @@ func _draw_rect_region(to_canvas_item: RID, rect: Rect2, src_rect: Rect2, modula
 	var height_ratio := rect.size.y / _get_height()
 
 	for i in range(_textures.size()):
-		var tex:Texture2D = _textures[i]
+		var tex: Texture2D = _textures[i]
 		if !tex: continue
 
 		if i != 0:
@@ -314,15 +323,15 @@ func _draw_text(to_canvas_item: RID, font_position: Vector2, text: String):
 			_font.draw_string_outline(to_canvas_item, font_position, text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size, _label_settings.outline_size, _label_settings.outline_color)
 	_font.draw_string(to_canvas_item, font_position, text, HORIZONTAL_ALIGNMENT_CENTER, -1, _label_settings.font_size, _label_settings.font_color)
 
-var _helper_viewport : Viewport
-var _is_stitching_texture : bool = false
+var _helper_viewport: Viewport
+var _is_stitching_texture: bool = false
 func _stitch_texture():
 	if _textures.is_empty():
 		return
 
 	_is_stitching_texture = true
 
-	var font_image : Image
+	var font_image: Image
 	if _textures.size() > 1:
 		# Generate a viewport to draw the text
 		_helper_viewport = SubViewport.new()
@@ -345,7 +354,7 @@ func _stitch_texture():
 		_helper_viewport.free()
 
 	var position := Vector2i(0, 0)
-	var img : Image
+	var img: Image
 	for i in range(_textures.size()):
 		if !_textures[i]: continue
 
@@ -375,7 +384,7 @@ func _stitch_texture():
 # This is necessary for 3D sprites, as the texture is assigned to a material, and not drawn directly.
 # For multi prompts, we need to generate a texture
 var _dirty := true
-var _texture_3d : Texture
+var _texture_3d: Texture
 func _get_rid():
 	if _dirty:
 		if not _is_stitching_texture:
