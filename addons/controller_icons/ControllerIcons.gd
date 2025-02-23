@@ -310,7 +310,7 @@ func _convert_path_to_asset_file(path: String, input_type: int, controller: int)
 		PathType.INPUT_ACTION:
 			var event := get_matching_event(path, input_type, controller)
 			if event:
-				return _convert_event_to_path(event)
+				return _convert_event_to_path(event, controller)
 			return path
 		PathType.JOYPAD_PATH:
 			return Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback)
@@ -374,7 +374,7 @@ func _convert_asset_file_to_tts(path: String) -> String:
 		_:
 			return path
 
-func _convert_event_to_path(event: InputEvent):
+func _convert_event_to_path(event: InputEvent, controller: int = _last_controller):
 	if event is InputEventKey:
 		# If this is a physical key, convert to localized scancode
 		if event.keycode == 0:
@@ -383,9 +383,9 @@ func _convert_event_to_path(event: InputEvent):
 	elif event is InputEventMouseButton:
 		return _convert_mouse_button_to_path(event.button_index)
 	elif event is InputEventJoypadButton:
-		return _convert_joypad_button_to_path(event.button_index, event.device)
+		return _convert_joypad_button_to_path(event.button_index, controller)
 	elif event is InputEventJoypadMotion:
-		return _convert_joypad_motion_to_path(event.axis, event.device)
+		return _convert_joypad_motion_to_path(event.axis, controller)
 
 func _convert_key_to_path(scancode: int):
 	match scancode:
