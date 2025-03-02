@@ -186,13 +186,14 @@ func refresh():
 	# All it takes is to signal icons to refresh paths
 	emit_signal("input_type_changed", _last_input_type, _last_controller)
 
+## TODO: Can this be removed? Seems like its unused - greenpixels
 func get_joypad_type(controller: int = _last_controller) -> ControllerSettings.Devices:
 	return Mapper._get_joypad_type(controller, _settings.joypad_fallback)
 
-func parse_path(path: String, input_type = _last_input_type, last_controller = _last_controller) -> Texture:
+func parse_path(path: String, input_type = _last_input_type, last_controller = _last_controller, forced_controller_icon_style = ControllerSettings.Devices.NONE) -> Texture:
 	if typeof(input_type) == TYPE_NIL:
 		return null
-	var root_paths := _expand_path(path, input_type, last_controller)
+	var root_paths := _expand_path(path, input_type, last_controller, forced_controller_icon_style)
 	for root_path in root_paths:
 		if _load_icon(root_path):
 			continue
@@ -291,7 +292,7 @@ func get_matching_event(path: String, input_type: InputType = _last_input_type, 
 
 	return fallbacks[0] if not fallbacks.is_empty() else null
 
-func _expand_path(path: String, input_type: int, controller: int) -> Array:
+func _expand_path(path: String, input_type: int, controller: int, forced_controller_icon_style = ControllerSettings.Devices.NONE) -> Array:
 	var paths := []
 	var base_paths := [
 		_settings.custom_asset_dir + "/",
@@ -300,20 +301,20 @@ func _expand_path(path: String, input_type: int, controller: int) -> Array:
 	for base_path in base_paths:
 		if base_path.is_empty():
 			continue
-		base_path += _convert_path_to_asset_file(path, input_type, controller)
+		base_path += _convert_path_to_asset_file(path, input_type, controller, forced_controller_icon_style)
 
 		paths.push_back(base_path + "." + _base_extension)
 	return paths
 
-func _convert_path_to_asset_file(path: String, input_type: int, controller: int) -> String:
+func _convert_path_to_asset_file(path: String, input_type: int, controller: int, forced_controller_icon_style = ControllerSettings.Devices.NONE) -> String:
 	match get_path_type(path):
 		PathType.INPUT_ACTION:
 			var event := get_matching_event(path, input_type, controller)
 			if event:
-				return _convert_event_to_path(event, controller)
+				return _convert_event_to_path(event, controller, forced_controller_icon_style)
 			return path
 		PathType.JOYPAD_PATH:
-			return Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback)
+			return Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback, forced_controller_icon_style)
 		PathType.SPECIFIC_PATH, _:
 			return path
 
@@ -374,7 +375,7 @@ func _convert_asset_file_to_tts(path: String) -> String:
 		_:
 			return path
 
-func _convert_event_to_path(event: InputEvent, controller: int = _last_controller):
+func _convert_event_to_path(event: InputEvent, controller: int = _last_controller, forced_controller_icon_style = ControllerSettings.Devices.NONE):
 	if event is InputEventKey:
 		# If this is a physical key, convert to localized scancode
 		if event.keycode == 0:
@@ -383,9 +384,9 @@ func _convert_event_to_path(event: InputEvent, controller: int = _last_controlle
 	elif event is InputEventMouseButton:
 		return _convert_mouse_button_to_path(event.button_index)
 	elif event is InputEventJoypadButton:
-		return _convert_joypad_button_to_path(event.button_index, controller)
+		return _convert_joypad_button_to_path(event.button_index, controller, forced_controller_icon_style)
 	elif event is InputEventJoypadMotion:
-		return _convert_joypad_motion_to_path(event.axis, controller)
+		return _convert_joypad_motion_to_path(event.axis, controller, forced_controller_icon_style)
 
 func _convert_key_to_path(scancode: int):
 	match scancode:
@@ -617,7 +618,7 @@ func _convert_mouse_button_to_path(button_index: int):
 		_:
 			return "mouse/sample"
 
-func _convert_joypad_button_to_path(button_index: int, controller: int):
+func _convert_joypad_button_to_path(button_index: int, controller: int, forced_controller_icon_style = ControllerSettings.Devices.NONE):
 	var path
 	match button_index:
 		JOY_BUTTON_A:
@@ -654,9 +655,9 @@ func _convert_joypad_button_to_path(button_index: int, controller: int):
 			path = "joypad/share"
 		_:
 			return ""
-	return Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback)
+	return Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback, forced_controller_icon_style)
 
-func _convert_joypad_motion_to_path(axis: int, controller: int):
+func _convert_joypad_motion_to_path(axis: int, controller: int, forced_controller_icon_style = ControllerSettings.Devices.NONE):
 	var path : String
 	match axis:
 		JOY_AXIS_LEFT_X, JOY_AXIS_LEFT_Y:
@@ -669,7 +670,7 @@ func _convert_joypad_motion_to_path(axis: int, controller: int):
 			path = "joypad/rt"
 		_:
 			return ""
-	return Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback)
+	return Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback, forced_controller_icon_style)
 
 func _load_icon(path: String) -> int:
 	if _cached_icons.has(path): return OK

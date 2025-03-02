@@ -68,6 +68,22 @@ enum ShowMode {
 		show_mode = _show_mode
 		_load_texture_path()
 
+
+## Forces the icon to show a specific controller style, regardless of the
+## currently used controller type.
+##[br][br]
+## This will override force_device if set to a value other than NONE.
+##[br][br]
+## This is only relevant for paths using input actions, and has no effect on
+## other scenarios.
+
+
+
+@export var force_controller_icon_style: ControllerSettings.Devices = ControllerSettings.Devices.NONE:
+	set(_force_controller_icon_style):
+		force_controller_icon_style = _force_controller_icon_style
+		_load_texture_path()
+
 enum ForceType {
 	NONE, ## Icon will swap according to the used input method.
 	KEYBOARD_MOUSE, ## Icon will always show the keyboard/mouse action.
@@ -196,7 +212,7 @@ func _load_texture_path_impl():
 			var event := ControllerIcons.get_matching_event(path, input_type)
 			textures.append_array(ControllerIcons.parse_event_modifiers(event))
 		var target_device = force_device if force_device != ForceDevice.ANY else ControllerIcons._last_controller
-		var tex := ControllerIcons.parse_path(path, input_type, target_device)
+		var tex := ControllerIcons.parse_path(path, input_type, target_device, force_controller_icon_style)
 		if tex:
 			textures.append(tex)
 	_textures = textures

@@ -15,7 +15,8 @@ enum Devices {
 	XBOX360,
 	XBOXONE,
 	XBOXSERIES,
-	STEAM_DECK
+	STEAM_DECK,
+	NONE
 }
 
 ## General addon settings
