@@ -84,10 +84,30 @@ enum ForceType {
 		force_type = _force_type
 		_load_texture_path()
 
+enum ForceDevice {
+	DEVICE_0,
+	DEVICE_1,
+	DEVICE_2,
+	DEVICE_3,
+	DEVICE_4,
+	DEVICE_5,
+	DEVICE_6,
+	DEVICE_7,
+	DEVICE_8,
+	DEVICE_9,
+	DEVICE_10,
+	DEVICE_11,
+	DEVICE_12,
+	DEVICE_13,
+	DEVICE_14,
+	DEVICE_15,
+	ANY # No device will be forced
+}
+
 ## Forces the icon to use the textures for the device connected at the specified index.
 ## For example, if a PlayStation 5 controller is connected at device_index 0,
 ## the icon will always show PlayStation 5 textures.
-@export var force_device: int = -1:
+@export var force_device: ForceDevice = ForceDevice.ANY:
 	set(_force_device):
 		force_device = _force_device
 		_load_texture_path()
@@ -175,7 +195,7 @@ func _load_texture_path_impl():
 		if ControllerIcons.get_path_type(path) == ControllerIcons.PathType.INPUT_ACTION:
 			var event := ControllerIcons.get_matching_event(path, input_type)
 			textures.append_array(ControllerIcons.parse_event_modifiers(event))
-		var target_device = force_device if force_device >= 0 else ControllerIcons._last_controller
+		var target_device = force_device if force_device != ForceDevice.ANY else ControllerIcons._last_controller
 		var tex := ControllerIcons.parse_path(path, input_type, target_device)
 		if tex:
 			textures.append(tex)
