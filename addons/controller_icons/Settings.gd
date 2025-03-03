@@ -3,6 +3,7 @@ extends Resource
 class_name ControllerSettings
 
 enum Devices {
+	NONE = -1,
 	LUNA,
 	OUYA,
 	PS3,
@@ -15,8 +16,7 @@ enum Devices {
 	XBOX360,
 	XBOXONE,
 	XBOXSERIES,
-	STEAM_DECK,
-	NONE
+	STEAM_DECK
 }
 
 ## General addon settings
