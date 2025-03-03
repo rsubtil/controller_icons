@@ -3,6 +3,7 @@ extends Resource
 class_name ControllerSettings
 
 enum Devices {
+	NONE = -1,
 	LUNA,
 	OUYA,
 	PS3,
