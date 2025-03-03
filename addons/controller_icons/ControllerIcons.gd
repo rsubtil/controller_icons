@@ -186,7 +186,6 @@ func refresh():
 	# All it takes is to signal icons to refresh paths
 	emit_signal("input_type_changed", _last_input_type, _last_controller)
 
-## TODO: Can this be removed? Seems like its unused - greenpixels
 func get_joypad_type(controller: int = _last_controller) -> ControllerSettings.Devices:
 	return Mapper._get_joypad_type(controller, _settings.joypad_fallback)
 

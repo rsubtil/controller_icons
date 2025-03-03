@@ -77,8 +77,6 @@ enum ShowMode {
 ## This is only relevant for paths using input actions, and has no effect on
 ## other scenarios.
 
-
-
 @export var force_controller_icon_style: ControllerSettings.Devices = ControllerSettings.Devices.NONE:
 	set(_force_controller_icon_style):
 		force_controller_icon_style = _force_controller_icon_style
