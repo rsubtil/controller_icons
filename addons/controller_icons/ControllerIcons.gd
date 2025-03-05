@@ -189,6 +189,9 @@ func refresh():
 func get_joypad_type(controller: int = _last_controller) -> ControllerSettings.Devices:
 	return Mapper._get_joypad_type(controller, _settings.joypad_fallback)
 
+func get_last_input_type() -> InputType:
+  return _last_input_type
+
 func parse_path(path: String, input_type = _last_input_type, last_controller = _last_controller, forced_controller_icon_style = ControllerSettings.Devices.NONE) -> Texture:
 	if typeof(input_type) == TYPE_NIL:
 		return null
