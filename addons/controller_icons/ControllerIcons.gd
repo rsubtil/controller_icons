@@ -231,6 +231,7 @@ func parse_event_modifiers(event: InputEvent) -> Array[Texture]:
 		for icon_path in _expand_path(modifier, InputType.KEYBOARD_MOUSE, -1):
 			if _load_icon(icon_path) == OK:
 				icons.push_back(_cached_icons[icon_path])
+				break
 
 	return icons
 
