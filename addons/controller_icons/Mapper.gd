@@ -264,7 +264,7 @@ func _convert_joypad_to_steamdeck(path: String):
 		"rt":
 			return path.replace("/rt", "/r2")
 		"select":
-			return path.replace("/select", "/square")
+			return path.replace("/select", "/inventory")
 		"start":
 			return path.replace("/start", "/menu")
 		"home":
