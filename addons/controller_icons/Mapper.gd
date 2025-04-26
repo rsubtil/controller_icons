@@ -1,4 +1,4 @@
-extends Node
+extends RefCounted
 class_name ControllerMapper
 
 func _convert_joypad_path(path: String, device: int, fallback: ControllerSettings.Devices, force_controller_icon_style = ControllerSettings.Devices.NONE) -> String:
