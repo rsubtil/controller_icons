@@ -86,7 +86,7 @@ func _enter_tree():
 		_parse_input_actions()
 
 func _exit_tree():
-	Mapper.queue_free()
+	Mapper = null
 
 func _parse_input_actions():
 	_custom_input_actions.clear()
