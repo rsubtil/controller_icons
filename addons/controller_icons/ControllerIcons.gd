@@ -88,7 +88,7 @@ func _enter_tree():
 		_parse_input_actions()
 
 func _exit_tree():
-	Mapper.queue_free()
+	Mapper = null
 
 func _parse_input_actions():
 	_custom_input_actions.clear()
@@ -196,6 +196,9 @@ func refresh():
 func get_joypad_type(controller: int = _last_controller) -> ControllerSettings.Devices:
 	return Mapper._get_joypad_type(controller, _settings.joypad_fallback)
 
+func get_last_input_type() -> InputType:
+	return _last_input_type
+
 func parse_path(path: String, input_type = _last_input_type, last_controller = _last_controller, forced_controller_icon_style = ControllerSettings.Devices.NONE) -> Texture:
 	if typeof(input_type) == TYPE_NIL:
 		return null
@@ -235,6 +238,7 @@ func parse_event_modifiers(event: InputEvent) -> Array[Texture]:
 		for icon_path in _expand_path(modifier, InputType.KEYBOARD_MOUSE, -1):
 			if _load_icon(icon_path) == OK:
 				icons.push_back(_cached_icons[icon_path])
+				break
 
 	return icons
 
@@ -664,7 +668,7 @@ func _convert_joypad_button_to_path(button_index: int, controller: int, forced_c
 	return Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback, forced_controller_icon_style)
 
 func _convert_joypad_motion_to_path(axis: int, controller: int, forced_controller_icon_style = ControllerSettings.Devices.NONE):
-	var path: String
+	var path : String
 	match axis:
 		JOY_AXIS_LEFT_X, JOY_AXIS_LEFT_Y:
 			path = "joypad/l_stick"
