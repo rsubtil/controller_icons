@@ -69,6 +69,8 @@ enum ShowMode {
 		_load_texture_path()
 
 
+@export_subgroup("Overrides")
+
 ## Forces the icon to show a specific controller style, regardless of the
 ## currently used controller type.
 ##[br][br]
@@ -76,7 +78,6 @@ enum ShowMode {
 ##[br][br]
 ## This is only relevant for paths using input actions, and has no effect on
 ## other scenarios.
-
 @export var force_controller_icon_style: ControllerSettings.Devices = ControllerSettings.Devices.NONE:
 	set(_force_controller_icon_style):
 		force_controller_icon_style = _force_controller_icon_style
