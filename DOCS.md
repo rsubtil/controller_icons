@@ -88,7 +88,7 @@ func my_func():
 	...
 	ControllerIcons.input_type_changed.connect(_on_input_type_changed)
 
-func _on_input_type_changed(input_type):
+func _on_input_type_changed(input_type: ControllerIcons.InputType, controller: int):
 	match input_type:
 		ControllerIcons.InputType.KEYBOARD_MOUSE:
 			# Input changed to keyboard/mouse
