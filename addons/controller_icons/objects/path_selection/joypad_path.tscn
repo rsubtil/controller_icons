@@ -1,6 +1,6 @@
 [gd_scene load_steps=25 format=3 uid="uid://b3lplrf2w6kh7"]
 
-[ext_resource type="Script" path="res://addons/controller_icons/objects/path_selection/JoypadPathSelector.gd" id="1_4ryog"]
+[ext_resource type="Script" path="res://addons/controller_icons/objects/path_selection/joypad_path.gd" id="1_4ryog"]
 [ext_resource type="Script" path="res://addons/controller_icons/objects/ControllerIconTexture.gd" id="2_yxfq6"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_haylq"]

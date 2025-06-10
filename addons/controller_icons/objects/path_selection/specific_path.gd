@@ -69,9 +69,6 @@ func populate(editor_interface: EditorInterface) -> void:
 		n_assets_container.remove_child(child)
 		child.queue_free()
 
-	# UPGRADE: In Godot 4.2, there's no need to have an instance to
-	# EditorInterface, since it's now a static call:
-	# var editor_control := EditorInterface.get_base_control()
 	var editor_control := editor_interface.get_base_control()
 	color_text_enabled = editor_control.get_theme_color("font_color", "Editor")
 	color_text_disabled = editor_control.get_theme_color("disabled_font_color", "Editor")

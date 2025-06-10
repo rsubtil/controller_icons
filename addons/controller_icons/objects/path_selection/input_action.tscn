@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bituity863qe4"]
 
-[ext_resource type="Script" path="res://addons/controller_icons/objects/path_selection/InputActionSelector.gd" id="1_shxks"]
+[ext_resource type="Script" path="res://addons/controller_icons/objects/path_selection/input_action.gd" id="1_shxks"]
 
 [node name="Input Action" type="Panel"]
 anchors_preset = 15

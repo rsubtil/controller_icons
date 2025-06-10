@@ -1,6 +1,6 @@
 extends EditorInspectorPlugin
 
-var path_selector := preload("res://addons/controller_icons/objects/ControllerIconPathEditorProperty.gd")
+var path_selector := preload("res://addons/controller_icons/objects/inspector/editor_path_property.gd")
 
 var editor_interface : EditorInterface
 

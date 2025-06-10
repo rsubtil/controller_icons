@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://d2ow6e2ba86b6"]
 
-[ext_resource type="Script" path="res://addons/controller_icons/objects/path_selection/SpecificPathSelector.gd" id="1_iqwfd"]
+[ext_resource type="Script" path="res://addons/controller_icons/objects/path_selection/specific_path.gd" id="1_iqwfd"]
 
 [node name="Specific Path" type="Panel"]
 anchors_preset = 15

@@ -8,7 +8,7 @@ func _init(editor_interface: EditorInterface):
 	add_child(build_tree(editor_interface))
 
 func build_tree(editor_interface: EditorInterface):
-	selector = preload("res://addons/controller_icons/objects/ControllerIconPathSelectorPopup.tscn").instantiate()
+	selector = preload("res://addons/controller_icons/objects/path_selection/path_selector_popup.tscn").instantiate()
 	selector.editor_interface = editor_interface
 	selector.visible = false
 	selector.path_selected.connect(
