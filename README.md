@@ -40,6 +40,11 @@ Provides icons for all major controllers and keyboard/mouse actions, with an aut
 > [!IMPORTANT]
 > This is the Godot 4.x version. For the Godot 3.x version, check the [3.x branch](https://github.com/rsubtil/controller_icons/tree/3.x)
 
+> [!NOTE]
+> If you're using C#, there are currently some engine bugs affecting the addon's usage. For a C# version of the addon, check out [Jace Varlet's fork instead](https://github.com/jembawls/controller_icons_csharp).
+>
+> A special thanks to Jace for porting this addon to C#. Please check out [their work](https://linktr.ee/jembawls)!
+
 The minimum Godot version is 4.1.2 (stable).
 
 Download this repository and copy the `addons` folder to your project root directory.
