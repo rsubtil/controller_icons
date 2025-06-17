@@ -4,6 +4,7 @@
 
 Provides icons for all major controllers and keyboard/mouse actions, with an automatic icon remapping system.
 
+> [!IMPORTANT]
 > This is the Godot 4.x version. For the Godot 3.x version, check the [3.x branch](https://github.com/rsubtil/controller_icons/tree/3.x)
 
 ## Features
@@ -36,6 +37,7 @@ Provides icons for all major controllers and keyboard/mouse actions, with an aut
 
 ## Installation
 
+> [!IMPORTANT]
 > This is the Godot 4.x version. For the Godot 3.x version, check the [3.x branch](https://github.com/rsubtil/controller_icons/tree/3.x)
 
 The minimum Godot version is 4.1.2 (stable).
