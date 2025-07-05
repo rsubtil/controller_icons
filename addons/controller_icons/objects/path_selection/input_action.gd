@@ -23,8 +23,8 @@ class ControllerIcons_Item:
 		controller_icon_joy.path = path
 		controller_icon_joy.force_type = 2
 
-		tree_item.set_icon_max_width(1, 48 * controller_icon_key._textures.size())
-		tree_item.set_icon_max_width(2, 48 * controller_icon_key._textures.size())
+		tree_item.set_icon_max_width(1, 48 * controller_icon_key._texture_data.textures.size())
+		tree_item.set_icon_max_width(2, 48 * controller_icon_key._texture_data.textures.size())
 		tree_item.set_icon(1, controller_icon_key)
 		tree_item.set_icon(2, controller_icon_joy)
 

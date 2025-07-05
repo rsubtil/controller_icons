@@ -55,6 +55,14 @@ class_name ControllerIconTexture
 		path = _path
 		_load_texture_path()
 
+## Modifiers to add to the displayed icon
+## TODO: Document
+@export var modifiers: String = "":
+	set(_modifiers):
+		modifiers = _modifiers
+		_load_texture_path()
+
+
 enum ShowMode {
 	ANY, ## Icon will be display on any input method.
 	KEYBOARD_MOUSE, ## Icon will be display only when the keyboard/mouse is being used.
@@ -134,8 +142,8 @@ enum ForceDevice {
 		custom_label_settings = _custom_label_settings
 		_load_texture_path()
 
-		# Call _textures setter, which handles signal connections for label settings
-		_textures = _textures
+		# Call _texture_data setter, which handles signal connections for label settings
+		_texture_data = _texture_data
 
 
 ## Returns a text representation of the displayed icon, useful for TTS
@@ -160,21 +168,14 @@ func _can_be_shown():
 		0, _:
 			return true
 
-var _textures: Array[Texture2D]:
-	set(__textures):
-		# UPGRADE: In Godot 4.2, for-loop variables can be
-		# statically typed:
-		# for tex:Texture in __textures:
-		for tex in __textures:
-			if tex and tex.is_connected("changed", _reload_resource):
-				tex.disconnect("changed", _reload_resource)
-
+var _texture_data: ControllerIcons.TextureData:
+	set(__texture_data):
 		if _label_settings and _label_settings.is_connected("changed", _on_label_settings_changed):
 			_label_settings.disconnect("changed", _on_label_settings_changed)
 
-		_textures = __textures
+		_texture_data = __texture_data
 		_label_settings = null
-		if _textures and _textures.size() > 1:
+		if _texture_data and _texture_data.textures.size() > 1:
 			_label_settings = custom_label_settings
 			if not _label_settings:
 				_label_settings = ControllerIcons._settings.custom_label_settings
@@ -183,12 +184,6 @@ var _textures: Array[Texture2D]:
 			_label_settings.connect("changed", _on_label_settings_changed)
 			_font = ThemeDB.fallback_font if not _label_settings.font else _label_settings.font
 			_on_label_settings_changed()
-		# UPGRADE: In Godot 4.2, for-loop variables can be
-		# statically typed:
-		# for tex:Texture in __textures:
-		for tex in __textures:
-			if tex:
-				tex.connect("changed", _reload_resource)
 
 var _font: Font
 var _label_settings: LabelSettings
@@ -204,18 +199,11 @@ func _reload_resource():
 	emit_changed()
 
 func _load_texture_path_impl():
-	var textures: Array[Texture2D] = []
 	if ControllerIcons.is_node_ready() and _can_be_shown():
 		var input_type = ControllerIcons._last_input_type if force_type == ForceType.NONE else force_type - 1
-		if ControllerIcons.get_path_type(path) == ControllerIcons.PathType.INPUT_ACTION:
-			var event := ControllerIcons.get_matching_event(path, input_type)
-			textures.append_array(ControllerIcons.parse_event_modifiers(event))
 		var target_device = force_device if force_device != ForceDevice.ANY else ControllerIcons._last_controller
-		var tex := ControllerIcons.parse_path(path, input_type, target_device, force_controller_icon_style)
-		if tex:
-			textures.append(tex)
-	_textures = textures
-	_reload_resource()
+		_texture_data = ControllerIcons.parse_path(path, modifiers, input_type, target_device, force_controller_icon_style)
+		_reload_resource()
 
 func _load_texture_path():
 	# Ensure loading only occurs on the main thread
@@ -237,27 +225,27 @@ func _on_input_type_changed(input_type: int, controller: int):
 const _NULL_SIZE := 2
 
 func _get_width() -> int:
-	if _can_be_shown():
-		var ret := _textures.reduce(func(accum: int, texture: Texture2D):
+	if _texture_data and _can_be_shown():
+		var ret := _texture_data.textures.reduce(func(accum: int, texture: Texture2D):
 			if texture:
 				return accum + texture.get_width()
 			return accum
 		, 0)
 		if _label_settings:
-			ret += max(0, _textures.size() - 1) * _text_size.x
+			ret += max(0, _texture_data.textures.size() - 1) * _text_size.x
 		# If ret is 0, return a size of 2 to prevent triggering engine checks
 		# for null sizes. The correct size will be set at a later frame.
 		return ret if ret > 0 else _NULL_SIZE
 	return _NULL_SIZE
 
 func _get_height() -> int:
-	if _can_be_shown():
-		var ret := _textures.reduce(func(accum: int, texture: Texture2D):
+	if _texture_data and _can_be_shown():
+		var ret := _texture_data.textures.reduce(func(accum: int, texture: Texture2D):
 			if texture:
 				return max(accum, texture.get_height())
 			return accum
 		, 0)
-		if _label_settings and _textures.size() > 1:
+		if _label_settings and _texture_data.textures.size() > 1:
 			ret = max(ret, _text_size.y)
 		# If ret is 0, return a size of 2 to prevent triggering engine checks
 		# for null sizes. The correct size will be set at a later frame.
@@ -265,7 +253,7 @@ func _get_height() -> int:
 	return _NULL_SIZE
 
 func _has_alpha() -> bool:
-	return _textures.any(func(texture: Texture2D):
+	return _texture_data and _texture_data.textures.any(func(texture: Texture2D):
 		return texture.has_alpha()
 	)
 
@@ -278,8 +266,8 @@ func _is_pixel_opaque(x, y) -> bool:
 func _draw(to_canvas_item: RID, pos: Vector2, modulate: Color, transpose: bool):
 	var position := pos
 
-	for i in range(_textures.size()):
-		var tex: Texture2D = _textures[i]
+	for i in range(_texture_data.textures.size()):
+		var tex: Texture2D = _texture_data.textures[i]
 		if !tex: continue
 
 		if i != 0:
@@ -299,8 +287,8 @@ func _draw_rect(to_canvas_item: RID, rect: Rect2, tile: bool, modulate: Color, t
 	var width_ratio := rect.size.x / _get_width()
 	var height_ratio := rect.size.y / _get_height()
 
-	for i in range(_textures.size()):
-		var tex: Texture2D = _textures[i]
+	for i in range(_texture_data.textures.size()):
+		var tex: Texture2D = _texture_data.textures[i]
 		if !tex: continue
 
 		if i != 0:
@@ -321,8 +309,8 @@ func _draw_rect_region(to_canvas_item: RID, rect: Rect2, src_rect: Rect2, modula
 	var width_ratio := rect.size.x / _get_width()
 	var height_ratio := rect.size.y / _get_height()
 
-	for i in range(_textures.size()):
-		var tex: Texture2D = _textures[i]
+	for i in range(_texture_data.textures.size()):
+		var tex: Texture2D = _texture_data.textures[i]
 		if !tex: continue
 
 		if i != 0:
@@ -361,13 +349,13 @@ func _draw_text(to_canvas_item: RID, font_position: Vector2, text: String):
 var _helper_viewport: Viewport
 var _is_stitching_texture: bool = false
 func _stitch_texture():
-	if _textures.is_empty():
+	if _texture_data.textures.is_empty():
 		return
 
 	_is_stitching_texture = true
 
 	var font_image: Image
-	if _textures.size() > 1:
+	if _texture_data.textures.size() > 1:
 		# Generate a viewport to draw the text
 		_helper_viewport = SubViewport.new()
 		# FIXME: We need a 3px margin for some reason
@@ -390,8 +378,8 @@ func _stitch_texture():
 
 	var position := Vector2i(0, 0)
 	var img: Image
-	for i in range(_textures.size()):
-		if !_textures[i]: continue
+	for i in range(_texture_data.textures.size()):
+		if !_texture_data.textures[i]: continue
 
 		if i != 0:
 			# Draw text char '+'
@@ -403,7 +391,7 @@ func _stitch_texture():
 			img.blit_rect(font_image, region, font_position)
 			position.x += ceili(region.size.x)
 
-		var texture_raw := _textures[i].get_image()
+		var texture_raw := _texture_data.textures[i].get_image()
 		texture_raw.decompress()
 		if not img:
 			img = Image.create(_get_width(), _get_height(), true, texture_raw.get_format())
@@ -430,6 +418,6 @@ func _get_rid():
 				return 0
 		else:
 			return 0
-	return _texture_3d.get_rid() if not _textures.is_empty() else 0
+	return _texture_3d.get_rid() if not _texture_data.textures.is_empty() else 0
 
 #endregion
