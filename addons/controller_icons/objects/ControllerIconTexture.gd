@@ -263,31 +263,12 @@ func _is_pixel_opaque(x, y) -> bool:
 	# stops working.
 	return true
 
-func _draw(to_canvas_item: RID, pos: Vector2, modulate: Color, transpose: bool):
-	var position := pos
-
-	for i in range(_texture_data.textures.size()):
-		var tex: Texture2D = _texture_data.textures[i]
-		if !tex: continue
-
-		if i != 0:
-			# Draw text char '+'
-			var font_position := Vector2(
-				position.x,
-				position.y + (get_height() - _text_size.y) / 2.0
-			)
-			_draw_text(to_canvas_item, font_position, "+")
-			position.x += _text_size.x
-
-		tex.draw(to_canvas_item, position, modulate, transpose)
-		position.x += tex.get_width()
-
-func _draw_rect(to_canvas_item: RID, rect: Rect2, tile: bool, modulate: Color, transpose: bool):
+func _draw_impl(rect: Rect2, draw_icon_func: Callable, draw_text_func: Callable):
 	var position := rect.position
 	var width_ratio := rect.size.x / _get_width()
 	var height_ratio := rect.size.y / _get_height()
 
-	for i in range(_texture_data.textures.size()):
+	for i in _texture_data.textures.size():
 		var tex: Texture2D = _texture_data.textures[i]
 		if !tex: continue
 
@@ -297,45 +278,14 @@ func _draw_rect(to_canvas_item: RID, rect: Rect2, tile: bool, modulate: Color, t
 				position.x + (_text_size.x * width_ratio) / 2 - (_text_size.x / 2),
 				position.y + (rect.size.y - _text_size.y) / 2.0
 			)
-			_draw_text(to_canvas_item, font_position, "+")
+			draw_text_func.call("+", font_position)
 			position.x += _text_size.x * width_ratio
 
 		var size := tex.get_size() * Vector2(width_ratio, height_ratio)
-		tex.draw_rect(to_canvas_item, Rect2(position, size), tile, modulate, transpose)
+		draw_icon_func.call(tex, Rect2(position, size)) 
 		position.x += size.x
 
-func _draw_rect_region(to_canvas_item: RID, rect: Rect2, src_rect: Rect2, modulate: Color, transpose: bool, clip_uv: bool):
-	var position := rect.position
-	var width_ratio := rect.size.x / _get_width()
-	var height_ratio := rect.size.y / _get_height()
-
-	for i in range(_texture_data.textures.size()):
-		var tex: Texture2D = _texture_data.textures[i]
-		if !tex: continue
-
-		if i != 0:
-			# Draw text char '+'
-			var font_position := Vector2(
-				position.x + (_text_size.x * width_ratio) / 2 - (_text_size.x / 2),
-				position.y + (rect.size.y - _text_size.y) / 2.0
-			)
-			_draw_text(to_canvas_item, font_position, "+")
-			position.x += _text_size.x * width_ratio
-
-		var size := tex.get_size() * Vector2(width_ratio, height_ratio)
-		var src_rect_ratio := Vector2(
-			tex.get_width() / float(_get_width()),
-			tex.get_height() / float(_get_height())
-		)
-		var tex_src_rect := Rect2(
-			src_rect.position * src_rect_ratio,
-			src_rect.size * src_rect_ratio
-		)
-
-		tex.draw_rect_region(to_canvas_item, Rect2(position, size), tex_src_rect, modulate, transpose, clip_uv)
-		position.x += size.x
-
-func _draw_text(to_canvas_item: RID, font_position: Vector2, text: String):
+func _draw_text(to_canvas_item: RID, text: String, font_position: Vector2):
 	font_position.y += _font.get_ascent(_label_settings.font_size)
 	
 	if _label_settings.shadow_color.a > 0:
@@ -345,6 +295,42 @@ func _draw_text(to_canvas_item: RID, font_position: Vector2, text: String):
 	if _label_settings.outline_color.a > 0 and _label_settings.outline_size > 0:
 			_font.draw_string_outline(to_canvas_item, font_position, text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size, _label_settings.outline_size, _label_settings.outline_color)
 	_font.draw_string(to_canvas_item, font_position, text, HORIZONTAL_ALIGNMENT_CENTER, -1, _label_settings.font_size, _label_settings.font_color)
+
+func _draw(to_canvas_item: RID, pos: Vector2, modulate: Color, transpose: bool):
+	var draw_icon_func := func(tex: Texture2D, rect: Rect2):
+		tex.draw(to_canvas_item, rect.position, modulate, transpose)
+
+	var draw_text_func := func(text: String, position: Vector2):
+		_draw_text(to_canvas_item, text, position)
+
+	_draw_impl(Rect2(pos, Vector2(_get_width(), _get_height())), draw_icon_func, draw_text_func)
+
+func _draw_rect(to_canvas_item: RID, rect: Rect2, tile: bool, modulate: Color, transpose: bool):
+	var draw_icon_func := func(tex: Texture2D, rect: Rect2):
+		tex.draw_rect(to_canvas_item, rect, tile, modulate, transpose)
+
+	var draw_text_func := func(text: String, position: Vector2):
+		_draw_text(to_canvas_item, text, position)
+
+	_draw_impl(rect, draw_icon_func, draw_text_func)
+
+func _draw_rect_region(to_canvas_item: RID, rect: Rect2, src_rect: Rect2, modulate: Color, transpose: bool, clip_uv: bool):
+	var draw_icon_func := func(tex: Texture2D, new_rect: Rect2):
+		var src_rect_ratio := Vector2(
+			tex.get_width() / float(_get_width()),
+			tex.get_height() / float(_get_height())
+		)
+		var tex_src_rect := Rect2(
+			src_rect.position * src_rect_ratio,
+			src_rect.size * src_rect_ratio
+		)
+		tex.draw_rect_region(to_canvas_item, new_rect, tex_src_rect, modulate, transpose, clip_uv)
+
+	var draw_text_func := func(text: String, position: Vector2) -> float:
+		_draw_text(to_canvas_item, text, position)
+		return _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size).x
+
+	_draw_impl(rect, draw_icon_func, draw_text_func)
 
 var _helper_viewport: Viewport
 var _is_stitching_texture: bool = false
@@ -376,28 +362,20 @@ func _stitch_texture():
 		ControllerIcons.remove_child(_helper_viewport)
 		_helper_viewport.free()
 
-	var position := Vector2i(0, 0)
-	var img: Image
-	for i in range(_texture_data.textures.size()):
-		if !_texture_data.textures[i]: continue
-
-		if i != 0:
-			# Draw text char '+'
-			var region := font_image.get_used_rect()
-			var font_position := Vector2i(
-				position.x,
-				position.y + (get_height() - region.size.y) / 2
-			)
-			img.blit_rect(font_image, region, font_position)
-			position.x += ceili(region.size.x)
-
-		var texture_raw := _texture_data.textures[i].get_image()
+	var img := Image.create(_get_width(), _get_height(), true, Image.FORMAT_RGBA8)
+	
+	var draw_icon_func := func(tex: Texture2D, rect: Rect2):
+		var texture_raw := tex.get_image()
 		texture_raw.decompress()
-		if not img:
-			img = Image.create(_get_width(), _get_height(), true, texture_raw.get_format())
 
-		img.blit_rect(texture_raw, Rect2i(0, 0, texture_raw.get_width(), texture_raw.get_height()), position)
-		position.x += texture_raw.get_width()
+		img.blit_rect(texture_raw, Rect2i(0, 0, texture_raw.get_width(), texture_raw.get_height()), rect.position)
+
+	var draw_text_func := func(text: String, position: Vector2):
+		var region := font_image.get_used_rect()
+		position.y += (_text_size.y - region.size.y) / 2
+		img.blit_rect(font_image, region, position)
+
+	_draw_impl(Rect2(Vector2.ZERO, Vector2(_get_width(), _get_height())), draw_icon_func, draw_text_func)
 
 	_is_stitching_texture = false
 	_dirty = false
