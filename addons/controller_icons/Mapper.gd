@@ -1,39 +1,39 @@
 extends RefCounted
 class_name ControllerMapper
 
-func _convert_joypad_path(path: String, device: int, fallback: ControllerSettings.Devices, force_controller_icon_style = ControllerSettings.Devices.NONE) -> String:
+func _convert_joypad_path(path: String, device: int, fallback: ControllerIcons.Devices, force_controller_icon_style = ControllerIcons.Devices.NONE) -> String:
 	match _get_joypad_type(device, fallback, force_controller_icon_style):
-		ControllerSettings.Devices.LUNA:
+		ControllerIcons.Devices.LUNA:
 			return _convert_joypad_to_luna(path)
-		ControllerSettings.Devices.PS3:
+		ControllerIcons.Devices.PS3:
 			return _convert_joypad_to_ps3(path)
-		ControllerSettings.Devices.PS4:
+		ControllerIcons.Devices.PS4:
 			return _convert_joypad_to_ps4(path)
-		ControllerSettings.Devices.PS5:
+		ControllerIcons.Devices.PS5:
 			return _convert_joypad_to_ps5(path)
-		ControllerSettings.Devices.STADIA:
+		ControllerIcons.Devices.STADIA:
 			return _convert_joypad_to_stadia(path)
-		ControllerSettings.Devices.STEAM:
+		ControllerIcons.Devices.STEAM:
 			return _convert_joypad_to_steam(path)
-		ControllerSettings.Devices.SWITCH:
+		ControllerIcons.Devices.SWITCH:
 			return _convert_joypad_to_switch(path)
-		ControllerSettings.Devices.JOYCON:
+		ControllerIcons.Devices.JOYCON:
 			return _convert_joypad_to_joycon(path)
-		ControllerSettings.Devices.XBOX360:
+		ControllerIcons.Devices.XBOX360:
 			return _convert_joypad_to_xbox360(path)
-		ControllerSettings.Devices.XBOXONE:
+		ControllerIcons.Devices.XBOXONE:
 			return _convert_joypad_to_xboxone(path)
-		ControllerSettings.Devices.XBOXSERIES:
+		ControllerIcons.Devices.XBOXSERIES:
 			return _convert_joypad_to_xboxseries(path)
-		ControllerSettings.Devices.STEAM_DECK:
+		ControllerIcons.Devices.STEAM_DECK:
 			return _convert_joypad_to_steamdeck(path)
-		ControllerSettings.Devices.OUYA:
+		ControllerIcons.Devices.OUYA:
 			return _convert_joypad_to_ouya(path)
 		_:
 			return ""
 
 func _get_joypad_type(device, fallback, force_controller_icon_style):
-	if force_controller_icon_style != ControllerSettings.Devices.NONE:
+	if force_controller_icon_style != ControllerIcons.Devices.NONE:
 		return force_controller_icon_style
 	var available = Input.get_connected_joypads()
 	if available.is_empty():
@@ -47,37 +47,37 @@ func _get_joypad_type(device, fallback, force_controller_icon_style):
 
 	var controller_name = Input.get_joy_name(device)
 	if "Luna Controller" in controller_name:
-		return ControllerSettings.Devices.LUNA
+		return ControllerIcons.Devices.LUNA
 	elif "PS3 Controller" in controller_name:
-		return ControllerSettings.Devices.PS3
+		return ControllerIcons.Devices.PS3
 	elif "PS4 Controller" in controller_name or \
 		"DUALSHOCK 4" in controller_name:
-		return ControllerSettings.Devices.PS4
+		return ControllerIcons.Devices.PS4
 	elif "PS5 Controller" in controller_name or \
 		"DualSense" in controller_name:
-		return ControllerSettings.Devices.PS5
+		return ControllerIcons.Devices.PS5
 	elif "Stadia Controller" in controller_name:
-		return ControllerSettings.Devices.STADIA
+		return ControllerIcons.Devices.STADIA
 	elif "Steam Controller" in controller_name:
-		return ControllerSettings.Devices.STEAM
+		return ControllerIcons.Devices.STEAM
 	elif "Switch Controller" in controller_name or \
 		"Switch Pro Controller" in controller_name:
-		return ControllerSettings.Devices.SWITCH
+		return ControllerIcons.Devices.SWITCH
 	elif "Joy-Con" in controller_name:
-		return ControllerSettings.Devices.JOYCON
+		return ControllerIcons.Devices.JOYCON
 	elif "Xbox 360 Controller" in controller_name:
-		return ControllerSettings.Devices.XBOX360
+		return ControllerIcons.Devices.XBOX360
 	elif "Xbox One" in controller_name or \
 		"X-Box One" in controller_name or \
 		"Xbox Wireless Controller" in controller_name:
-		return ControllerSettings.Devices.XBOXONE
+		return ControllerIcons.Devices.XBOXONE
 	elif "Xbox Series" in controller_name:
-		return ControllerSettings.Devices.XBOXSERIES
+		return ControllerIcons.Devices.XBOXSERIES
 	elif "Steam Deck" in controller_name or \
 		"Steam Virtual Gamepad" in controller_name:
-		return ControllerSettings.Devices.STEAM_DECK
+		return ControllerIcons.Devices.STEAM_DECK
 	elif "OUYA Controller" in controller_name:
-		return ControllerSettings.Devices.OUYA
+		return ControllerIcons.Devices.OUYA
 	else:
 		return fallback
 

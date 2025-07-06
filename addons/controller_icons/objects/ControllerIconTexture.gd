@@ -86,7 +86,7 @@ enum ShowMode {
 ##[br][br]
 ## This is only relevant for paths using input actions, and has no effect on
 ## other scenarios.
-@export var force_controller_icon_style: ControllerSettings.Devices = ControllerSettings.Devices.NONE:
+@export var force_controller_icon_style: ControllerIcons.Devices = ControllerIcons.Devices.NONE:
 	set(_force_controller_icon_style):
 		force_controller_icon_style = _force_controller_icon_style
 		_load_texture_path()
@@ -178,7 +178,9 @@ var _texture_data: ControllerIcons.TextureData:
 		if _texture_data and _texture_data.textures.size() > 1:
 			_label_settings = custom_label_settings
 			if not _label_settings:
-				_label_settings = ControllerIcons._settings.custom_label_settings
+				var label_settings_res := ProjectSettings.get_setting_with_override(ControllerIcons.SETTING_CUSTOM_LABEL_SETTINGS)
+				if ResourceLoader.exists(label_settings_res):
+					_label_settings = load(ProjectSettings.get_setting_with_override(ControllerIcons.SETTING_CUSTOM_LABEL_SETTINGS))
 			if not _label_settings:
 				_label_settings = LabelSettings.new()
 			_label_settings.connect("changed", _on_label_settings_changed)

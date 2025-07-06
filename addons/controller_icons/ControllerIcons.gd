@@ -14,6 +14,23 @@ enum PathType {
 	SPECIFIC_PATH ## The path is a specific path.
 }
 
+enum Devices {
+	NONE = -1,
+	LUNA,
+	OUYA,
+	PS3,
+	PS4,
+	PS5,
+	STADIA,
+	STEAM,
+	SWITCH,
+	JOYCON,
+	XBOX360,
+	XBOXONE,
+	XBOXSERIES,
+	STEAM_DECK
+}
+
 class TextureData:
 	# We cannot use char(0) because it spams GDScript errors...
 	const NULL_CHAR = char(0xFFFD)
@@ -89,6 +106,20 @@ class TextureData:
 
 		var text : String
 
+const SETTING_JOYPAD_FALLBACK = "controller_icons/general/joypad_fallback"
+const SETTING_JOYPAD_DEADZONE = "controller_icons/general/joypad_deadzone"
+const SETTING_ALLOW_MOUSE_REMAP = "controller_icons/general/allow_mouse_remap"
+const SETTING_MOUSE_MIN_MOVEMENT = "controller_icons/general/mouse_minimum_movement"
+const SETTING_CUSTOM_LABEL_SETTINGS = "controller_icons/text_rendering/custom_label_settings"
+
+var DEFAULT_SETTINGS := {
+	SETTING_JOYPAD_FALLBACK: Devices.XBOX360,
+	SETTING_JOYPAD_DEADZONE: 0.5,
+	SETTING_ALLOW_MOUSE_REMAP: true,
+	SETTING_MOUSE_MIN_MOVEMENT: 200,
+	SETTING_CUSTOM_LABEL_SETTINGS: "",
+}
+
 var _cached_icons : Dictionary[String, Texture] = {}
 var _custom_input_actions := {}
 
@@ -97,7 +128,6 @@ var _cached_callables : Array[Callable] = []
 
 var _last_input_type : InputType
 var _last_controller : int
-var _settings : ControllerSettings
 var _base_extension := "png"
 
 # Custom mouse velocity calculation, because Godot
@@ -157,8 +187,49 @@ func _set_last_input_type(__last_input_type, __last_controller):
 
 func _enter_tree():
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	for setting in DEFAULT_SETTINGS:
+		if not ProjectSettings.has_setting(setting):
+			ProjectSettings.set_setting(setting, DEFAULT_SETTINGS[setting])
+		_initialize_setting_info(setting)
+
 	if Engine.is_editor_hint():
 		_parse_input_actions()
+
+func _initialize_setting_info(key: String) -> void:
+	ProjectSettings.set_initial_value(key, DEFAULT_SETTINGS[key])
+	match key:
+		SETTING_JOYPAD_FALLBACK:
+			# Needs enum information
+			ProjectSettings.add_property_info({
+				"name": key,
+				"type": TYPE_INT,
+				"hint": PROPERTY_HINT_ENUM,
+				"hint_string": "Amazon Luna,OUYA,PlayStation 3,PlayStation 4,PlayStation 5,Google Stadia,Steam Controller,Nintendo Switch Pro Controller,Nintendo Switch Joy-Cons,Xbox 360,Xbox One,Xbox Series S/X,Steam Deck"
+			})
+		SETTING_JOYPAD_DEADZONE:
+			# Needs range
+			ProjectSettings.add_property_info({
+				"name": key,
+				"type": TYPE_FLOAT,
+				"hint": PROPERTY_HINT_RANGE,
+				"hint_string": "0.0,1.0"
+			})
+		SETTING_MOUSE_MIN_MOVEMENT:
+			# Needs range
+			ProjectSettings.add_property_info({
+				"name": key,
+				"type": TYPE_INT,
+				"hint": PROPERTY_HINT_RANGE,
+				"hint_string": "0,10000"
+			})
+		SETTING_CUSTOM_LABEL_SETTINGS:
+			# Is a resource type
+			ProjectSettings.add_property_info({
+				"name": key,
+				"type": TYPE_STRING,
+				"hint": PROPERTY_HINT_FILE,
+				"hint_string": "*.tres"
+			})
 
 func _exit_tree():
 	Mapper = null
@@ -186,13 +257,6 @@ func _parse_input_actions():
 
 func _ready():
 	Input.joy_connection_changed.connect(_on_joy_connection_changed)
-	_settings = load("res://addons/controller_icons/settings.tres")
-	if not _settings:
-		_settings = ControllerSettings.new()
-	if _settings.custom_mapper:
-		Mapper = _settings.custom_mapper.new()
-	if _settings.custom_file_extension and not _settings.custom_file_extension.is_empty():
-		_base_extension = _settings.custom_file_extension
 	# Wait a frame to give a chance for the app to initialize
 	await get_tree().process_frame
 	# Set input type to what's likely being used currently
@@ -217,13 +281,13 @@ func _input(event: InputEvent):
 		"InputEventKey", "InputEventMouseButton":
 			input_type = InputType.KEYBOARD_MOUSE
 		"InputEventMouseMotion":
-			if _settings.allow_mouse_remap and _test_mouse_velocity(event.relative):
+			if ProjectSettings.get_setting_with_override(SETTING_ALLOW_MOUSE_REMAP) and _test_mouse_velocity(event.relative):
 				input_type = InputType.KEYBOARD_MOUSE
 		"InputEventJoypadButton":
 			input_type = InputType.CONTROLLER
 			controller = event.device
 		"InputEventJoypadMotion":
-			if abs(event.axis_value) > _settings.joypad_deadzone:
+			if abs(event.axis_value) > ProjectSettings.get_setting_with_override(SETTING_JOYPAD_DEADZONE):
 				input_type = InputType.CONTROLLER
 				controller = event.device
 	if input_type != _last_input_type or controller != _last_controller:
@@ -240,7 +304,7 @@ func _test_mouse_velocity(relative_vec: Vector2):
 	# It is also good enough for this system, so reliability
 	# is sacrificed in favor of speed.
 	_mouse_velocity += abs(relative_vec.x) + abs(relative_vec.y)
-	return _mouse_velocity / _MOUSE_VELOCITY_DELTA > _settings.mouse_min_movement
+	return _mouse_velocity / _MOUSE_VELOCITY_DELTA > ProjectSettings.get_setting_with_override(SETTING_MOUSE_MIN_MOVEMENT)
 
 func _process(delta: float) -> void:
 	_t += delta
@@ -261,13 +325,13 @@ func refresh():
 	# All it takes is to signal icons to refresh paths
 	emit_signal("input_type_changed", _last_input_type, _last_controller)
 
-func get_joypad_type(controller: int = _last_controller) -> ControllerSettings.Devices:
-	return Mapper._get_joypad_type(controller, _settings.joypad_fallback)
+func get_joypad_type(controller: int = _last_controller) -> Devices:
+	return Mapper._get_joypad_type(controller, ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK), Devices.NONE)
 
 func get_last_input_type() -> InputType:
 	return _last_input_type
 
-func parse_path(path: String, modifiers: String, input_type = _last_input_type, controller = _last_controller, forced_controller_icon_style = ControllerSettings.Devices.NONE) -> TextureData:
+func parse_path(path: String, modifiers: String, input_type = _last_input_type, controller = _last_controller, forced_controller_icon_style = Devices.NONE) -> TextureData:
 	var data := TextureData.new()
 	if path.is_empty():
 		return data
@@ -280,7 +344,7 @@ func parse_path(path: String, modifiers: String, input_type = _last_input_type, 
 			return _compute_input_path(path, modifiers, input_type, controller, forced_controller_icon_style)
 		var type:
 			if type == PathType.JOYPAD_PATH:
-				path = Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback, forced_controller_icon_style)
+				path = Mapper._convert_joypad_path(path, controller, ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK), forced_controller_icon_style)
 
 			if _load_icon(path) != OK:
 				return data
@@ -368,7 +432,7 @@ func get_matching_events(path: String, input_type: InputType = _last_input_type,
 
 	return results + fallbacks
 
-func _compute_input_path(input_action: String, modifiers: String, input_type: InputType, controller: int, forced_controller_icon_style: ControllerSettings.Devices) -> TextureData:
+func _compute_input_path(input_action: String, modifiers: String, input_type: InputType, controller: int, forced_controller_icon_style: Devices) -> TextureData:
 	var data := TextureData.new()
 
 	var input_events := get_matching_events(input_action, input_type, controller)
@@ -410,7 +474,7 @@ func _compute_input_path(input_action: String, modifiers: String, input_type: In
 
 	return data
 
-func _convert_path_to_asset_files(path: String, input_type: int, controller: int, forced_controller_icon_style = ControllerSettings.Devices.NONE) -> Array[String]:
+func _convert_path_to_asset_files(path: String, input_type: int, controller: int, forced_controller_icon_style = Devices.NONE) -> Array[String]:
 	match get_path_type(path):
 		PathType.INPUT_ACTION:
 			var paths : Array[String]
@@ -418,7 +482,7 @@ func _convert_path_to_asset_files(path: String, input_type: int, controller: int
 				paths.push_back(_convert_event_to_path(event, controller, forced_controller_icon_style))
 			return paths
 		PathType.JOYPAD_PATH:
-			return [Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback, forced_controller_icon_style)]
+			return [Mapper._convert_joypad_path(path, controller, ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK), forced_controller_icon_style)]
 		PathType.SPECIFIC_PATH, _:
 			return [path]
 
@@ -479,7 +543,7 @@ func _convert_asset_file_to_tts(path: String) -> String:
 		_:
 			return path
 
-func _convert_event_to_path(event: InputEvent, controller: int = _last_controller, forced_controller_icon_style = ControllerSettings.Devices.NONE) -> String:
+func _convert_event_to_path(event: InputEvent, controller: int = _last_controller, forced_controller_icon_style = Devices.NONE) -> String:
 	if event is InputEventKey:
 		# If this is a physical key, convert to localized scancode
 		if event.keycode == 0:
@@ -725,7 +789,7 @@ func _convert_mouse_button_to_path(button_index: int):
 		_:
 			return "mouse/sample"
 
-func _convert_joypad_button_to_path(button_index: int, controller: int, forced_controller_icon_style = ControllerSettings.Devices.NONE):
+func _convert_joypad_button_to_path(button_index: int, controller: int, forced_controller_icon_style = Devices.NONE):
 	var path
 	match button_index:
 		JOY_BUTTON_A:
@@ -762,9 +826,9 @@ func _convert_joypad_button_to_path(button_index: int, controller: int, forced_c
 			path = "joypad/share"
 		_:
 			return ""
-	return Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback, forced_controller_icon_style)
+	return Mapper._convert_joypad_path(path, controller, ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK), forced_controller_icon_style)
 
-func _convert_joypad_motion_to_path(axis: int, controller: int, forced_controller_icon_style = ControllerSettings.Devices.NONE):
+func _convert_joypad_motion_to_path(axis: int, controller: int, forced_controller_icon_style = Devices.NONE):
 	var path : String
 	match axis:
 		JOY_AXIS_LEFT_X, JOY_AXIS_LEFT_Y:
@@ -777,7 +841,7 @@ func _convert_joypad_motion_to_path(axis: int, controller: int, forced_controlle
 			path = "joypad/rt"
 		_:
 			return ""
-	return Mapper._convert_joypad_path(path, controller, _settings.joypad_fallback, forced_controller_icon_style)
+	return Mapper._convert_joypad_path(path, controller, ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK), forced_controller_icon_style)
 
 func _load_icon(path: String) -> int:
 	if _cached_icons.has(path): return OK
