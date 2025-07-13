@@ -128,7 +128,6 @@ var _cached_callables : Array[Callable] = []
 
 var _last_input_type : InputType
 var _last_controller : int
-var _base_extension := "png"
 
 # Custom mouse velocity calculation, because Godot
 # doesn't implement it on some OSes apparently
@@ -136,7 +135,7 @@ const _MOUSE_VELOCITY_DELTA := 0.1
 var _t : float
 var _mouse_velocity : int
 
-var Mapper = preload("res://addons/controller_icons/Mapper.gd").new()
+var IconPack = preload("res://addons/controller_icons/icon_packs/xelu/Main.gd").new()
 
 # Default actions will be the builtin editor actions when
 # the script is at editor ("tool") level. To pickup more
@@ -232,7 +231,7 @@ func _initialize_setting_info(key: String) -> void:
 			})
 
 func _exit_tree():
-	Mapper = null
+	IconPack = null
 
 func _parse_input_actions():
 	_custom_input_actions.clear()
@@ -325,9 +324,6 @@ func refresh():
 	# All it takes is to signal icons to refresh paths
 	emit_signal("input_type_changed", _last_input_type, _last_controller)
 
-func get_joypad_type(controller: int = _last_controller) -> Devices:
-	return Mapper._get_joypad_type(controller, ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK), Devices.NONE)
-
 func get_last_input_type() -> InputType:
 	return _last_input_type
 
@@ -344,7 +340,7 @@ func parse_path(path: String, modifiers: String, input_type = _last_input_type, 
 			return _compute_input_path(path, modifiers, input_type, controller, forced_controller_icon_style)
 		var type:
 			if type == PathType.JOYPAD_PATH:
-				path = Mapper._convert_joypad_path(path, controller, ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK), forced_controller_icon_style)
+				path = _convert_joypad_path(path, controller, forced_controller_icon_style)
 
 			if _load_icon(path) != OK:
 				return data
@@ -398,6 +394,53 @@ func get_path_type(path: String) -> PathType:
 		return PathType.JOYPAD_PATH
 	else:
 		return PathType.SPECIFIC_PATH
+
+func get_joypad_type(device_idx: int):
+	var available = Input.get_connected_joypads()
+	if available.is_empty():
+		return ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK)
+	# If the requested joypad is not on the connected joypad list, try using the last known connected joypad
+	if not device_idx in available:
+		device_idx = ControllerIcons._last_controller
+	# If that fails too, then use whatever joypad we have connected right now
+	if not device_idx in available:
+		device_idx = available.front()
+
+	var controller_name = Input.get_joy_name(device_idx)
+	if "Luna Controller" in controller_name:
+		return Devices.LUNA
+	elif "PS3 Controller" in controller_name:
+		return Devices.PS3
+	elif "PS4 Controller" in controller_name or \
+		"DUALSHOCK 4" in controller_name:
+		return Devices.PS4
+	elif "PS5 Controller" in controller_name or \
+		"DualSense" in controller_name:
+		return Devices.PS5
+	elif "Stadia Controller" in controller_name:
+		return Devices.STADIA
+	elif "Steam Controller" in controller_name:
+		return Devices.STEAM
+	elif "Switch Controller" in controller_name or \
+		"Switch Pro Controller" in controller_name:
+		return Devices.SWITCH
+	elif "Joy-Con" in controller_name:
+		return Devices.JOYCON
+	elif "Xbox 360 Controller" in controller_name:
+		return Devices.XBOX360
+	elif "Xbox One" in controller_name or \
+		"X-Box One" in controller_name or \
+		"Xbox Wireless Controller" in controller_name:
+		return Devices.XBOXONE
+	elif "Xbox Series" in controller_name:
+		return Devices.XBOXSERIES
+	elif "Steam Deck" in controller_name or \
+		"Steam Virtual Gamepad" in controller_name:
+		return Devices.STEAM_DECK
+	elif "OUYA Controller" in controller_name:
+		return Devices.OUYA
+	else:
+		return ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK)
 
 func get_matching_events(path: String, input_type: InputType = _last_input_type, controller: int = _last_controller) -> Array[InputEvent]:
 	var events : Array
@@ -482,7 +525,7 @@ func _convert_path_to_asset_files(path: String, input_type: int, controller: int
 				paths.push_back(_convert_event_to_path(event, controller, forced_controller_icon_style))
 			return paths
 		PathType.JOYPAD_PATH:
-			return [Mapper._convert_joypad_path(path, controller, ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK), forced_controller_icon_style)]
+			return [_convert_joypad_path(path, controller, forced_controller_icon_style)]
 		PathType.SPECIFIC_PATH, _:
 			return [path]
 
@@ -547,10 +590,10 @@ func _convert_event_to_path(event: InputEvent, controller: int = _last_controlle
 	if event is InputEventKey:
 		# If this is a physical key, convert to localized scancode
 		if event.keycode == 0:
-			return _convert_key_to_path(DisplayServer.keyboard_get_keycode_from_physical(event.physical_keycode))
-		return _convert_key_to_path(event.keycode)
+			return IconPack._convert_key_to_path(DisplayServer.keyboard_get_keycode_from_physical(event.physical_keycode))
+		return IconPack._convert_key_to_path(event.keycode)
 	elif event is InputEventMouseButton:
-		return _convert_mouse_button_to_path(event.button_index)
+		return IconPack._convert_mouse_button_to_path(event.button_index)
 	elif event is InputEventJoypadButton:
 		return _convert_joypad_button_to_path(event.button_index, controller, forced_controller_icon_style)
 	elif event is InputEventJoypadMotion:
@@ -558,236 +601,6 @@ func _convert_event_to_path(event: InputEvent, controller: int = _last_controlle
 
 	# Unsupported InputEvent
 	return ""
-
-func _convert_key_to_path(scancode: int):
-	match scancode:
-		KEY_ESCAPE:
-			return "key/esc"
-		KEY_TAB:
-			return "key/tab"
-		KEY_BACKSPACE:
-			return "key/backspace_alt"
-		KEY_ENTER:
-			return "key/enter_alt"
-		KEY_KP_ENTER:
-			return "key/enter_tall"
-		KEY_INSERT:
-			return "key/insert"
-		KEY_DELETE:
-			return "key/del"
-		KEY_PRINT:
-			return "key/print_screen"
-		KEY_HOME:
-			return "key/home"
-		KEY_END:
-			return "key/end"
-		KEY_LEFT:
-			return "key/arrow_left"
-		KEY_UP:
-			return "key/arrow_up"
-		KEY_RIGHT:
-			return "key/arrow_right"
-		KEY_DOWN:
-			return "key/arrow_down"
-		KEY_PAGEUP:
-			return "key/page_up"
-		KEY_PAGEDOWN:
-			return "key/page_down"
-		KEY_SHIFT:
-			return "key/shift_alt"
-		KEY_CTRL:
-			return "key/ctrl"
-		KEY_META:
-			match OS.get_name():
-				"macOS":
-					return "key/command"
-				_:
-					return "key/meta"
-		KEY_ALT:
-			return "key/alt"
-		KEY_CAPSLOCK:
-			return "key/caps_lock"
-		KEY_NUMLOCK:
-			return "key/num_lock"
-		KEY_F1:
-			return "key/f1"
-		KEY_F2:
-			return "key/f2"
-		KEY_F3:
-			return "key/f3"
-		KEY_F4:
-			return "key/f4"
-		KEY_F5:
-			return "key/f5"
-		KEY_F6:
-			return "key/f6"
-		KEY_F7:
-			return "key/f7"
-		KEY_F8:
-			return "key/f8"
-		KEY_F9:
-			return "key/f9"
-		KEY_F10:
-			return "key/f10"
-		KEY_F11:
-			return "key/f11"
-		KEY_F12:
-			return "key/f12"
-		KEY_KP_MULTIPLY, KEY_ASTERISK:
-			return "key/asterisk"
-		KEY_KP_SUBTRACT, KEY_MINUS:
-			return "key/minus"
-		KEY_KP_ADD:
-			return "key/plus_tall"
-		KEY_KP_0:
-			return "key/0"
-		KEY_KP_1:
-			return "key/1"
-		KEY_KP_2:
-			return "key/2"
-		KEY_KP_3:
-			return "key/3"
-		KEY_KP_4:
-			return "key/4"
-		KEY_KP_5:
-			return "key/5"
-		KEY_KP_6:
-			return "key/6"
-		KEY_KP_7:
-			return "key/7"
-		KEY_KP_8:
-			return "key/8"
-		KEY_KP_9:
-			return "key/9"
-		KEY_UNKNOWN:
-			return ""
-		KEY_SPACE:
-			return "key/space"
-		KEY_QUOTEDBL:
-			return "key/quote"
-		KEY_PLUS:
-			return "key/plus"
-		KEY_0:
-			return "key/0"
-		KEY_1:
-			return "key/1"
-		KEY_2:
-			return "key/2"
-		KEY_3:
-			return "key/3"
-		KEY_4:
-			return "key/4"
-		KEY_5:
-			return "key/5"
-		KEY_6:
-			return "key/6"
-		KEY_7:
-			return "key/7"
-		KEY_8:
-			return "key/8"
-		KEY_9:
-			return "key/9"
-		KEY_SEMICOLON:
-			return "key/semicolon"
-		KEY_LESS:
-			return "key/mark_left"
-		KEY_GREATER:
-			return "key/mark_right"
-		KEY_QUESTION:
-			return "key/question"
-		KEY_A:
-			return "key/a"
-		KEY_B:
-			return "key/b"
-		KEY_C:
-			return "key/c"
-		KEY_D:
-			return "key/d"
-		KEY_E:
-			return "key/e"
-		KEY_F:
-			return "key/f"
-		KEY_G:
-			return "key/g"
-		KEY_H:
-			return "key/h"
-		KEY_I:
-			return "key/i"
-		KEY_J:
-			return "key/j"
-		KEY_K:
-			return "key/k"
-		KEY_L:
-			return "key/l"
-		KEY_M:
-			return "key/m"
-		KEY_N:
-			return "key/n"
-		KEY_O:
-			return "key/o"
-		KEY_P:
-			return "key/p"
-		KEY_Q:
-			return "key/q"
-		KEY_R:
-			return "key/r"
-		KEY_S:
-			return "key/s"
-		KEY_T:
-			return "key/t"
-		KEY_U:
-			return "key/u"
-		KEY_V:
-			return "key/v"
-		KEY_W:
-			return "key/w"
-		KEY_X:
-			return "key/x"
-		KEY_Y:
-			return "key/y"
-		KEY_Z:
-			return "key/z"
-		KEY_BRACKETLEFT:
-			return "key/bracket_left"
-		KEY_BACKSLASH:
-			return "key/slash"
-		KEY_SLASH:
-			return "key/forward_slash"
-		KEY_BRACKETRIGHT:
-			return "key/bracket_right"
-		KEY_ASCIITILDE:
-			return "key/tilda"
-		KEY_QUOTELEFT:
-			return "key/backtick"
-		KEY_APOSTROPHE:
-			return "key/apostrophe"
-		KEY_COMMA:
-			return "key/comma"
-		KEY_EQUAL:
-			return "key/equals"
-		KEY_PERIOD, KEY_KP_PERIOD:
-			return "key/period"
-		_:
-			return ""
-
-func _convert_mouse_button_to_path(button_index: int):
-	match button_index:
-		MOUSE_BUTTON_LEFT:
-			return "mouse/left"
-		MOUSE_BUTTON_RIGHT:
-			return "mouse/right"
-		MOUSE_BUTTON_MIDDLE:
-			return "mouse/middle"
-		MOUSE_BUTTON_WHEEL_UP:
-			return "mouse/wheel_up"
-		MOUSE_BUTTON_WHEEL_DOWN:
-			return "mouse/wheel_down"
-		MOUSE_BUTTON_XBUTTON1:
-			return "mouse/side_down"
-		MOUSE_BUTTON_XBUTTON2:
-			return "mouse/side_up"
-		_:
-			return "mouse/sample"
 
 func _convert_joypad_button_to_path(button_index: int, controller: int, forced_controller_icon_style = Devices.NONE):
 	var path
@@ -826,7 +639,7 @@ func _convert_joypad_button_to_path(button_index: int, controller: int, forced_c
 			path = "joypad/share"
 		_:
 			return ""
-	return Mapper._convert_joypad_path(path, controller, ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK), forced_controller_icon_style)
+	return _convert_joypad_path(path, controller, forced_controller_icon_style)
 
 func _convert_joypad_motion_to_path(axis: int, controller: int, forced_controller_icon_style = Devices.NONE):
 	var path : String
@@ -841,12 +654,16 @@ func _convert_joypad_motion_to_path(axis: int, controller: int, forced_controlle
 			path = "joypad/rt"
 		_:
 			return ""
-	return Mapper._convert_joypad_path(path, controller, ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK), forced_controller_icon_style)
+	return _convert_joypad_path(path, controller, forced_controller_icon_style)
 
+func _convert_joypad_path(path: String, controller_idx: int, forced_controller_icon_style := Devices.NONE) -> String:
+	var device = forced_controller_icon_style if forced_controller_icon_style != Devices.NONE else get_joypad_type(controller_idx)
+	return IconPack._convert_joypad_path(path, device)
+	
 func _load_icon(path: String) -> int:
 	if _cached_icons.has(path): return OK
 	
-	var full_path := "res://addons/controller_icons/assets/%s.%s" % [ path, _base_extension ]
+	var full_path := IconPack._convert_asset_path(path)
 	var tex = null
 	if full_path.begins_with("res://"):
 		if ResourceLoader.exists(full_path):

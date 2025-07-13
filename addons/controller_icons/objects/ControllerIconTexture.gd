@@ -201,8 +201,8 @@ func _reload_resource():
 	emit_changed()
 
 func _load_texture_path_impl():
-	if ControllerIcons.is_node_ready() and _can_be_shown():
-		var input_type = ControllerIcons._last_input_type if force_type == ForceType.NONE else force_type - 1
+	if ControllerIcons and ControllerIcons.is_node_ready() and _can_be_shown():
+		var input_type = ControllerIcons.get_last_input_type() if force_type == ControllerIcons.InputType.AUTO else force_type
 		var target_device = force_device if force_device != ForceDevice.ANY else ControllerIcons._last_controller
 		_texture_data = ControllerIcons.parse_path(path, modifiers, input_type, target_device, force_controller_icon_style)
 		_reload_resource()
@@ -217,7 +217,16 @@ func _load_texture_path():
 	else:
 		_load_texture_path_impl()
 
+# TODO: Investigate. There might be a race condition in the engine, where
+# sometimes this initializes before the ControllerIcons singleton is available.
+# This hack seems to fix it, but it's ugly
+var _hack_await_init := false
 func _init():
+	if not ControllerIcons and not _hack_await_init:
+		_hack_await_init = true
+		_init.call_deferred()
+		return
+
 	ControllerIcons.input_type_changed.connect(_on_input_type_changed)
 
 func _on_input_type_changed(input_type: int, controller: int):

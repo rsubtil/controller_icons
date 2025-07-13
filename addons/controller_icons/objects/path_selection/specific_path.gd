@@ -76,22 +76,13 @@ func populate(editor_interface: EditorInterface) -> void:
 
 	asset_names_root = n_base_asset_names.create_item()
 
-	var base_paths := [
-		ControllerIcons._settings.custom_asset_dir,
-		"res://addons/controller_icons/assets"
-	]
+	var base_path := ControllerIcons.IconPack._get_root_asset_path()
 
-	# UPGRADE: In Godot 4.2, for-loop variables can be
-	# statically typed:
-	# for base_path:String in base_paths:
-	for base_path in base_paths:
-		if base_path.is_empty() or not base_path.begins_with("res://"):
-			continue
-		# Files first
-		handle_files("", base_path)
-		# Directories next
-		for dir in DirAccess.get_directories_at(base_path):
-			handle_files(dir, base_path.path_join(dir))
+	# Files first
+	handle_files("", base_path)
+	# Directories next
+	for dir in DirAccess.get_directories_at(base_path):
+		handle_files(dir, base_path.path_join(dir))
 	
 	var child : TreeItem = asset_names_root.get_next_in_tree()
 	if child:
@@ -99,7 +90,7 @@ func populate(editor_interface: EditorInterface) -> void:
 
 func handle_files(category: String, base_path: String):
 	for file in DirAccess.get_files_at(base_path):
-		if file.get_extension() == ControllerIcons._base_extension:
+		if file.get_extension() in ["png", "jpg", "jpeg", "svg"]:
 			create_icon(category, base_path.path_join(file))
 
 func create_icon(category: String, path: String):
