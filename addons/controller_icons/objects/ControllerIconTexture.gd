@@ -69,7 +69,7 @@ enum ShowMode {
 	CONTROLLER ## Icon will be display only when a controller is being used.
 }
 
-## Show the icon only if a specific input method is being used. When hidden, 
+## Show the icon only if a specific input method is being used. When hidden,
 ## the icon will not occupy have any space (no width and height).
 @export var show_mode: ShowMode = ShowMode.ANY:
 	set(_show_mode):
@@ -175,7 +175,7 @@ var _texture_data: ControllerIcons.TextureData:
 
 		_texture_data = __texture_data
 		_label_settings = null
-		if _texture_data and _texture_data.textures.size() > 1:
+		if _texture_data:
 			_label_settings = custom_label_settings
 			if not _label_settings:
 				var label_settings_res := ProjectSettings.get_setting_with_override(ControllerIcons.SETTING_CUSTOM_LABEL_SETTINGS)
@@ -189,11 +189,9 @@ var _texture_data: ControllerIcons.TextureData:
 
 var _font: Font
 var _label_settings: LabelSettings
-var _text_size: Vector2
 
 func _on_label_settings_changed():
 	_font = ThemeDB.fallback_font if not _label_settings.font else _label_settings.font
-	_text_size = _font.get_string_size("+", HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size)
 	_reload_resource()
 
 func _reload_resource():
@@ -237,30 +235,32 @@ const _NULL_SIZE := 2
 
 func _get_width() -> int:
 	if _texture_data and _can_be_shown():
-		var ret := _texture_data.textures.reduce(func(accum: int, texture: Texture2D):
-			if texture:
-				return accum + texture.get_width()
-			return accum
-		, 0)
-		if _label_settings:
-			ret += max(0, _texture_data.textures.size() - 1) * _text_size.x
-		# If ret is 0, return a size of 2 to prevent triggering engine checks
+		var total = 0
+		for token: ControllerIcons.TextureData.Token in ControllerIcons.TextureData.tokenize_draw_string(_texture_data.draw_string):
+			if token is ControllerIcons.TextureData.IconToken:
+				var tex := _texture_data.textures[token.index % _texture_data.textures.size()]
+				if tex:
+					total += tex.get_width()
+			elif token is ControllerIcons.TextureData.TextToken and _label_settings:
+				total += _font.get_string_size(token.text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size).x
+		# If total is 0, return a size of 2 to prevent triggering engine checks
 		# for null sizes. The correct size will be set at a later frame.
-		return ret if ret > 0 else _NULL_SIZE
+		return total if total > 0 else _NULL_SIZE
 	return _NULL_SIZE
 
 func _get_height() -> int:
 	if _texture_data and _can_be_shown():
-		var ret := _texture_data.textures.reduce(func(accum: int, texture: Texture2D):
-			if texture:
-				return max(accum, texture.get_height())
-			return accum
-		, 0)
-		if _label_settings and _texture_data.textures.size() > 1:
-			ret = max(ret, _text_size.y)
-		# If ret is 0, return a size of 2 to prevent triggering engine checks
+		var max_value = 0
+		for token: ControllerIcons.TextureData.Token in ControllerIcons.TextureData.tokenize_draw_string(_texture_data.draw_string):
+			if token is ControllerIcons.TextureData.IconToken:
+				var tex := _texture_data.textures[token.index % _texture_data.textures.size()]
+				if tex:
+					max_value = max(max_value, tex.get_height())
+			elif token is ControllerIcons.TextureData.TextToken and _label_settings:
+				max_value = max(max_value, _font.get_string_size(token.text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size).y)
+		# If total is 0, return a size of 2 to prevent triggering engine checks
 		# for null sizes. The correct size will be set at a later frame.
-		return ret if ret > 0 else _NULL_SIZE
+		return max_value if max_value > 0 else _NULL_SIZE
 	return _NULL_SIZE
 
 func _has_alpha() -> bool:
@@ -279,22 +279,20 @@ func _draw_impl(rect: Rect2, draw_icon_func: Callable, draw_text_func: Callable)
 	var width_ratio := rect.size.x / _get_width()
 	var height_ratio := rect.size.y / _get_height()
 
-	for i in _texture_data.textures.size():
-		var tex: Texture2D = _texture_data.textures[i]
-		if !tex: continue
-
-		if i != 0:
-			# Draw text char '+'
+	for token: ControllerIcons.TextureData.Token in ControllerIcons.TextureData.tokenize_draw_string(_texture_data.draw_string):
+		if token is ControllerIcons.TextureData.TextToken:
+			var font_size := _font.get_string_size(token.text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size)
 			var font_position := Vector2(
-				position.x + (_text_size.x * width_ratio) / 2 - (_text_size.x / 2),
-				position.y + (rect.size.y - _text_size.y) / 2.0
+				position.x + (font_size.x * width_ratio) / 2 - (font_size.x / 2),
+				position.y + (rect.size.y - font_size.y) / 2.0
 			)
-			draw_text_func.call("+", font_position)
-			position.x += _text_size.x * width_ratio
-
-		var size := tex.get_size() * Vector2(width_ratio, height_ratio)
-		draw_icon_func.call(tex, Rect2(position, size)) 
-		position.x += size.x
+			await draw_text_func.call(token.text, font_position)
+			position.x += font_size.x * width_ratio
+		elif token is ControllerIcons.TextureData.IconToken:
+			var tex := _texture_data.textures[token.index % _texture_data.textures.size()]
+			var size := tex.get_size() * Vector2(width_ratio, height_ratio)
+			await draw_icon_func.call(tex, Rect2(position, size))
+			position.x += size.x
 
 func _draw_text(to_canvas_item: RID, text: String, font_position: Vector2):
 	font_position.y += _font.get_ascent(_label_settings.font_size)
@@ -337,9 +335,8 @@ func _draw_rect_region(to_canvas_item: RID, rect: Rect2, src_rect: Rect2, modula
 		)
 		tex.draw_rect_region(to_canvas_item, new_rect, tex_src_rect, modulate, transpose, clip_uv)
 
-	var draw_text_func := func(text: String, position: Vector2) -> float:
+	var draw_text_func := func(text: String, position: Vector2):
 		_draw_text(to_canvas_item, text, position)
-		return _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size).x
 
 	_draw_impl(rect, draw_icon_func, draw_text_func)
 
@@ -350,31 +347,8 @@ func _stitch_texture():
 		return
 
 	_is_stitching_texture = true
-
-	var font_image: Image
-	if _texture_data.textures.size() > 1:
-		# Generate a viewport to draw the text
-		_helper_viewport = SubViewport.new()
-		# FIXME: We need a 3px margin for some reason
-		_helper_viewport.size = _text_size + Vector2(3, 0)
-		_helper_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
-		_helper_viewport.render_target_clear_mode = SubViewport.CLEAR_MODE_ONCE
-		_helper_viewport.transparent_bg = true
-
-		var label := Label.new()
-		label.label_settings = _label_settings
-		label.text = "+"
-		label.position = Vector2.ZERO
-		_helper_viewport.add_child(label)
-
-		ControllerIcons.add_child(_helper_viewport)
-		await RenderingServer.frame_post_draw
-		font_image = _helper_viewport.get_texture().get_image()
-		ControllerIcons.remove_child(_helper_viewport)
-		_helper_viewport.free()
-
 	var img := Image.create(_get_width(), _get_height(), true, Image.FORMAT_RGBA8)
-	
+
 	var draw_icon_func := func(tex: Texture2D, rect: Rect2):
 		var texture_raw := tex.get_image()
 		texture_raw.decompress()
@@ -382,12 +356,36 @@ func _stitch_texture():
 		img.blit_rect(texture_raw, Rect2i(0, 0, texture_raw.get_width(), texture_raw.get_height()), rect.position)
 
 	var draw_text_func := func(text: String, position: Vector2):
+		var text_size = _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size)
+		# Generate a viewport to draw the text
+		if not _helper_viewport:
+			_helper_viewport = SubViewport.new()
+			# FIXME: We need a 3px margin for some reason
+			_helper_viewport.size = text_size + Vector2(3, 0)
+			_helper_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+			_helper_viewport.render_target_clear_mode = SubViewport.CLEAR_MODE_ALWAYS
+			_helper_viewport.transparent_bg = true
+			ControllerIcons.add_child(_helper_viewport)
+
+		var label := Label.new()
+		label.label_settings = _label_settings
+		label.text = text
+		label.position = Vector2.ZERO
+		_helper_viewport.add_child(label)
+		await RenderingServer.frame_post_draw
+		label.queue_free()
+
+		var font_image = _helper_viewport.get_texture().get_image()
+
 		var region := font_image.get_used_rect()
-		position.y += (_text_size.y - region.size.y) / 2
+		position.y += (text_size.y - region.size.y) / 2
 		img.blit_rect(font_image, region, position)
 
-	_draw_impl(Rect2(Vector2.ZERO, Vector2(_get_width(), _get_height())), draw_icon_func, draw_text_func)
+	await _draw_impl(Rect2(Vector2.ZERO, Vector2(_get_width(), _get_height())), draw_icon_func, draw_text_func)
 
+	if _helper_viewport:
+		ControllerIcons.remove_child(_helper_viewport)
+		_helper_viewport.free()
 	_is_stitching_texture = false
 	_dirty = false
 	_texture_3d = ImageTexture.create_from_image(img)

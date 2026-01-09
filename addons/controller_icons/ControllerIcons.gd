@@ -91,7 +91,7 @@ class TextureData:
 			tokens.push_back(TextToken.new(accum_text))
 		return tokens
 
-	class Token:
+	@abstract class Token:
 		pass
 
 	class IconToken extends Token:
