@@ -238,9 +238,12 @@ func _get_width() -> int:
 		var total = 0
 		for token: ControllerIcons.TextureData.Token in ControllerIcons.TextureData.tokenize_draw_string(_texture_data.draw_string):
 			if token is ControllerIcons.TextureData.IconToken:
-				var tex := _texture_data.textures[token.index % _texture_data.textures.size()]
-				if tex:
-					total += tex.get_width()
+				if _texture_data.textures.is_empty():
+					return _NULL_SIZE
+				var size := _texture_data.textures[token.index].get_width()
+				if token.flair:
+					size = max(size, _texture_data.textures[_texture_data.flairs[token.flair]].get_width())
+				total += size
 			elif token is ControllerIcons.TextureData.TextToken and _label_settings:
 				total += _font.get_string_size(token.text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size).x
 		# If total is 0, return a size of 2 to prevent triggering engine checks
@@ -253,9 +256,11 @@ func _get_height() -> int:
 		var max_value = 0
 		for token: ControllerIcons.TextureData.Token in ControllerIcons.TextureData.tokenize_draw_string(_texture_data.draw_string):
 			if token is ControllerIcons.TextureData.IconToken:
-				var tex := _texture_data.textures[token.index % _texture_data.textures.size()]
-				if tex:
-					max_value = max(max_value, tex.get_height())
+				if _texture_data.textures.is_empty():
+					return _NULL_SIZE
+				max_value = max(max_value, _texture_data.textures[token.index].get_height())
+				if token.flair:
+					max_value = max(max_value, _texture_data.textures[_texture_data.flairs[token.flair]].get_height())
 			elif token is ControllerIcons.TextureData.TextToken and _label_settings:
 				max_value = max(max_value, _font.get_string_size(token.text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size).y)
 		# If total is 0, return a size of 2 to prevent triggering engine checks
@@ -275,9 +280,13 @@ func _is_pixel_opaque(x, y) -> bool:
 	return true
 
 func _draw_impl(rect: Rect2, draw_icon_func: Callable, draw_text_func: Callable):
-	var position := rect.position
+	if not _texture_data: return
+
 	var width_ratio := rect.size.x / _get_width()
 	var height_ratio := rect.size.y / _get_height()
+
+	var position := rect.position
+	var size := rect.size
 
 	for token: ControllerIcons.TextureData.Token in ControllerIcons.TextureData.tokenize_draw_string(_texture_data.draw_string):
 		if token is ControllerIcons.TextureData.TextToken:
@@ -289,10 +298,36 @@ func _draw_impl(rect: Rect2, draw_icon_func: Callable, draw_text_func: Callable)
 			await draw_text_func.call(token.text, font_position)
 			position.x += font_size.x * width_ratio
 		elif token is ControllerIcons.TextureData.IconToken:
-			var tex := _texture_data.textures[token.index % _texture_data.textures.size()]
-			var size := tex.get_size() * Vector2(width_ratio, height_ratio)
-			await draw_icon_func.call(tex, Rect2(position, size))
-			position.x += size.x
+			if _texture_data.textures.is_empty(): continue
+
+			var draw_calls : Array[Callable]
+
+			var tex := _texture_data.textures[token.index]
+			var tex_size := tex.get_size() * Vector2(width_ratio, height_ratio)
+			var tex_position := position
+			# Icons are drawn always centered in the vertical axis
+			tex_position.y += max(0, (size.y - tex_size.y) / 2.0)
+
+			if token.flair:
+				# Prepare already a draw call for flair drawing, because it might affect
+				# the main texture's position
+				var flair_tex := _texture_data.textures[_texture_data.flairs[token.flair]]
+				var flair_size := flair_tex.get_size() * Vector2(width_ratio, height_ratio)
+				var flair_position := position
+				flair_position.y += max(0, (size.y - flair_size.y) / 2.0)
+				draw_calls.push_back(draw_icon_func.bind(flair_tex, Rect2(flair_position, flair_size)) )
+
+				tex_position.x += max(0, (flair_size.x - tex_size.x) / 2.0)
+
+			draw_calls.push_front(draw_icon_func.bind(tex, Rect2(tex_position, tex_size)))
+			
+			var total_size := Vector2(0, 0)
+			for draw_call in draw_calls:
+				# Extract size from draw calls to compute largest dimensions
+				total_size = total_size.max((draw_call.get_bound_arguments().back() as Rect2).size)
+				await draw_call.call()
+
+			position.x += total_size.x
 
 func _draw_text(to_canvas_item: RID, text: String, font_position: Vector2):
 	font_position.y += _font.get_ascent(_label_settings.font_size)
@@ -343,7 +378,7 @@ func _draw_rect_region(to_canvas_item: RID, rect: Rect2, src_rect: Rect2, modula
 var _helper_viewport: Viewport
 var _is_stitching_texture: bool = false
 func _stitch_texture():
-	if _texture_data.textures.is_empty():
+	if not _texture_data:
 		return
 
 	_is_stitching_texture = true
@@ -353,7 +388,7 @@ func _stitch_texture():
 		var texture_raw := tex.get_image()
 		texture_raw.decompress()
 
-		img.blit_rect(texture_raw, Rect2i(0, 0, texture_raw.get_width(), texture_raw.get_height()), rect.position)
+		img.blend_rect(texture_raw, Rect2i(0, 0, texture_raw.get_width(), texture_raw.get_height()), rect.position)
 
 	var draw_text_func := func(text: String, position: Vector2):
 		var text_size = _font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size)
@@ -379,7 +414,7 @@ func _stitch_texture():
 
 		var region := font_image.get_used_rect()
 		position.y += (text_size.y - region.size.y) / 2
-		img.blit_rect(font_image, region, position)
+		img.blend_rect(font_image, region, position)
 
 	await _draw_impl(Rect2(Vector2.ZERO, Vector2(_get_width(), _get_height())), draw_icon_func, draw_text_func)
 
@@ -405,6 +440,6 @@ func _get_rid():
 				return 0
 		else:
 			return 0
-	return _texture_3d.get_rid() if not _texture_data.textures.is_empty() else 0
+	return _texture_3d.get_rid() if _texture_data else 0
 
 #endregion

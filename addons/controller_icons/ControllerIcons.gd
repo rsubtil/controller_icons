@@ -36,7 +36,8 @@ class TextureData:
 	const NULL_CHAR = char(0xFFFD)
 	var draw_string : String
 	var textures : Array[Texture2D]
-	
+	var flairs : Dictionary[String, int]
+
 	static func tokenize_draw_string(draw_string: String) -> Array[Token]:
 		var tokens : Array[Token]
 
@@ -50,10 +51,11 @@ class TextureData:
 		while i < draw_string.length():
 			match bounded_access.call(i):
 				"\\":
-					# User might be escaping _
-					if bounded_access.call(i+1) == '_':
-						# In that case, insert only the _
-						accum_text += '_'
+					# User might be escaping _ or {
+					var next_char = bounded_access.call(i+1)
+					if next_char == '_' or next_char == "{":
+						# In that case, insert only that char
+						accum_text += next_char
 						i += 1
 				"_":
 					# Might be the start of an icon token; check if it starts
@@ -78,8 +80,29 @@ class TextureData:
 
 					# Generate icon token
 					assert(number_str.is_valid_int())
-					tokens.push_back(IconToken.new(number_str.to_int() - 1))
-				char(0):
+					var icon_token := IconToken.new(number_str.to_int() - 1)
+					tokens.push_back(icon_token)
+					
+					# Then, immediately test for an incoming flair
+					if bounded_access.call(i+1) == "{":
+						i += 1
+						# Accumulate text and figure out whether it's a flair, or just text
+						var accum_flair : String
+						var next_char = bounded_access.call(i+1)
+						while next_char != "}" and next_char != NULL_CHAR:
+							accum_flair += next_char
+							i += 1
+							next_char = bounded_access.call(i+1)
+
+						# Did we reach the end of the stream?
+						if next_char == NULL_CHAR:
+							# No closing token } found; treat this as text
+							tokens.push_back(TextToken.new(accum_flair))
+						else:
+							# Found end token; treat this as flair
+							i += 1
+							icon_token.flair = accum_flair
+				NULL_CHAR:
 					# NUL char, skip
 					pass
 				var text:
@@ -99,6 +122,7 @@ class TextureData:
 			self.index = index
 
 		var index : int
+		var flair : String
 
 	class TextToken extends Token:
 		func _init(text: String) -> void:
@@ -506,12 +530,30 @@ func _compute_input_path(input_action: String, modifiers: String, input_type: In
 		data.draw_string += draw_string
 		cached_textures[idx] = draw_string
 
+	# Temporary cache between flair and draw string; avoids duplicated
+	# textures in texture data
+	var cached_flairs : Dictionary[String, String]
+	var append_flair := func(flair: String):
+		if flair in cached_flairs:
+			data.draw_string += cached_flairs[flair]
+			return
+
+		var flair_path = "flairs/%s" % flair
+		if _load_icon(flair_path) == OK:
+			data.textures.push_back(_cached_icons[flair_path])
+			data.flairs[flair] = data.textures.size()-1
+			var draw_string = "{%s}" % flair
+			data.draw_string += draw_string
+			cached_flairs[flair] = draw_string
+
 	var draw_string := modifiers if not modifiers.is_empty() else "_1"
 
 	# Tokenize the draw string to understand which textures to fetch
 	for token: TextureData.Token in TextureData.tokenize_draw_string(draw_string):
 		if token is TextureData.IconToken:
 			append_texture.call(token.index)
+			if token.flair:
+				append_flair.call(token.flair)
 		elif token is TextureData.TextToken:
 			data.draw_string += token.text
 

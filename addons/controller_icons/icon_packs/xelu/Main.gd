@@ -6,6 +6,26 @@ func _get_folder_name() -> String:
 func _get_root_asset_path() -> String:
 	return "res://addons/controller_icons/icon_packs/xelu/assets"
 
+func _supports_flairs() -> bool:
+	return true
+
+func _get_supported_controllers() -> Array[ControllerIcons.Devices]:
+	return [
+		ControllerIcons.Devices.LUNA,
+		ControllerIcons.Devices.OUYA,
+		ControllerIcons.Devices.PS3,
+		ControllerIcons.Devices.PS4,
+		ControllerIcons.Devices.PS5,
+		ControllerIcons.Devices.STADIA,
+		ControllerIcons.Devices.STEAM,
+		ControllerIcons.Devices.SWITCH,
+		ControllerIcons.Devices.JOYCON,
+		ControllerIcons.Devices.XBOX360,
+		ControllerIcons.Devices.XBOXONE,
+		ControllerIcons.Devices.XBOXSERIES,
+		ControllerIcons.Devices.STEAM_DECK
+	]
+
 func _convert_key_to_path(scancode: int) -> String:
 	match scancode:
 		KEY_ESCAPE:
