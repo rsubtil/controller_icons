@@ -134,8 +134,8 @@ func get_icon_path() -> String:
 		return button.icon.path
 	return ""
 
-func grab_focus() -> void:
-	n_name_filter.grab_focus()
+func grab_focus(hide_focus: bool = false) -> void:
+	n_name_filter.grab_focus(hide_focus)
 
 
 func _on_base_asset_names_item_selected():
