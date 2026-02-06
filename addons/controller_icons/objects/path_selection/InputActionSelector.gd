@@ -1,6 +1,8 @@
 @tool
 extends Panel
 
+const GODOT_4_6_VERSION = 0x040600
+
 signal done
 
 @onready var n_name_filter := %NameFilter
@@ -95,7 +97,12 @@ func set_default_actions_visibility(display: bool):
 		item.show_default = display or not item.is_default
 
 func grab_focus(hide_focus: bool = false) -> void:
-	n_name_filter.grab_focus(hide_focus)
+	# UPGRADE: In Godot 4.6, grab_focus has a new internal arg
+	# n_name_filter.grab_focus(hide_focus)
+	if Engine.get_version_info().hex >= GODOT_4_6_VERSION:
+		n_name_filter.call("grab_focus", hide_focus)
+	else:
+		n_name_filter.grab_focus()
 
 
 func _on_builtin_action_button_toggled(toggled_on: bool) -> void:
