@@ -412,6 +412,7 @@ func _stitch_texture():
 
 	_is_stitching_texture = false
 	_dirty = false
+	img.generate_mipmaps()
 	_texture_3d = ImageTexture.create_from_image(img)
 	emit_changed()
 
