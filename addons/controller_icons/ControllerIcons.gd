@@ -14,11 +14,13 @@ enum PathType {
 	SPECIFIC_PATH ## The path is a specific path.
 }
 
+var _textures_to_update: Array[ControllerIconTexture] = []
+
 var _cached_icons := {}
 var _custom_input_actions := {}
 
 var _cached_callables_lock := Mutex.new()
-var _cached_callables : Array[Callable] = []
+var _cached_callables: Array[Callable] = []
 
 var _last_input_type : InputType
 var _last_controller : int
@@ -170,6 +172,11 @@ func _test_mouse_velocity(relative_vec: Vector2):
 func _process(delta: float) -> void:
 	_t += delta
 
+	for texture in _textures_to_update:
+		texture._load_texture_path()
+		texture._should_trigger_texture_load = false
+		
+	_textures_to_update = []
 	if not _cached_callables.is_empty() and _cached_callables_lock.try_lock():
 		# UPGRADE: In Godot 4.2, for-loop variables can be
 		# statically typed:
