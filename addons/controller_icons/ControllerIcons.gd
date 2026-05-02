@@ -247,13 +247,14 @@ func parse_event(event: InputEvent) -> Texture:
 		return null
 
 	var base_paths := [
-		_settings.custom_asset_dir + "/",
-		"res://addons/controller_icons/assets/"
+		_settings.custom_asset_dir,
+		"res://addons/controller_icons/assets"
 	]
 	for base_path in base_paths:
+		base_path = base_path.simplify_path()
 		if base_path.is_empty():
 			continue
-		base_path += path + "." + _base_extension
+		base_path = base_path.path_join( "%s.%s" % [path, _base_extension] )
 		if _load_icon(base_path):
 			continue
 		return _cached_icons[base_path]
