@@ -215,6 +215,15 @@ func _load_texture_path():
 	else:
 		_load_texture_path_impl()
 
+func _get_tokens() -> Array[ControllerIcons.TextureData.Token]:
+	var modifier_string = "_1" if modifiers.is_empty() else modifiers
+	return ControllerIcons.TextureData.tokenize_draw_string(modifier_string)
+
+func _get_raw_tokens() -> Array[ControllerIcons.TextureData.Token]:
+	if !_texture_data:
+		return []
+	return _texture_data.tokenize_draw_string(_texture_data.draw_string)
+
 # TODO: Investigate. There might be a race condition in the engine, where
 # sometimes this initializes before the ControllerIcons singleton is available.
 # This hack seems to fix it, but it's ugly
@@ -236,7 +245,7 @@ const _NULL_SIZE := 2
 func _get_width() -> int:
 	if _texture_data and _can_be_shown():
 		var total = 0
-		for token: ControllerIcons.TextureData.Token in ControllerIcons.TextureData.tokenize_draw_string(_texture_data.draw_string):
+		for token: ControllerIcons.TextureData.Token in _get_raw_tokens():
 			if token is ControllerIcons.TextureData.IconToken:
 				if _texture_data.textures.is_empty():
 					return _NULL_SIZE
@@ -254,7 +263,7 @@ func _get_width() -> int:
 func _get_height() -> int:
 	if _texture_data and _can_be_shown():
 		var max_value = 0
-		for token: ControllerIcons.TextureData.Token in ControllerIcons.TextureData.tokenize_draw_string(_texture_data.draw_string):
+		for token: ControllerIcons.TextureData.Token in _get_raw_tokens():
 			if token is ControllerIcons.TextureData.IconToken:
 				if _texture_data.textures.is_empty():
 					return _NULL_SIZE
@@ -288,7 +297,7 @@ func _draw_impl(rect: Rect2, draw_icon_func: Callable, draw_text_func: Callable)
 	var position := rect.position
 	var size := rect.size
 
-	for token: ControllerIcons.TextureData.Token in ControllerIcons.TextureData.tokenize_draw_string(_texture_data.draw_string):
+	for token: ControllerIcons.TextureData.Token in _get_raw_tokens():
 		if token is ControllerIcons.TextureData.TextToken:
 			var font_size := _font.get_string_size(token.text, HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size)
 			var font_position := Vector2(

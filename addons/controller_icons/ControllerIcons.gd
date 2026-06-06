@@ -145,7 +145,7 @@ var DEFAULT_SETTINGS := {
 }
 
 var _cached_icons : Dictionary[String, Texture] = {}
-var _custom_input_actions := {}
+var _custom_input_actions : Dictionary[String, Array] = {}
 
 var _cached_callables_lock := Mutex.new()
 var _cached_callables : Array[Callable] = []
@@ -466,12 +466,15 @@ func get_joypad_type(device_idx: int):
 	else:
 		return ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK)
 
-func get_matching_events(path: String, input_type: InputType = _last_input_type, controller: int = _last_controller) -> Array[InputEvent]:
-	var events : Array
+func _get_action_events(path: String) -> Array:
+	# First check project specific actions
 	if _custom_input_actions.has(path):
-		events = _custom_input_actions[path]
-	else:
-		events = InputMap.action_get_events(path)
+		return _custom_input_actions[path]
+	# Then use Godot default actions
+	return InputMap.action_get_events(path)
+
+func get_matching_events(path: String, input_type: InputType = _last_input_type, controller: int = _last_controller) -> Array[InputEvent]:
+	var events := _get_action_events(path)
 
 	var filter_func = func(event: InputEvent):
 		if not is_instance_valid(event): return false

@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://b1e62j0egj6dv"]
+
+[ext_resource type="Script" uid="uid://sraq5v12dvro" path="res://addons/controller_icons/objects/modifier_selection/modifier_selector_popup.gd" id="1_axp7w"]
+[ext_resource type="PackedScene" uid="uid://btsappyp3pd02" path="res://addons/controller_icons/objects/modifier_selection/modifier_selector.tscn" id="2_axp7w"]
+[ext_resource type="PackedScene" uid="uid://btiw8bpptku3j" path="res://addons/controller_icons/objects/path_selection/icon_container.tscn" id="3_31fl1"]
+
+[node name="ControllerIconModifierSelectorPopup" type="ConfirmationDialog" unique_id=136967276]
+oversampling_override = 1.0
+title = "Select an icon path"
+initial_position = 1
+size = Vector2i(866, 507)
+visible = true
+script = ExtResource("1_axp7w")
+
+[node name="ControllerIconModifierSelector" parent="." unique_id=1819352042 instance=ExtResource("2_axp7w")]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -49.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="FlairSelectionPopup" type="ConfirmationDialog" parent="." unique_id=843897348]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Select a Flair"
+initial_position = 1
+size = Vector2i(425, 240)
+
+[node name="IconContainer" parent="FlairSelectionPopup" unique_id=148192853 instance=ExtResource("3_31fl1")]
+unique_name_in_owner = true
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -49.0
+
+[node name="TextEditorPopup" type="ConfirmationDialog" parent="." unique_id=1826816311]
+unique_name_in_owner = true
+oversampling_override = 1.0
+title = "Choose a Text"
+initial_position = 1
+
+[node name="CenterContainer" type="MarginContainer" parent="TextEditorPopup" unique_id=1850144764]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -49.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextEditor" type="LineEdit" parent="TextEditorPopup/CenterContainer" unique_id=1305222669]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+size_flags_vertical = 4
+placeholder_text = "Displayed text"
+
+[connection signal="about_to_popup" from="." to="." method="_on_about_to_popup"]
+[connection signal="confirmed" from="." to="." method="_on_confirmed"]
+[connection signal="flair_requested" from="ControllerIconModifierSelector" to="." method="_on_controller_icon_modifier_selector_flair_requested"]
+[connection signal="text_requested" from="ControllerIconModifierSelector" to="." method="_on_controller_icon_modifier_selector_text_requested"]
+[connection signal="about_to_popup" from="FlairSelectionPopup" to="." method="_on_flair_selection_popup_about_to_popup"]
+[connection signal="confirmed" from="FlairSelectionPopup" to="." method="_on_flair_selection_popup_confirmed"]
+[connection signal="icon_selected" from="FlairSelectionPopup/IconContainer" to="." method="_on_icon_container_icon_selected"]
+[connection signal="about_to_popup" from="TextEditorPopup" to="." method="_on_text_editor_popup_about_to_popup"]
+[connection signal="confirmed" from="TextEditorPopup" to="." method="_on_text_editor_popup_confirmed"]
+[connection signal="text_changed" from="TextEditorPopup/CenterContainer/TextEditor" to="." method="_on_text_editor_text_changed"]
+[connection signal="text_submitted" from="TextEditorPopup/CenterContainer/TextEditor" to="." method="_on_text_editor_text_submitted"]

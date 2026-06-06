@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://c7whtyec1s2ig"]
+
+[ext_resource type="Script" uid="uid://c1fuv4v54kh4" path="res://addons/controller_icons/objects/modifier_selection/modifier_token.gd" id="1_33qg4"]
+
+[node name="ControllerIconsModifierToken" type="MenuButton" unique_id=1650951214]
+size_flags_horizontal = 4
+size_flags_vertical = 4
+flat = false
+script = ExtResource("1_33qg4")

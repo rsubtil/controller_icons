@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://btsappyp3pd02"]
+
+[ext_resource type="Script" uid="uid://dtmc668uw0xbq" path="res://addons/controller_icons/objects/modifier_selection/modifier_selector.gd" id="1_ul4fg"]
+
+[sub_resource type="DPITexture" id="DPITexture_ul4fg"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#ff5d5d\" d=\"M2 1v8.586l1.293-1.293a1 1 0 0 1 1.414 0L7 10.587l2.293-2.293a1 1 0 0 1 1.414 0L13 10.586l1-1V6H9V1H2zm8 0v4h4zm-6 9.414-2 2V15h12v-2.586l-.293.293a1 1 0 0 1-1.414 0L10 10.414l-2.293 2.293a1 1 0 0 1-1.414 0L4 10.414z\"/></svg>
+"
+base_scale = 2.0
+
+[sub_resource type="DPITexture" id="DPITexture_2b3qi"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#ff5d5d\" d=\"M2 1v8.586l1.293-1.293a1 1 0 0 1 1.414 0L7 10.587l2.293-2.293a1 1 0 0 1 1.414 0L13 10.586l1-1V6H9V1H2zm8 0v4h4zm-6 9.414-2 2V15h12v-2.586l-.293.293a1 1 0 0 1-1.414 0L10 10.414l-2.293 2.293a1 1 0 0 1-1.414 0L4 10.414z\"/></svg>
+"
+
+[node name="ControllerIconsModifierSelector" type="PanelContainer" unique_id=1572078399]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ul4fg")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=477808541]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=604823287]
+layout_mode = 2
+text = "Hover over any existing tokens to modify them or click + to add one"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1142032496]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_constants/separation = 8
+
+[node name="ModifierIcons" type="HBoxContainer" parent="VBoxContainer/HBoxContainer" unique_id=50731085]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="VBoxContainer/HBoxContainer" unique_id=1417254785]
+layout_mode = 2
+
+[node name="AddModifier" type="MenuButton" parent="VBoxContainer/HBoxContainer" unique_id=1617858047]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.7529412)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+icon = SubResource("DPITexture_ul4fg")
+flat = false
+icon_alignment = 1
+item_count = 2
+popup/item_0/text = "Icon"
+popup/item_0/icon = SubResource("DPITexture_2b3qi")
+popup/item_0/id = 0
+popup/item_1/text = "Text"
+popup/item_1/icon = SubResource("DPITexture_2b3qi")
+popup/item_1/id = 1

@@ -7,56 +7,11 @@ signal done
 
 @onready var n_name_filter := %NameFilter
 @onready var n_base_asset_names := %BaseAssetNames
-@onready var n_assets_container := %AssetsContainer
-
-var _last_pressed_icon : ControllerIcons_Icon
-var _last_pressed_timestamp : int
+@onready var n_icon_container := %IconContainer
 
 var color_text_enabled : Color
 var color_text_disabled : Color
 
-class ControllerIcons_Icon:
-	static var group := ButtonGroup.new()
-
-	func _init(category: String, path: String):
-		self.category = category
-		self.filtered = true
-		self.path = path.get_slice("/", 1)
-
-		button = Button.new()
-		button.custom_minimum_size = Vector2(100, 100)
-		button.clip_text = true
-		button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		button.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
-		button.expand_icon = true
-		button.toggle_mode = true
-		button.button_group = group
-		button.text = self.path
-
-		var icon = ControllerIconTexture.new()
-		icon.path = path
-		button.icon = icon
-
-	var button : Button
-	var category : String
-	var path : String
-	
-	var selected: bool:
-		set(_selected):
-			selected = _selected
-			_query_visibility()
-	
-	var filtered: bool:
-		set(_filtered):
-			filtered = _filtered
-			_query_visibility()
-	
-	func _query_visibility():
-		if is_instance_valid(button):
-			button.visible = selected and filtered
-
-var button_nodes := {}
 var asset_names_root : TreeItem
 
 func populate(editor_interface: EditorInterface) -> void:
@@ -64,10 +19,7 @@ func populate(editor_interface: EditorInterface) -> void:
 	## Setting the text directly does not.
 	n_name_filter.text = ""
 	n_base_asset_names.clear()
-	button_nodes.clear()
-	for child in n_assets_container.get_children():
-		n_assets_container.remove_child(child)
-		child.queue_free()
+	n_icon_container.clear()
 
 	var editor_control := editor_interface.get_base_control()
 	color_text_enabled = editor_control.get_theme_color("font_color", "Editor")
@@ -95,31 +47,19 @@ func handle_files(category: String, base_path: String):
 
 func create_icon(category: String, path: String):
 	var map_category := "<no category>" if category.is_empty() else category
-	if not button_nodes.has(map_category):
-		button_nodes[map_category] = {}
+	if not n_icon_container.button_nodes.has(map_category):
+		n_icon_container.button_nodes[map_category] = {}
 		var item : TreeItem = n_base_asset_names.create_item(asset_names_root)
 		item.set_text(0, map_category)
 
 	var filename := path.get_file()
-	if button_nodes[map_category].has(filename): return
+	if n_icon_container.button_nodes[map_category].has(filename): return
 
 	var icon_path = ("" if category.is_empty() else category + "/") + path.get_file().get_basename()
-	var icon := ControllerIcons_Icon.new(map_category, icon_path)
-	button_nodes[map_category][filename] = icon
-	n_assets_container.add_child(icon.button)
-	icon.button.pressed.connect(func():
-		if _last_pressed_icon == icon:
-			if Time.get_ticks_msec() < _last_pressed_timestamp:
-				done.emit()
-			else:
-				_last_pressed_timestamp = Time.get_ticks_msec() + 1000
-		else:
-			_last_pressed_icon = icon
-			_last_pressed_timestamp = Time.get_ticks_msec() + 1000
-	)
+	n_icon_container.add_icon(map_category, icon_path)
 
 func get_icon_path() -> String:
-	var button := ControllerIcons_Icon.group.get_pressed_button()
+	var button : Button = n_icon_container.get_selected_icon()
 	if button:
 		return button.icon.path
 	return ""
@@ -138,15 +78,7 @@ func _on_base_asset_names_item_selected():
 	if not selected: return
 
 	var category := selected.get_text(0)
-	if not button_nodes.has(category): return
-
-	# UPGRADE: In Godot 4.2, for-loop variables can be
-	# statically typed:
-	# for key:String in button_nodes.keys():
-	# 	for icon:ControllerIcon_Icon in button_nodes[key].values():
-	for key in button_nodes.keys():
-		for icon in button_nodes[key].values():
-			icon.selected = key == category
+	n_icon_container.select_category(category)
 
 
 func _on_name_filter_text_changed(new_text:String):
@@ -162,8 +94,8 @@ func _on_name_filter_text_changed(new_text:String):
 	# statically typed:
 	# for key:String in button_nodes.keys():
 	# 	for icon:Icon in button_nodes[key].values():
-	for key in button_nodes.keys():
-		for icon in button_nodes[key].values():
+	for key in n_icon_container.button_nodes.keys():
+		for icon in n_icon_container.button_nodes[key].values():
 			var filtered : bool = true if new_text.is_empty() else icon.path.findn(new_text) != -1
 			icon.filtered = filtered
 			any_visible[key] = any_visible[key] or filtered
@@ -178,3 +110,7 @@ func _on_name_filter_text_changed(new_text:String):
 				asset_name.deselect(0)
 			asset_name.set_custom_color(0, color_text_enabled if selectable else color_text_disabled)
 		asset_name = asset_name.get_next_in_tree()
+
+
+func _on_icon_container_icon_selected(Icon: Variant) -> void:
+	done.emit()

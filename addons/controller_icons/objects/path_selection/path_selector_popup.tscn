@@ -1,20 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://ib8ydhcaklwy"]
+[gd_scene format=3 uid="uid://ib8ydhcaklwy"]
 
-[ext_resource type="Script" path="res://addons/controller_icons/objects/path_selection/path_selector_popup.gd" id="1_g6exe"]
+[ext_resource type="Script" uid="uid://bbnovccnmx2ti" path="res://addons/controller_icons/objects/path_selection/path_selector_popup.gd" id="1_p7x0p"]
 [ext_resource type="PackedScene" uid="uid://dijn7haax0boi" path="res://addons/controller_icons/objects/path_selection/path_selector.tscn" id="2_74aiu"]
 
-[node name="ControllerIconPathSelectorPopup" type="ConfirmationDialog"]
+[node name="ControllerIconPathSelectorPopup" type="ConfirmationDialog" unique_id=815227797]
+oversampling_override = 1.0
 title = "Select an icon path"
 position = Vector2i(0, 36)
 size = Vector2i(866, 507)
 visible = true
-script = ExtResource("1_g6exe")
+script = ExtResource("1_p7x0p")
 
-[node name="ControllerIconPathSelector" parent="." instance=ExtResource("2_74aiu")]
+[node name="ControllerIconPathSelector" parent="." unique_id=1118367631 instance=ExtResource("2_74aiu")]
 offset_left = 8.0
 offset_top = 8.0
 offset_right = -8.0
 offset_bottom = -49.0
 
 [connection signal="confirmed" from="." to="." method="_on_confirmed"]
-[connection signal="path_selected" from="ControllerIconPathSelector" to="." method="_on_controller_icon_path_selector_path_selected"]
