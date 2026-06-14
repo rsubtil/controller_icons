@@ -26,7 +26,7 @@ class ControllerIcons_Item:
 		controller_icon_joy.icon_pack = icon_pack
 
 		tree_item.set_icon_max_width(1, 48 * controller_icon_key._texture_data.textures.size())
-		tree_item.set_icon_max_width(2, 48 * controller_icon_key._texture_data.textures.size())
+		tree_item.set_icon_max_width(2, 48 * controller_icon_joy._texture_data.textures.size())
 		tree_item.set_icon(1, controller_icon_key)
 		tree_item.set_icon(2, controller_icon_joy)
 
@@ -64,7 +64,7 @@ func populate(editor_interface: EditorInterface, icon: ControllerIconTexture) ->
 
 	# Setup tree columns
 	n_tree.set_column_title(0, "Action")
-	n_tree.set_column_title(1, "Preview")
+	n_tree.set_column_title(2, "Preview")
 	n_tree.set_column_expand(1, false)
 	n_tree.set_column_expand(2, false)
 
