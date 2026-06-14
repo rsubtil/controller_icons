@@ -4,8 +4,9 @@ extends Node
 signal input_type_changed(input_type: InputType, controller: int)
 
 enum InputType {
+	AUTO, ## The input type should be auto-deducted.
 	KEYBOARD_MOUSE, ## The input is from the keyboard and/or mouse.
-	CONTROLLER ## The input is from a controller.
+	CONTROLLER, ## The input is from a controller.
 }
 
 enum PathType {

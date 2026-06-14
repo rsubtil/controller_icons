@@ -96,18 +96,12 @@ enum ShowMode {
 		force_controller_icon_style = _force_controller_icon_style
 		_load_texture_path()
 
-enum ForceType {
-	NONE, ## Icon will swap according to the used input method.
-	KEYBOARD_MOUSE, ## Icon will always show the keyboard/mouse action.
-	CONTROLLER, ## Icon will always show the controller action.
-}
-
 ## Forces the icon to show either the keyboard/mouse or controller icon,
 ## regardless of the currently used input method.
 ##[br][br]
 ## This is only relevant for paths using input actions, and has no effect on
 ## other scenarios.
-@export var force_type: ForceType = ForceType.NONE:
+@export var force_type: ControllerIcons.InputType = ControllerIcons.InputType.AUTO:
 	set(_force_type):
 		force_type = _force_type
 		_load_texture_path()
@@ -166,11 +160,11 @@ func get_tts_string() -> String:
 
 func _can_be_shown():
 	match show_mode:
-		1:
+		ShowMode.KEYBOARD_MOUSE:
 			return ControllerIcons._last_input_type == ControllerIcons.InputType.KEYBOARD_MOUSE
-		2:
+		ShowMode.CONTROLLER:
 			return ControllerIcons._last_input_type == ControllerIcons.InputType.CONTROLLER
-		0, _:
+		ShowMode.ANY, _:
 			return true
 
 var _texture_data: ControllerIcons.TextureData:
