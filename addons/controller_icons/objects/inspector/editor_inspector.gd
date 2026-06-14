@@ -59,16 +59,11 @@ var modifier_selector_instance : EditorProperty
 
 func _parse_property(object: Object, type, name: String, hint_type: PropertyHint, hint_string: String, usage_flags: int, wide: bool) -> bool:
 	if name == "path" and not path_selector_instance:
-		path_selector_instance = path_selector.new(editor_interface)
+		path_selector_instance = path_selector.new(editor_interface, object as ControllerIconTexture)
 		add_property_editor(name, path_selector_instance)
 		return true
 	if name == "modifiers" and not modifier_selector_instance:
-		modifier_selector_instance = modifier_selector.new(editor_interface)
-		if path_selector_instance:
-			path_selector_instance.property_changed.connect(func(property: StringName, value: Variant, field: StringName, changing: bool):
-				modifier_selector_instance.read_only = ControllerIcons.get_path_type(value) != ControllerIcons.PathType.INPUT_ACTION
-				print(modifier_selector_instance.read_only)
-			)
+		modifier_selector_instance = modifier_selector.new(editor_interface, object as ControllerIconTexture)
 		add_property_editor(name, modifier_selector_instance)
 		return true
 	return false

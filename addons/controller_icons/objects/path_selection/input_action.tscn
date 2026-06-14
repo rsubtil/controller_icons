@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://bituity863qe4"]
+[gd_scene format=3 uid="uid://bituity863qe4"]
 
-[ext_resource type="Script" path="res://addons/controller_icons/objects/path_selection/input_action.gd" id="1_shxks"]
+[ext_resource type="Script" uid="uid://ch4gfumjkaua6" path="res://addons/controller_icons/objects/path_selection/input_action.gd" id="1_shxks"]
 
-[node name="Input Action" type="Panel"]
+[node name="Input Action" type="Panel" unique_id=1590440988]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -10,7 +10,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_shxks")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1774295880]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,31 +18,31 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="VBoxContainer"]
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=1912476266]
 layout_mode = 2
 text = "The icon will be tied to an input action, swapping between keyboard/mouse and controller automatically."
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=191746215]
 layout_mode = 2
 
-[node name="NameFilter" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
+[node name="NameFilter" type="LineEdit" parent="VBoxContainer/HBoxContainer" unique_id=2020509084]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Filter by name..."
 clear_button_enabled = true
 
-[node name="BuiltinActionButton" type="CheckButton" parent="VBoxContainer/HBoxContainer"]
+[node name="BuiltinActionButton" type="CheckButton" parent="VBoxContainer/HBoxContainer" unique_id=1503952232]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Show Built-in Actions"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer" unique_id=1673936256]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Tree" type="Tree" parent="VBoxContainer/ScrollContainer"]
+[node name="Tree" type="Tree" parent="VBoxContainer/ScrollContainer" unique_id=321901008]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

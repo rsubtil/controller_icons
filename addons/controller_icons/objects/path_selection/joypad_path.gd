@@ -18,12 +18,13 @@ signal done
 var _last_pressed_button : Button
 var _last_pressed_timestamp : int
 
-func populate(editor_interface: EditorInterface) -> void:
+func populate(editor_interface: EditorInterface, icon: ControllerIconTexture) -> void:
 	# UPGRADE: In Godot 4.2, for-loop variables can be
 	# statically typed:
 	# for button:Button in button_nodes:
 	for button in button_nodes:
 		button.button_pressed = false
+		button.icon.icon_pack = icon.icon_pack
 
 func get_icon_path() -> String:
 	# UPGRADE: In Godot 4.2, for-loop variables can be

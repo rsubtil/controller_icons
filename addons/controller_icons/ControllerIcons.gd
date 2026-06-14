@@ -159,7 +159,7 @@ const _MOUSE_VELOCITY_DELTA := 0.1
 var _t : float
 var _mouse_velocity : int
 
-var IconPack = preload("res://addons/controller_icons/icon_packs/xelu/Main.gd").new()
+var _icon_packs : Dictionary[String, ControllerIconPack]
 
 # Default actions will be the builtin editor actions when
 # the script is at editor ("tool") level. To pickup more
@@ -255,7 +255,31 @@ func _initialize_setting_info(key: String) -> void:
 			})
 
 func _exit_tree():
-	IconPack = null
+	_icon_packs.clear()
+
+func _load_icon_pack(icon_pack: String = "") -> ControllerIconPack:
+	var _first_if_exists := func() -> ControllerIconPack:
+		return _icon_packs.values().front() if !_icon_packs.is_empty() else null
+
+	if icon_pack in _icon_packs:
+		return _icon_packs[icon_pack]
+
+	var candidate_paths := DirAccess.get_directories_at("res://addons/controller_icons/icon_packs")
+	if candidate_paths.is_empty():
+		return null
+	
+	var candidate_pack = "res://addons/controller_icons/icon_packs/%s/Main.gd" % (candidate_paths[0] if icon_pack.is_empty() else icon_pack)
+	if not FileAccess.file_exists(candidate_pack):
+		push_error("Attempted to fetch from \"%s\" icon pack which doesn't exist! Using default pack..." % icon_pack)
+		return _first_if_exists.call()
+	
+	var candidate_inst : ControllerIconPack = load(candidate_pack).new()
+	if not candidate_inst:
+		push_error("Loading \"%s\" icon pack failed! Using default pack..." % icon_pack)
+		return _first_if_exists.call()
+	
+	_icon_packs[icon_pack] = candidate_inst
+	return candidate_inst
 
 func _parse_input_actions():
 	_custom_input_actions.clear()
@@ -351,7 +375,7 @@ func refresh():
 func get_last_input_type() -> InputType:
 	return _last_input_type
 
-func parse_path(path: String, modifiers: String, input_type = _last_input_type, controller = _last_controller, forced_controller_icon_style = Devices.NONE) -> TextureData:
+func parse_path(path: String, modifiers: String, icon_pack: String = "", input_type = _last_input_type, controller = _last_controller, forced_controller_icon_style = Devices.NONE) -> TextureData:
 	var data := TextureData.new()
 	if path.is_empty():
 		return data
@@ -359,22 +383,23 @@ func parse_path(path: String, modifiers: String, input_type = _last_input_type, 
 	if typeof(input_type) == TYPE_NIL:
 		return data
 
+	var icon_pack_inst := _load_icon_pack(icon_pack)
+	if not icon_pack_inst:
+		return data
+
 	match get_path_type(path):
 		PathType.INPUT_ACTION:
-			return _compute_input_path(path, modifiers, input_type, controller, forced_controller_icon_style)
+			return _compute_input_path(path, modifiers, icon_pack_inst, input_type, controller, forced_controller_icon_style)
 		var type:
 			if type == PathType.JOYPAD_PATH:
-				path = _convert_joypad_path(path, controller, forced_controller_icon_style)
+				path = _convert_joypad_path(path, icon_pack_inst, controller, forced_controller_icon_style)
+			return _compute_other_path(path, modifiers, icon_pack_inst, input_type, controller, forced_controller_icon_style)
 
-			if _load_icon(path) != OK:
-				return data
-
-			data.textures.push_back(_cached_icons[path])
-			data.draw_string = "_1"
-			return data
-
-func parse_event_modifiers(event: InputEvent) -> Array[Texture]:
+func parse_event_modifiers(event: InputEvent, icon_pack: ControllerIconPack = _load_icon_pack()) -> Array[Texture]:
 	if not event or not event is InputEventWithModifiers:
+		return []
+
+	if not icon_pack:
 		return []
 
 	var icons : Array[Texture] = []
@@ -399,16 +424,19 @@ func parse_event_modifiers(event: InputEvent) -> Array[Texture]:
 				modifiers.push_back("key/win")
 
 	for modifier in modifiers:
-		if _load_icon(modifier) == OK:
-			icons.push_back(_cached_icons[modifier])
+		if _load_icon(modifier, icon_pack) == OK:
+			icons.push_back(_retrieve_cached_icon(modifier, icon_pack))
 
 	return icons
 
-func parse_path_to_tts(path: String, input_type: int = _last_input_type, controller: int = _last_controller) -> String:
+func parse_path_to_tts(path: String, icon_pack: String, input_type: int = _last_input_type, controller: int = _last_controller) -> String:
 	if input_type == null:
 		return ""
+	var icon_pack_inst := _load_icon_pack(icon_pack)
+	if icon_pack_inst == null:
+		return ""
 	# TODO: Fix, return changed to array
-	var tts = _convert_path_to_asset_files(path, input_type, controller)
+	var tts = _convert_path_to_asset_files(path, input_type, controller, icon_pack_inst)
 	return _convert_asset_file_to_tts(tts.get_basename().get_file())
 
 func get_path_type(path: String) -> PathType:
@@ -466,6 +494,13 @@ func get_joypad_type(device_idx: int):
 	else:
 		return ProjectSettings.get_setting_with_override(SETTING_JOYPAD_FALLBACK)
 
+func pack_supports_flairs(icon_pack: String) -> bool:
+	var icon_pack_inst := _load_icon_pack(icon_pack)
+	if not icon_pack_inst:
+		return false
+	
+	return icon_pack_inst._supports_flairs()
+
 func _get_action_events(path: String) -> Array:
 	# First check project specific actions
 	if _custom_input_actions.has(path):
@@ -502,7 +537,7 @@ func get_matching_events(path: String, input_type: InputType = _last_input_type,
 
 	return results + fallbacks
 
-func _compute_input_path(input_action: String, modifiers: String, input_type: InputType, controller: int, forced_controller_icon_style: Devices) -> TextureData:
+func _compute_input_path(input_action: String, modifiers: String, icon_pack: ControllerIconPack, input_type: InputType, controller: int, forced_controller_icon_style: Devices) -> TextureData:
 	var data := TextureData.new()
 
 	var input_events := get_matching_events(input_action, input_type, controller)
@@ -520,10 +555,10 @@ func _compute_input_path(input_action: String, modifiers: String, input_type: In
 		var event = input_events[idx % input_events.size()]
 
 		var textures : Array[Texture]
-		textures.append_array(parse_event_modifiers(event))
-		var key_path := _convert_event_to_path(event, controller, forced_controller_icon_style)
-		if _load_icon(key_path) == OK:
-			textures.push_back(_cached_icons[key_path])
+		textures.append_array(parse_event_modifiers(event, icon_pack))
+		var key_path := _convert_event_to_path(event, icon_pack, controller, forced_controller_icon_style)
+		if _load_icon(key_path, icon_pack) == OK:
+			textures.push_back(_retrieve_cached_icon(key_path, icon_pack))
 
 		var draw_string : String
 		for i in textures.size():
@@ -542,8 +577,8 @@ func _compute_input_path(input_action: String, modifiers: String, input_type: In
 			return
 
 		var flair_path = "flairs/%s" % flair
-		if _load_icon(flair_path) == OK:
-			data.textures.push_back(_cached_icons[flair_path])
+		if _load_icon(flair_path, icon_pack) == OK:
+			data.textures.push_back(_retrieve_cached_icon(flair_path, icon_pack))
 			data.flairs[flair] = data.textures.size()-1
 			var draw_string = "{%s}" % flair
 			data.draw_string += draw_string
@@ -562,15 +597,59 @@ func _compute_input_path(input_action: String, modifiers: String, input_type: In
 
 	return data
 
-func _convert_path_to_asset_files(path: String, input_type: int, controller: int, forced_controller_icon_style = Devices.NONE) -> Array[String]:
+func _compute_other_path(path: String, modifiers: String, icon_pack: ControllerIconPack, input_type: InputType, controller: int, forced_controller_icon_style: Devices) -> TextureData:
+	var data := TextureData.new()
+
+	var cached_texture : Texture
+	var append_texture := func():
+		if cached_texture:
+			data.draw_string += "_1"
+			return
+
+		if _load_icon(path, icon_pack) == OK:
+			cached_texture = _retrieve_cached_icon(path, icon_pack)
+			data.textures.push_back(cached_texture)
+
+		data.draw_string += "_1"
+
+	# Temporary cache between flair and draw string; avoids duplicated
+	# textures in texture data
+	var cached_flairs : Dictionary[String, String]
+	var append_flair := func(flair: String):
+		if flair in cached_flairs:
+			data.draw_string += cached_flairs[flair]
+			return
+
+		var flair_path = "flairs/%s" % flair
+		if _load_icon(flair_path, icon_pack) == OK:
+			data.textures.push_back(_retrieve_cached_icon(flair_path, icon_pack))
+			data.flairs[flair] = data.textures.size()-1
+			var draw_string = "{%s}" % flair
+			data.draw_string += draw_string
+			cached_flairs[flair] = draw_string
+
+	var draw_string := modifiers if not modifiers.is_empty() else "_1"
+
+	# Tokenize the draw string to understand which textures to fetch
+	for token: TextureData.Token in TextureData.tokenize_draw_string(draw_string):
+		if token is TextureData.IconToken:
+			append_texture.call()
+			if token.flair:
+				append_flair.call(token.flair)
+		elif token is TextureData.TextToken:
+			data.draw_string += token.text
+
+	return data
+
+func _convert_path_to_asset_files(path: String, input_type: int, controller: int, icon_pack: ControllerIconPack, forced_controller_icon_style = Devices.NONE) -> Array[String]:
 	match get_path_type(path):
 		PathType.INPUT_ACTION:
 			var paths : Array[String]
 			for event in get_matching_events(path, input_type, controller):
-				paths.push_back(_convert_event_to_path(event, controller, forced_controller_icon_style))
+				paths.push_back(_convert_event_to_path(event, icon_pack, controller, forced_controller_icon_style))
 			return paths
 		PathType.JOYPAD_PATH:
-			return [_convert_joypad_path(path, controller, forced_controller_icon_style)]
+			return [_convert_joypad_path(path, icon_pack, controller, forced_controller_icon_style)]
 		PathType.SPECIFIC_PATH, _:
 			return [path]
 
@@ -631,23 +710,23 @@ func _convert_asset_file_to_tts(path: String) -> String:
 		_:
 			return path
 
-func _convert_event_to_path(event: InputEvent, controller: int = _last_controller, forced_controller_icon_style = Devices.NONE) -> String:
+func _convert_event_to_path(event: InputEvent, icon_pack: ControllerIconPack, controller: int = _last_controller, forced_controller_icon_style = Devices.NONE) -> String:
 	if event is InputEventKey:
 		# If this is a physical key, convert to localized scancode
 		if event.keycode == 0:
-			return IconPack._convert_key_to_path(DisplayServer.keyboard_get_keycode_from_physical(event.physical_keycode))
-		return IconPack._convert_key_to_path(event.keycode)
+			return icon_pack._convert_key_to_path(DisplayServer.keyboard_get_keycode_from_physical(event.physical_keycode))
+		return icon_pack._convert_key_to_path(event.keycode)
 	elif event is InputEventMouseButton:
-		return IconPack._convert_mouse_button_to_path(event.button_index)
+		return icon_pack._convert_mouse_button_to_path(event.button_index)
 	elif event is InputEventJoypadButton:
-		return _convert_joypad_button_to_path(event.button_index, controller, forced_controller_icon_style)
+		return _convert_joypad_button_to_path(event.button_index, controller, icon_pack, forced_controller_icon_style)
 	elif event is InputEventJoypadMotion:
-		return _convert_joypad_motion_to_path(event.axis, controller, forced_controller_icon_style)
+		return _convert_joypad_motion_to_path(event.axis, controller, icon_pack, forced_controller_icon_style)
 
 	# Unsupported InputEvent
 	return ""
 
-func _convert_joypad_button_to_path(button_index: int, controller: int, forced_controller_icon_style = Devices.NONE):
+func _convert_joypad_button_to_path(button_index: int, controller: int, icon_pack: ControllerIconPack, forced_controller_icon_style = Devices.NONE):
 	var path
 	match button_index:
 		JOY_BUTTON_A:
@@ -684,9 +763,9 @@ func _convert_joypad_button_to_path(button_index: int, controller: int, forced_c
 			path = "joypad/share"
 		_:
 			return ""
-	return _convert_joypad_path(path, controller, forced_controller_icon_style)
+	return _convert_joypad_path(path, icon_pack, controller, forced_controller_icon_style)
 
-func _convert_joypad_motion_to_path(axis: int, controller: int, forced_controller_icon_style = Devices.NONE):
+func _convert_joypad_motion_to_path(axis: int, controller: int, icon_pack: ControllerIconPack, forced_controller_icon_style = Devices.NONE):
 	var path : String
 	match axis:
 		JOY_AXIS_LEFT_X, JOY_AXIS_LEFT_Y:
@@ -699,16 +778,18 @@ func _convert_joypad_motion_to_path(axis: int, controller: int, forced_controlle
 			path = "joypad/rt"
 		_:
 			return ""
-	return _convert_joypad_path(path, controller, forced_controller_icon_style)
+	return _convert_joypad_path(path, icon_pack, controller, forced_controller_icon_style)
 
-func _convert_joypad_path(path: String, controller_idx: int, forced_controller_icon_style := Devices.NONE) -> String:
+func _convert_joypad_path(path: String, icon_pack: ControllerIconPack, controller_idx: int, forced_controller_icon_style := Devices.NONE) -> String:
 	var device = forced_controller_icon_style if forced_controller_icon_style != Devices.NONE else get_joypad_type(controller_idx)
-	return IconPack._convert_joypad_path(path, device)
-	
-func _load_icon(path: String) -> int:
-	if _cached_icons.has(path): return OK
-	
-	var full_path := IconPack._convert_asset_path(path)
+	return icon_pack._convert_joypad_path(path, device)
+
+func _load_icon(path: String, icon_pack: ControllerIconPack) -> int:
+	var cache_key = "%s:%s" % [icon_pack._get_folder_name(), path]
+
+	if _cached_icons.has(cache_key): return OK
+
+	var full_path := icon_pack._convert_asset_path(path)
 	var tex = null
 	if full_path.begins_with("res://"):
 		if ResourceLoader.exists(full_path):
@@ -727,8 +808,12 @@ func _load_icon(path: String) -> int:
 		tex = ImageTexture.new()
 		tex.create_from_image(img)
 
-	_cached_icons[path] = tex
+	_cached_icons[cache_key] = tex
 	return OK
+
+func _retrieve_cached_icon(path: String, icon_pack: ControllerIconPack) -> Texture:
+	var cache_key = "%s:%s" % [icon_pack._get_folder_name(), path]
+	return _cached_icons[cache_key] if cache_key in _cached_icons else null
 
 func _defer_texture_load(f: Callable) -> void:
 	_cached_callables_lock.lock()

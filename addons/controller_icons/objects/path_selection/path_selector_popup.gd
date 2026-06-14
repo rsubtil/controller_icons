@@ -4,11 +4,12 @@ extends ConfirmationDialog
 signal path_selected(path: String)
 
 var editor_interface : EditorInterface
+var icon : ControllerIconTexture
 
 @onready var n_selector := $ControllerIconPathSelector
 
 func populate():
-	n_selector.populate(editor_interface)
+	n_selector.populate(editor_interface, icon)
 
 
 func _on_controller_icon_path_selector_path_selected(path) -> void:

@@ -13,14 +13,16 @@ var joypad_path_populated := false
 var specific_path_populated := false
 
 var editor_interface : EditorInterface
+var icon : ControllerIconTexture
 
-func populate(editor_interface: EditorInterface) -> void:
+func populate(editor_interface: EditorInterface, icon: ControllerIconTexture) -> void:
 	self.editor_interface = editor_interface
-	
+	self.icon = icon
+
 	input_action_populated = false
 	joypad_path_populated = false
 	specific_path_populated = false
-	
+
 	n_tab_container.current_tab = 0
 
 func get_icon_path() -> String:
@@ -32,15 +34,15 @@ func _on_tab_container_tab_selected(tab = null) -> void:
 		n_input_action:
 			if not input_action_populated:
 				input_action_populated = true
-				n_input_action.populate(editor_interface)
+				n_input_action.populate(editor_interface, icon)
 		n_joypad_path:
 			if not joypad_path_populated:
 				joypad_path_populated = true
-				n_joypad_path.populate(editor_interface)
+				n_joypad_path.populate(editor_interface, icon)
 		n_specific_path:
 			if not specific_path_populated:
 				specific_path_populated = true
-				n_specific_path.populate(editor_interface)
+				n_specific_path.populate(editor_interface, icon)
 
 	await get_tree().process_frame
 	n_tab_container.get_current_tab_control().grab_focus()

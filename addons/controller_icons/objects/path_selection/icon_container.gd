@@ -5,7 +5,7 @@ class_name ControllerIcons_IconContainer
 class ControllerIcons_Icon:
 	static var group := ButtonGroup.new()
 
-	func _init(category: String, path: String):
+	func _init(category: String, path: String, icon_pack: String):
 		self.category = category
 		self.filtered = true
 		self.path = path.get_slice("/", 1)
@@ -23,6 +23,7 @@ class ControllerIcons_Icon:
 
 		var icon = ControllerIconTexture.new()
 		icon.path = path
+		icon.icon_pack = icon_pack
 		button.icon = icon
 
 	var button : Button
@@ -60,8 +61,8 @@ func clear() -> void:
 func is_empty() -> bool:
 	return button_nodes.is_empty()
 
-func add_icon(category: String, path: String) -> void:
-	var icon := ControllerIcons_Icon.new(category, path)
+func add_icon(category: String, path: String, icon_pack: String) -> void:
+	var icon := ControllerIcons_Icon.new(category, path, icon_pack)
 	button_nodes[category][path.get_file()] = icon
 	n_container.add_child(icon.button)
 	icon.button.pressed.connect(func():
@@ -76,7 +77,7 @@ func add_icon(category: String, path: String) -> void:
 	)
 
 func add_meta_icon(category: String, content: String) -> void:
-	var icon := ControllerIcons_Icon.new(category, "/" + content)
+	var icon := ControllerIcons_Icon.new(category, "/" + content, "")
 	button_nodes[category][content] = icon
 	n_container.add_child(icon.button)
 	icon.button.pressed.connect(func():

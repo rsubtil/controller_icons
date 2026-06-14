@@ -125,7 +125,8 @@ func build_icon_menu(path: String, input_type: ControllerIcons.InputType, curr_i
 
 	for event: InputEvent in ControllerIcons._get_action_events(path).filter(_filter_func):
 		var controller_icon := ControllerIconTexture.new()
-		controller_icon.path = ControllerIcons._convert_event_to_path(event)
+		# TODO: Fix
+		controller_icon.path = ControllerIcons._convert_event_to_path(event, ControllerIcons._load_icon_pack())
 		menu.add_icon_radio_check_item(controller_icon, event.as_text())
 	menu.set_item_checked(curr_index, true)
 

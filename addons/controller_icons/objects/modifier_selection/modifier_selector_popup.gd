@@ -16,7 +16,7 @@ var current_modifier : ControllerIcons_ModifierButton
 
 func populate():
 	n_selector.populate(editor_interface)
-	if !ControllerIcons.IconPack._supports_flairs():
+	if !ControllerIcons.pack_supports_flairs(icon.icon_pack):
 		n_flair_selection_popup.queue_free()
 
 func _on_confirmed() -> void:
@@ -24,14 +24,16 @@ func _on_confirmed() -> void:
 
 
 func _on_flair_selection_popup_about_to_popup() -> void:
-	assert(ControllerIcons.IconPack._supports_flairs())
+	assert(ControllerIcons.pack_supports_flairs(icon.icon_pack))
 
 	if !n_icon_container.is_empty():
 		# Already populated; nothing to do
 		return
 
 	# Populate with flairs
-	var flair_path := ControllerIcons.IconPack._get_root_asset_path().path_join("flairs")
+	var icon_pack := ControllerIcons._load_icon_pack(icon.icon_pack)
+	assert(icon_pack)
+	var flair_path := icon_pack._get_root_asset_path().path_join("flairs")
 	n_icon_container.button_nodes["flairs"] = {}
 	n_icon_container.add_meta_icon("flairs", "<empty>")
 	for file in DirAccess.get_files_at(flair_path):

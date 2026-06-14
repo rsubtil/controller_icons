@@ -76,6 +76,11 @@ enum ShowMode {
 		show_mode = _show_mode
 		_load_texture_path()
 
+## TODO: Document
+@export var icon_pack: String = "":
+	set(_icon_pack):
+		icon_pack = _icon_pack
+		_load_texture_path()
 
 @export_subgroup("Overrides")
 
@@ -155,9 +160,9 @@ enum ForceDevice {
 ## names (e.g. [code]A[/code] for Xbox, [code]Cross[/code] for PlayStation, etc).
 func get_tts_string() -> String:
 	if force_type:
-		return ControllerIcons.parse_path_to_tts(path, force_type - 1)
+		return ControllerIcons.parse_path_to_tts(path, icon_pack, force_type - 1)
 	else:
-		return ControllerIcons.parse_path_to_tts(path)
+		return ControllerIcons.parse_path_to_tts(path, icon_pack)
 
 func _can_be_shown():
 	match show_mode:
@@ -202,7 +207,7 @@ func _load_texture_path_impl():
 	if ControllerIcons and ControllerIcons.is_node_ready() and _can_be_shown():
 		var input_type = ControllerIcons.get_last_input_type() if force_type == ControllerIcons.InputType.AUTO else force_type
 		var target_device = force_device if force_device != ForceDevice.ANY else ControllerIcons._last_controller
-		_texture_data = ControllerIcons.parse_path(path, modifiers, input_type, target_device, force_controller_icon_style)
+		_texture_data = ControllerIcons.parse_path(path, modifiers, icon_pack, input_type, target_device, force_controller_icon_style)
 		_reload_resource()
 
 func _load_texture_path():

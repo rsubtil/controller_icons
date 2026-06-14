@@ -4,12 +4,13 @@ extends EditorProperty
 var selector : ConfirmationDialog
 var line_edit : LineEdit
 
-func _init(editor_interface: EditorInterface):
-	add_child(build_tree(editor_interface))
+func _init(editor_interface: EditorInterface, icon: ControllerIconTexture):
+	add_child(build_tree(editor_interface, icon))
 
-func build_tree(editor_interface: EditorInterface):
+func build_tree(editor_interface: EditorInterface, icon: ControllerIconTexture):
 	selector = preload("res://addons/controller_icons/objects/path_selection/path_selector_popup.tscn").instantiate()
 	selector.editor_interface = editor_interface
+	selector.icon = icon
 	selector.visible = false
 	selector.path_selected.connect(
 		func(path: String):

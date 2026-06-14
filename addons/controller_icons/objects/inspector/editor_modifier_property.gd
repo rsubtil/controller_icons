@@ -5,12 +5,13 @@ var selector : ConfirmationDialog
 var line_edit : LineEdit
 var button : Button
 
-func _init(editor_interface: EditorInterface):
-	add_child(build_tree(editor_interface))
+func _init(editor_interface: EditorInterface, icon: ControllerIconTexture):
+	add_child(build_tree(editor_interface, icon))
 
-func build_tree(editor_interface: EditorInterface) -> Control:
+func build_tree(editor_interface: EditorInterface, icon: ControllerIconTexture) -> Control:
 	selector = preload("res://addons/controller_icons/objects/modifier_selection/modifier_selector_popup.tscn").instantiate()
 	selector.editor_interface = editor_interface
+	selector.icon = icon
 	selector.visible = false
 	selector.modifier_selected.connect(
 		func(path: String):

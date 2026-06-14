@@ -1,11 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://dijn7haax0boi"]
+[gd_scene format=3 uid="uid://dijn7haax0boi"]
 
-[ext_resource type="Script" path="res://addons/controller_icons/objects/path_selection/path_selector.gd" id="1_1bkgj"]
+[ext_resource type="Script" uid="uid://c01rlebt614hm" path="res://addons/controller_icons/objects/path_selection/path_selector.gd" id="1_1bkgj"]
 [ext_resource type="PackedScene" uid="uid://bituity863qe4" path="res://addons/controller_icons/objects/path_selection/input_action.tscn" id="2_uvylw"]
 [ext_resource type="PackedScene" uid="uid://b3lplrf2w6kh7" path="res://addons/controller_icons/objects/path_selection/joypad_path.tscn" id="3_bw803"]
 [ext_resource type="PackedScene" uid="uid://d2ow6e2ba86b6" path="res://addons/controller_icons/objects/path_selection/specific_path.tscn" id="4_v1rfp"]
 
-[node name="ControllerIconPathSelector" type="PanelContainer"]
+[node name="ControllerIconPathSelector" type="PanelContainer" unique_id=2021547016]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -13,27 +13,31 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_1bkgj")
 
-[node name="TabContainer" type="TabContainer" parent="."]
+[node name="TabContainer" type="TabContainer" parent="." unique_id=1243668021]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(850, 450)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/side_margin = 0
 tab_alignment = 1
+current_tab = 0
 
-[node name="Input Action" parent="TabContainer" instance=ExtResource("2_uvylw")]
+[node name="Input Action" parent="TabContainer" unique_id=242961978 instance=ExtResource("2_uvylw")]
 unique_name_in_owner = true
 layout_mode = 2
+metadata/_tab_index = 0
 
-[node name="Joypad Path" parent="TabContainer" instance=ExtResource("3_bw803")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-
-[node name="Specific Path" parent="TabContainer" instance=ExtResource("4_v1rfp")]
+[node name="Joypad Path" parent="TabContainer" unique_id=1584659180 instance=ExtResource("3_bw803")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="Specific Path" parent="TabContainer" unique_id=912664159 instance=ExtResource("4_v1rfp")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
 
 [connection signal="tab_selected" from="TabContainer" to="." method="_on_tab_container_tab_selected"]
 [connection signal="done" from="TabContainer/Input Action" to="." method="_on_input_action_done"]

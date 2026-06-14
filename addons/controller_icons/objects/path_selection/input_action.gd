@@ -10,7 +10,7 @@ signal done
 @onready var n_tree := %Tree
 
 class ControllerIcons_Item:
-	func _init(tree: Tree, root: TreeItem, path: String, is_default: bool):
+	func _init(tree: Tree, root: TreeItem, path: String, is_default: bool, icon_pack: String):
 		self.is_default = is_default
 		self.filtered = true
 		tree_item = tree.create_item(root)
@@ -19,9 +19,11 @@ class ControllerIcons_Item:
 		controller_icon_key = ControllerIconTexture.new()
 		controller_icon_key.path = path
 		controller_icon_key.force_type = 1
+		controller_icon_key.icon_pack = icon_pack
 		controller_icon_joy = ControllerIconTexture.new()
 		controller_icon_joy.path = path
 		controller_icon_joy.force_type = 2
+		controller_icon_joy.icon_pack = icon_pack
 
 		tree_item.set_icon_max_width(1, 48 * controller_icon_key._texture_data.textures.size())
 		tree_item.set_icon_max_width(2, 48 * controller_icon_key._texture_data.textures.size())
@@ -50,7 +52,7 @@ class ControllerIcons_Item:
 var root : TreeItem
 var items : Array[ControllerIcons_Item]
 
-func populate(editor_interface: EditorInterface) -> void:
+func populate(editor_interface: EditorInterface, icon: ControllerIconTexture) -> void:
 	# Clear
 	n_tree.clear()
 	## Using clear() triggers a signal and uses freed nodes.
@@ -78,7 +80,7 @@ func populate(editor_interface: EditorInterface) -> void:
 	# Map with all input actions
 	root = n_tree.create_item()
 	for data in ControllerIcons._custom_input_actions:
-		var child := ControllerIcons_Item.new(n_tree, root, data, data in default_actions)
+		var child := ControllerIcons_Item.new(n_tree, root, data, data in default_actions, icon.icon_pack)
 		items.push_back(child)
 
 	set_default_actions_visibility(n_builtin_action_button.button_pressed)

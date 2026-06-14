@@ -14,7 +14,7 @@ var color_text_disabled : Color
 
 var asset_names_root : TreeItem
 
-func populate(editor_interface: EditorInterface) -> void:
+func populate(editor_interface: EditorInterface, icon: ControllerIconTexture) -> void:
 	## Using clear() triggers a signal and uses freed nodes.
 	## Setting the text directly does not.
 	n_name_filter.text = ""
@@ -28,24 +28,26 @@ func populate(editor_interface: EditorInterface) -> void:
 
 	asset_names_root = n_base_asset_names.create_item()
 
-	var base_path := ControllerIcons.IconPack._get_root_asset_path()
+	var icon_pack := ControllerIcons._load_icon_pack(icon.icon_pack)
+	assert(icon_pack)
+	var base_path := icon_pack._get_root_asset_path()
 
 	# Files first
-	handle_files("", base_path)
+	handle_files("", base_path, icon_pack)
 	# Directories next
 	for dir in DirAccess.get_directories_at(base_path):
-		handle_files(dir, base_path.path_join(dir))
+		handle_files(dir, base_path.path_join(dir), icon_pack)
 	
 	var child : TreeItem = asset_names_root.get_next_in_tree()
 	if child:
 		child.select(0)
 
-func handle_files(category: String, base_path: String):
+func handle_files(category: String, base_path: String, icon_pack: ControllerIconPack):
 	for file in DirAccess.get_files_at(base_path):
-		if file.get_extension() in ["png", "jpg", "jpeg", "svg"]:
-			create_icon(category, base_path.path_join(file))
+		if file.get_extension() == "import": continue
+		create_icon(category, icon_pack._convert_asset_path(file.get_basename()), icon_pack._get_folder_name())
 
-func create_icon(category: String, path: String):
+func create_icon(category: String, path: String, icon_pack: String):
 	var map_category := "<no category>" if category.is_empty() else category
 	if not n_icon_container.button_nodes.has(map_category):
 		n_icon_container.button_nodes[map_category] = {}
@@ -56,7 +58,7 @@ func create_icon(category: String, path: String):
 	if n_icon_container.button_nodes[map_category].has(filename): return
 
 	var icon_path = ("" if category.is_empty() else category + "/") + path.get_file().get_basename()
-	n_icon_container.add_icon(map_category, icon_path)
+	n_icon_container.add_icon(map_category, icon_path, icon_pack)
 
 func get_icon_path() -> String:
 	var button : Button = n_icon_container.get_selected_icon()
