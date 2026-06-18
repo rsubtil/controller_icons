@@ -427,9 +427,9 @@ func _get_rid():
 			# This results in a one-frame white texture being displayed, which is not ideal. Investigate later.
 			_stitch_texture()
 			if _is_stitching_texture:
-				return 0
+				return RID()
 		else:
-			return 0
+			return RID()
 	return _texture_3d.get_rid() if not _textures.is_empty() else 0
 
 #endregion
