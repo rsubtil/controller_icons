@@ -430,6 +430,6 @@ func _get_rid():
 				return RID()
 		else:
 			return RID()
-	return _texture_3d.get_rid() if not _textures.is_empty() else 0
+	return _texture_3d.get_rid() if not _textures.is_empty() else RID()
 
 #endregion
