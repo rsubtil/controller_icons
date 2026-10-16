@@ -45,38 +45,38 @@ func _get_joypad_type(device, fallback, force_controller_icon_style):
 	if not device in available:
 		device = available.front()
 
-	var controller_name = Input.get_joy_name(device)
-	if "Luna Controller" in controller_name:
+	var controller_name = Input.get_joy_name(device).to_lower()
+	if "luna controller" in controller_name:
 		return ControllerSettings.Devices.LUNA
-	elif "PS3 Controller" in controller_name:
+	elif "ps3 controller" in controller_name:
 		return ControllerSettings.Devices.PS3
-	elif "PS4 Controller" in controller_name or \
-		"DUALSHOCK 4" in controller_name:
+	elif "ps4 controller" in controller_name or \
+		"dualshock 4" in controller_name:
 		return ControllerSettings.Devices.PS4
-	elif "PS5 Controller" in controller_name or \
-		"DualSense" in controller_name:
+	elif "ps5 controller" in controller_name or \
+		"dualsense" in controller_name:
 		return ControllerSettings.Devices.PS5
-	elif "Stadia Controller" in controller_name:
+	elif "stadia controller" in controller_name:
 		return ControllerSettings.Devices.STADIA
-	elif "Steam Controller" in controller_name:
+	elif "steam controller" in controller_name:
 		return ControllerSettings.Devices.STEAM
-	elif "Switch Controller" in controller_name or \
-		"Switch Pro Controller" in controller_name:
+	elif "switch controller" in controller_name or \
+		"switch pro controller" in controller_name:
 		return ControllerSettings.Devices.SWITCH
-	elif "Joy-Con" in controller_name:
+	elif "joy-con" in controller_name:
 		return ControllerSettings.Devices.JOYCON
-	elif "Xbox 360 Controller" in controller_name:
+	elif "xbox 360 controller" in controller_name:
 		return ControllerSettings.Devices.XBOX360
-	elif "Xbox One" in controller_name or \
-		"X-Box One" in controller_name or \
-		"Xbox Wireless Controller" in controller_name:
+	elif "xbox one" in controller_name or \
+		"x-box one" in controller_name or \
+		"xbox wireless controller" in controller_name:
 		return ControllerSettings.Devices.XBOXONE
-	elif "Xbox Series" in controller_name:
+	elif "xbox series" in controller_name:
 		return ControllerSettings.Devices.XBOXSERIES
-	elif "Steam Deck" in controller_name or \
-		"Steam Virtual Gamepad" in controller_name:
+	elif "steam deck" in controller_name or \
+		"steam virtual gamepad" in controller_name:
 		return ControllerSettings.Devices.STEAM_DECK
-	elif "OUYA Controller" in controller_name:
+	elif "ouya controller" in controller_name:
 		return ControllerSettings.Devices.OUYA
 	else:
 		return fallback
