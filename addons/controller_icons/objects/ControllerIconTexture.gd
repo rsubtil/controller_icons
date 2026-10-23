@@ -53,7 +53,7 @@ class_name ControllerIconTexture
 @export var path: String = "":
 	set(_path):
 		path = _path
-		_load_texture_path()
+		_should_trigger_texture_load = true
 
 enum ShowMode {
 	ANY, ## Icon will be display on any input method.
@@ -66,7 +66,7 @@ enum ShowMode {
 @export var show_mode: ShowMode = ShowMode.ANY:
 	set(_show_mode):
 		show_mode = _show_mode
-		_load_texture_path()
+		_should_trigger_texture_load = true
 
 
 ## Forces the icon to show a specific controller style, regardless of the
@@ -80,7 +80,7 @@ enum ShowMode {
 @export var force_controller_icon_style: ControllerSettings.Devices = ControllerSettings.Devices.NONE:
 	set(_force_controller_icon_style):
 		force_controller_icon_style = _force_controller_icon_style
-		_load_texture_path()
+		_should_trigger_texture_load = true
 
 enum ForceType {
 	NONE, ## Icon will swap according to the used input method.
@@ -96,7 +96,7 @@ enum ForceType {
 @export var force_type: ForceType = ForceType.NONE:
 	set(_force_type):
 		force_type = _force_type
-		_load_texture_path()
+		_should_trigger_texture_load = true
 
 enum ForceDevice {
 	DEVICE_0,
@@ -124,14 +124,14 @@ enum ForceDevice {
 @export var force_device: ForceDevice = ForceDevice.ANY:
 	set(_force_device):
 		force_device = _force_device
-		_load_texture_path()
+		_should_trigger_texture_load = true
 
 @export_subgroup("Text Rendering")
 ## Custom LabelSettings. If set, overrides the addon's global label settings.
 @export var custom_label_settings: LabelSettings:
 	set(_custom_label_settings):
 		custom_label_settings = _custom_label_settings
-		_load_texture_path()
+		_should_trigger_texture_load = true
 
 		# Call _textures setter, which handles signal connections for label settings
 		_textures = _textures
@@ -193,6 +193,13 @@ var _font: Font
 var _label_settings: LabelSettings
 var _text_size: Vector2
 
+var _should_trigger_texture_load = false:
+	set(value):
+		if _should_trigger_texture_load == value: return
+		_should_trigger_texture_load = value
+		if _should_trigger_texture_load and ControllerIcons != null:
+			ControllerIcons._textures_to_update.append(self)
+
 func _on_label_settings_changed():
 	_font = ThemeDB.fallback_font if not _label_settings.font else _label_settings.font
 	_text_size = _font.get_string_size("+", HORIZONTAL_ALIGNMENT_LEFT, -1, _label_settings.font_size)
@@ -230,7 +237,7 @@ func _init():
 	ControllerIcons.input_type_changed.connect(_on_input_type_changed)
 
 func _on_input_type_changed(input_type: int, controller: int):
-	_load_texture_path()
+	_should_trigger_texture_load = true
 
 #region "Draw functions"
 const _NULL_SIZE := 2
