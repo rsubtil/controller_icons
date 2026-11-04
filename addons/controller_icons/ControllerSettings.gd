@@ -43,6 +43,8 @@ enum Devices {
 ## Custom asset lookup folder for custom icons
 @export_dir var custom_asset_dir : String = ""
 
+@export var custom_resolver : Script
+
 ## Custom generic joystick mapper script
 @export var custom_mapper : Script
 
