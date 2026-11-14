@@ -214,6 +214,7 @@ grow_vertical = 2
 layout_mode = 2
 text = "The icon will only display a controller icon, changing dynamically according to the connected controller brand."
 horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="Control" type="Control" parent="VBoxContainer"]
 layout_mode = 2
