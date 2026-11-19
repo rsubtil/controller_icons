@@ -31,6 +31,7 @@ const _MOUSE_VELOCITY_DELTA := 0.1
 var _t : float
 var _mouse_velocity : int
 
+var CustomResolver: ControllerCustomResolver = null
 var Mapper = preload("res://addons/controller_icons/Mapper.gd").new()
 
 # Default actions will be the builtin editor actions when
@@ -86,6 +87,7 @@ func _enter_tree():
 		_parse_input_actions()
 
 func _exit_tree():
+	CustomResolver = null
 	Mapper = null
 
 func _parse_input_actions():
@@ -114,6 +116,8 @@ func _ready():
 	_settings = load("res://addons/controller_icons/settings.tres")
 	if not _settings:
 		_settings = ControllerSettings.new()
+	if _settings.custom_resolver:
+		CustomResolver = _settings.custom_resolver.new()
 	if _settings.custom_mapper:
 		Mapper = _settings.custom_mapper.new()
 	if _settings.custom_file_extension and not _settings.custom_file_extension.is_empty():
@@ -193,6 +197,20 @@ func get_last_input_type() -> InputType:
 	return _last_input_type
 
 func parse_path(path: String, input_type = _last_input_type, last_controller = _last_controller, forced_controller_icon_style = ControllerSettings.Devices.NONE) -> Texture:
+	if CustomResolver:
+		var texture: Texture
+		match get_path_type(path):
+			PathType.INPUT_ACTION:
+				var event := get_matching_event(path, input_type, last_controller)
+				if event:
+					texture = CustomResolver.resolve_event(event, last_controller, forced_controller_icon_style)
+			PathType.JOYPAD_PATH:
+				texture = CustomResolver._resolve_joypad_path(path, last_controller, _settings.joypad_fallback, forced_controller_icon_style)
+			PathType.SPECIFIC_PATH, _:
+				texture = CustomResolver._resolve_specific_path(path)
+		if texture:
+			return texture
+
 	if typeof(input_type) == TYPE_NIL:
 		return null
 	var root_paths := _expand_path(path, input_type, last_controller, forced_controller_icon_style)
