@@ -24,6 +24,12 @@ var _last_input_type : InputType
 var _last_controller : int
 var _settings : ControllerSettings
 var _base_extension := "png"
+var _trackpad_active := false
+
+# Assets pending human review are named "<name>.ai.<ext>". They are
+# looked up after "<name>.<ext>", so renaming a reviewed asset to drop
+# the suffix requires no path changes.
+const _AI_ASSET_SUFFIX := ".ai"
 
 # Custom mouse velocity calculation, because Godot
 # doesn't implement it on some OSes apparently
@@ -118,6 +124,11 @@ func _ready():
 		Mapper = _settings.custom_mapper.new()
 	if _settings.custom_file_extension and not _settings.custom_file_extension.is_empty():
 		_base_extension = _settings.custom_file_extension
+	match _settings.mouse_profile:
+		ControllerSettings.MouseProfiles.TRACKPAD:
+			_trackpad_active = true
+		ControllerSettings.MouseProfiles.AUTO:
+			_trackpad_active = OS.get_name() == "macOS"
 	# Wait a frame to give a chance for the app to initialize
 	await get_tree().process_frame
 	# Set input type to what's likely being used currently
@@ -138,9 +149,22 @@ func _on_joy_connection_changed(device, connected):
 func _input(event: InputEvent):
 	var input_type = _last_input_type
 	var controller = _last_controller
+	var trackpad_active = _trackpad_active
 	match event.get_class():
-		"InputEventKey", "InputEventMouseButton":
+		"InputEventKey":
 			input_type = InputType.KEYBOARD_MOUSE
+		"InputEventMouseButton":
+			input_type = InputType.KEYBOARD_MOUSE
+			# Trackpads don't emit these buttons; on macOS trackpad
+			# scrolling arrives as InputEventPanGesture instead of wheel
+			# button events.
+			if event.button_index in [MOUSE_BUTTON_MIDDLE, MOUSE_BUTTON_WHEEL_UP,
+				MOUSE_BUTTON_WHEEL_DOWN, MOUSE_BUTTON_WHEEL_LEFT,
+				MOUSE_BUTTON_WHEEL_RIGHT, MOUSE_BUTTON_XBUTTON1, MOUSE_BUTTON_XBUTTON2]:
+				trackpad_active = false
+		"InputEventPanGesture", "InputEventMagnifyGesture":
+			input_type = InputType.KEYBOARD_MOUSE
+			trackpad_active = true
 		"InputEventMouseMotion":
 			if _settings.allow_mouse_remap and _test_mouse_velocity(event.relative):
 				input_type = InputType.KEYBOARD_MOUSE
@@ -151,7 +175,12 @@ func _input(event: InputEvent):
 			if abs(event.axis_value) > _settings.joypad_deadzone:
 				input_type = InputType.CONTROLLER
 				controller = event.device
-	if input_type != _last_input_type or controller != _last_controller:
+	var profile_changed := false
+	if _settings.mouse_profile == ControllerSettings.MouseProfiles.AUTO and \
+		trackpad_active != _trackpad_active:
+		_trackpad_active = trackpad_active
+		profile_changed = true
+	if input_type != _last_input_type or controller != _last_controller or profile_changed:
 		_set_last_input_type(input_type, controller)
 
 func _test_mouse_velocity(relative_vec: Vector2):
@@ -191,6 +220,11 @@ func get_joypad_type(controller: int = _last_controller) -> ControllerSettings.D
 
 func get_last_input_type() -> InputType:
 	return _last_input_type
+
+## Returns the mouse profile currently in use, either
+## [code]MOUSE[/code] or [code]TRACKPAD[/code] (never [code]AUTO[/code]).
+func get_mouse_profile() -> ControllerSettings.MouseProfiles:
+	return ControllerSettings.MouseProfiles.TRACKPAD if _trackpad_active else ControllerSettings.MouseProfiles.MOUSE
 
 func parse_path(path: String, input_type = _last_input_type, last_controller = _last_controller, forced_controller_icon_style = ControllerSettings.Devices.NONE) -> Texture:
 	if typeof(input_type) == TYPE_NIL:
@@ -254,10 +288,10 @@ func parse_event(event: InputEvent) -> Texture:
 		base_path = base_path.simplify_path()
 		if base_path.is_empty():
 			continue
-		base_path = base_path.path_join( "%s.%s" % [path, _base_extension] )
-		if _load_icon(base_path):
-			continue
-		return _cached_icons[base_path]
+		for file_path in _get_asset_file_candidates(base_path.path_join(path)):
+			if _load_icon(file_path):
+				continue
+			return _cached_icons[file_path]
 	return null
 
 func get_path_type(path: String) -> PathType:
@@ -280,7 +314,8 @@ func get_matching_event(path: String, input_type: InputType = _last_input_type, 
 		if not is_instance_valid(event): continue
 
 		match event.get_class():
-			"InputEventKey", "InputEventMouse", "InputEventMouseMotion", "InputEventMouseButton":
+			"InputEventKey", "InputEventMouse", "InputEventMouseMotion", "InputEventMouseButton", \
+			"InputEventPanGesture", "InputEventMagnifyGesture":
 				if input_type == InputType.KEYBOARD_MOUSE:
 					return event
 			"InputEventJoypadButton", "InputEventJoypadMotion":
@@ -307,8 +342,14 @@ func _expand_path(path: String, input_type: int, controller: int, forced_control
 			continue
 		base_path += _convert_path_to_asset_file(path, input_type, controller, forced_controller_icon_style)
 
-		paths.push_back(base_path + "." + _base_extension)
+		paths.append_array(_get_asset_file_candidates(base_path))
 	return paths
+
+func _get_asset_file_candidates(asset_path: String) -> Array:
+	return [
+		"%s.%s" % [asset_path, _base_extension],
+		"%s%s.%s" % [asset_path, _AI_ASSET_SUFFIX, _base_extension]
+	]
 
 func _convert_path_to_asset_file(path: String, input_type: int, controller: int, forced_controller_icon_style = ControllerSettings.Devices.NONE) -> String:
 	match get_path_type(path):
@@ -376,6 +417,32 @@ func _convert_asset_file_to_tts(path: String) -> String:
 			return "left stick"
 		"r_stick":
 			return "right stick"
+		"two_finger_click":
+			return "two finger click"
+		"two_finger_tap":
+			return "two finger tap"
+		"force_click":
+			return "force click"
+		"two_finger_swipe":
+			return "two finger swipe"
+		"two_finger_swipe_vertical":
+			return "two finger vertical swipe"
+		"two_finger_swipe_horizontal":
+			return "two finger horizontal swipe"
+		"two_finger_swipe_up", "two_finger_swipe_down", \
+		"two_finger_swipe_left", "two_finger_swipe_right":
+			return "two finger swipe " + path.get_slice("_", 3)
+		"three_finger_swipe_up", "three_finger_swipe_down", \
+		"three_finger_swipe_left", "three_finger_swipe_right":
+			return "three finger swipe " + path.get_slice("_", 3)
+		"pinch_in":
+			return "pinch in"
+		"pinch_out":
+			return "pinch out"
+		"four_finger_pinch_in":
+			return "four finger pinch in"
+		"four_finger_pinch_out":
+			return "four finger pinch out"
 		_:
 			return path
 
@@ -386,7 +453,19 @@ func _convert_event_to_path(event: InputEvent, controller: int = _last_controlle
 			return _convert_key_to_path(DisplayServer.keyboard_get_keycode_from_physical(event.physical_keycode))
 		return _convert_key_to_path(event.keycode)
 	elif event is InputEventMouseButton:
-		return _convert_mouse_button_to_path(event.button_index)
+		var path : String = _convert_mouse_button_to_path(event.button_index)
+		if Mapper.has_method("_convert_mouse_path"):
+			return Mapper._convert_mouse_path(path, _trackpad_active)
+		return path
+	elif event is InputEventPanGesture:
+		var delta : Vector2 = event.delta
+		if delta.is_zero_approx():
+			return "trackpad/two_finger_swipe"
+		elif abs(delta.x) > abs(delta.y):
+			return "trackpad/two_finger_swipe_horizontal"
+		return "trackpad/two_finger_swipe_vertical"
+	elif event is InputEventMagnifyGesture:
+		return "trackpad/pinch_in" if event.factor < 1.0 else "trackpad/pinch_out"
 	elif event is InputEventJoypadButton:
 		return _convert_joypad_button_to_path(event.button_index, controller, forced_controller_icon_style)
 	elif event is InputEventJoypadMotion:
@@ -615,6 +694,10 @@ func _convert_mouse_button_to_path(button_index: int):
 			return "mouse/wheel_up"
 		MOUSE_BUTTON_WHEEL_DOWN:
 			return "mouse/wheel_down"
+		MOUSE_BUTTON_WHEEL_LEFT:
+			return "mouse/wheel_left"
+		MOUSE_BUTTON_WHEEL_RIGHT:
+			return "mouse/wheel_right"
 		MOUSE_BUTTON_XBUTTON1:
 			return "mouse/side_down"
 		MOUSE_BUTTON_XBUTTON2:

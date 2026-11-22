@@ -112,10 +112,12 @@ func create_icon(category: String, path: String):
 		var item : TreeItem = n_base_asset_names.create_item(asset_names_root)
 		item.set_text(0, map_category)
 
-	var filename := path.get_file()
+	# Assets pending review ("name.ai.png") resolve under the same
+	# path as their final name ("name.png")
+	var filename := path.get_file().get_basename().trim_suffix(ControllerIcons._AI_ASSET_SUFFIX)
 	if button_nodes[map_category].has(filename): return
 
-	var icon_path = ("" if category.is_empty() else category + "/") + path.get_file().get_basename()
+	var icon_path = ("" if category.is_empty() else category + "/") + filename
 	var icon := ControllerIcons_Icon.new(map_category, icon_path)
 	button_nodes[map_category][filename] = icon
 	n_assets_container.add_child(icon.button)

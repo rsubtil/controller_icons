@@ -19,6 +19,12 @@ enum Devices {
 	STEAM_DECK
 }
 
+enum MouseProfiles {
+	MOUSE, ## Mouse buttons use the regular mouse icons.
+	TRACKPAD, ## Mouse buttons use (macOS) trackpad gesture icons.
+	AUTO ## Trackpad on macOS by default, switching live based on the input received.
+}
+
 ## General addon settings
 @export_subgroup("General")
 
@@ -36,6 +42,13 @@ enum Devices {
 ## Minimum mouse "instantaneous" movement for
 ## triggering an icon remap
 @export_range(0, 10000) var mouse_min_movement : int = 200
+
+## Icon profile for mouse input. [code]Trackpad[/code] shows trackpad
+## gesture icons (e.g. left button as a one finger click).
+## [code]Auto[/code] starts as [code]Trackpad[/code] on macOS and
+## [code]Mouse[/code] elsewhere, then switches when trackpad gestures
+## or mouse-only buttons (middle, wheel, side buttons) are used.
+@export var mouse_profile : MouseProfiles = MouseProfiles.MOUSE
 
 ## Settings related to advanced custom assets usage and remapping
 @export_subgroup("Custom assets")

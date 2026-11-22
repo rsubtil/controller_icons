@@ -8,6 +8,7 @@
 	- [Specific path](#specific-path)
 - [Reacting to input change](#reacting-to-input-change)
 - [Settings](#settings)
+- [Trackpad profile](#trackpad-profile)
 - [Adding/removing controller iconss](#addingremoving-controller-icons)
 - [Changing controller mapper](#changing-controller-mapper)
 - [TTS support](#tts-support)
@@ -105,12 +106,34 @@ There is a settings resource file at `res://addons/controller_icons/settings.tre
 	- `Joypad Deadzone`: Controller's deadzone for analogue inputs when detecting input device changes.
 	- `Allow Mouse Remap`: If set, consider mouse movement when detecting input device changes.
 	- `Mouse Min Movement`: Minimum "instantaneous" mouse speed in pixels to be considered for an input device change
+	- `Mouse Profile`: Which icons to use for mouse input: `Mouse`, `Trackpad` or `Auto`. Refer to [Trackpad profile](#trackpad-profile) for more details.
 - **Custom Assets**
 	- `Custom Asset Dir`: Directory with custom controller icons to use. Refer to [Adding/removing controller icons](#addingremoving-controller-icons) for more instructions on how to do this.
 	- `Custom Mapper`: Custom generic path mapper script to use. Refer to [Changing controller mapper](#changing-controller-mapper) for more instructions on how to do this.
 	- `Custom Icon Extension`: Custom icon file extension to use. If empty, the addon defaults to `png`. Must be the extension portion only, without the preceding dot.
 - **Text Rendering**
 	- `Custom Label Settings`: Custom `LabelSettings` to use for text rendering on multi-icon prompts. Will be used by all icons by default, but can also be overridden on a per-icon basis.
+
+# Trackpad profile
+
+By default, mouse buttons on input actions are shown with mouse icons. Setting `Mouse Profile` to `Trackpad` shows (macOS) trackpad gesture icons instead, from `res://addons/controller_icons/assets/trackpad`:
+
+| Mouse input | Trackpad icon |
+| --- | --- |
+| Left button | `trackpad/click` |
+| Right button | `trackpad/two_finger_click` |
+| Wheel up/down | `trackpad/two_finger_swipe_vertical` |
+| Wheel left/right | `trackpad/two_finger_swipe_horizontal` |
+| Middle and side buttons | No trackpad equivalent, keeps the mouse icon |
+
+Wheel input uses direction-neutral icons, since the actual swipe direction depends on the user's "natural scrolling" OS setting.
+
+When set to `Auto`, the trackpad profile is used by default on macOS, and the mouse profile elsewhere. The profile then switches automatically: trackpad gestures (`InputEventPanGesture`, `InputEventMagnifyGesture`) switch to the trackpad profile, while mouse-only buttons (middle, wheel, side buttons) switch to the mouse profile. You can query the profile in use with `ControllerIcons.get_mouse_profile()`.
+
+Other gestures (taps, force click, pinch, rotate, three-finger swipes, four-finger pinch) are available as [specific paths](#specific-path), such as `trackpad/pinch_in`.
+
+> [!NOTE]
+> The trackpad icons are AI-generated and pending review by a human artist. These assets are named `<name>.ai.png`, but are still referenced by their plain path (e.g. `trackpad/click`). The addon looks for `<name>.png` first and falls back to `<name>.ai.png`, so renaming a reviewed asset requires no other changes.
 
 # Adding/removing controller icons
 

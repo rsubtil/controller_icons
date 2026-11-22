@@ -32,6 +32,24 @@ func _convert_joypad_path(path: String, device: int, fallback: ControllerSetting
 		_:
 			return ""
 
+func _convert_mouse_path(path: String, use_trackpad: bool) -> String:
+	if not use_trackpad:
+		return path
+	match path:
+		"mouse/left":
+			return "trackpad/click"
+		"mouse/right":
+			return "trackpad/two_finger_click"
+		# Scroll direction depends on the user's "natural scrolling"
+		# OS setting, so use direction-neutral swipe icons.
+		"mouse/wheel_up", "mouse/wheel_down":
+			return "trackpad/two_finger_swipe_vertical"
+		"mouse/wheel_left", "mouse/wheel_right":
+			return "trackpad/two_finger_swipe_horizontal"
+		_:
+			# No trackpad equivalent (middle/side buttons), keep mouse icon
+			return path
+
 func _get_joypad_type(device, fallback, force_controller_icon_style):
 	if force_controller_icon_style != ControllerSettings.Devices.NONE:
 		return force_controller_icon_style
